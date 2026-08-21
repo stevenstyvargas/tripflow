@@ -2,8 +2,8 @@
 // Cada página exporta una función render(container) que dibuja su vista.
 
 const routes = {
-  // "/": () => import("./pages/dashboard.js"),
-  // "/nuevo-viaje": () => import("./pages/new-trip.js"),
+  "/": () => import("./pages/dashboard.js"),
+  "/nuevo-viaje": () => import("./pages/new-trip.js"),
   // "/registrar-gasto": () => import("./pages/add-expense.js"),
 };
 
