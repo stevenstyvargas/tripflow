@@ -17,6 +17,20 @@ const routes = {
   "/historial": () => import("./pages/history.js"),
 };
 
+// "/viaje/{tripId}" no es una ruta fija: se resuelve aparte para extraer
+// el id del viaje como parámetro en vez de listarla una por una en routes.
+function matchRoute(path) {
+  if (path.startsWith("/viaje/")) {
+    return {
+      loadPage: () => import("./pages/trip-detail.js"),
+      params: { tripId: decodeURIComponent(path.slice("/viaje/".length)) },
+    };
+  }
+
+  const loadPage = routes[path];
+  return loadPage ? { loadPage, params: {} } : null;
+}
+
 export function initRouter(container) {
   let currentUser = null;
 
@@ -28,16 +42,16 @@ export function initRouter(container) {
     }
 
     const path = location.hash.replace("#", "") || "/";
-    const loadPage = routes[path];
+    const match = matchRoute(path);
     const content = renderShell(container, path);
 
-    if (!loadPage) {
+    if (!match) {
       content.innerHTML = `<p>Página no encontrada.</p>`;
       return;
     }
 
-    const page = await loadPage();
-    page.render(content);
+    const page = await match.loadPage();
+    page.render(content, match.params);
   }
 
   window.addEventListener("hashchange", render);
