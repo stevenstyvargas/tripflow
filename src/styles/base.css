@@ -58,7 +58,8 @@ select {
 
 .page-home,
 .page-alerts,
-.page-history {
+.page-history,
+.page-trip-detail {
   max-width: 64rem;
 }
 
@@ -631,4 +632,79 @@ button[type="submit"] {
 .history-item-budget {
   margin: 0;
   color: var(--color-text-muted);
+}
+
+/* ---------- Detalle de viaje ---------- */
+
+.trip-detail-budget {
+  margin: var(--space-1) 0 var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.expense-form {
+  max-width: 28rem;
+  margin: 0 0 var(--space-8);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.expense-form button[type="submit"] {
+  width: 100%;
+}
+
+.expense-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.expense-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.expense-item-icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.expense-item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.expense-item-category {
+  margin: 0;
+  font-weight: 600;
+}
+
+.expense-item-note {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.expense-item-meta {
+  text-align: right;
+}
+
+.expense-item-amount {
+  margin: 0;
+  font-weight: 600;
+}
+
+.expense-item-date {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
 }
