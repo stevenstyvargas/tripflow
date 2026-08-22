@@ -18,6 +18,12 @@
   --color-status-warning: #f79711; /* 80%–100% */
   --color-status-danger: #dc2e24; /* > 100% */
 
+  /* Texto de los badges de semáforo: mismo hue que el estado, oscurecido
+     para mantener contraste legible sobre un fondo claro del mismo color */
+  --color-status-ok-text: #3f6b17;
+  --color-status-warning-text: #92530a;
+  --color-status-danger-text: #8f1f19;
+
   /* Categorías de gasto (gráfico de dona) — paleta propia, distinta
      del semáforo para no mezclar significados de estado con categoría */
   --color-category-transporte: #001860;
