@@ -708,3 +708,71 @@ button[type="submit"] {
   color: var(--color-text-muted);
   font-size: var(--text-xs);
 }
+
+/* ---------- Modal de confirmación ---------- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.modal {
+  width: 100%;
+  max-width: 26rem;
+  padding: var(--space-6);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.modal-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0 auto var(--space-3);
+  color: var(--color-status-danger);
+}
+
+.modal-title {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+}
+
+.modal-body {
+  margin: 0 0 var(--space-6);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.button-outline {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-text-muted);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button-danger {
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-status-danger);
+  color: var(--color-surface);
+  font-weight: 600;
+  cursor: pointer;
+}
