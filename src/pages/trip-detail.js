@@ -9,6 +9,7 @@ import { getTrip, getTripTotal, getExpensesByTrip, addExpense } from "../data/st
 import { formatCurrency } from "../utils/currency.js";
 import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
+import { showConfirmModal } from "../components/confirm-modal.js";
 import { EXPENSE_CATEGORIES } from "../utils/categories.js";
 import { icon } from "../utils/icons.js";
 import { escapeHtml } from "../utils/dom.js";
@@ -122,27 +123,56 @@ export function render(container, { tripId } = {}) {
     if (!form.hidden) form.querySelector("#expense-amount").focus();
   });
 
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    errorBox.hidden = true;
+  async function saveExpense(expenseData) {
     submitButton.disabled = true;
-
-    const formData = new FormData(form);
-
     try {
-      await addExpense({
-        tripId: trip.id,
-        category: formData.get("category"),
-        amount: Number(formData.get("amount")),
-        currency: trip.currency,
-        date: formData.get("date"),
-        note: formData.get("note").trim(),
-      });
+      await addExpense(expenseData);
       render(container, { tripId: trip.id });
     } catch (err) {
       errorBox.textContent = err.message;
       errorBox.hidden = false;
       submitButton.disabled = false;
     }
+  }
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    errorBox.hidden = true;
+
+    const formData = new FormData(form);
+    const amount = Number(formData.get("amount"));
+    const expenseData = {
+      tripId: trip.id,
+      category: formData.get("category"),
+      amount,
+      currency: trip.currency,
+      date: formData.get("date"),
+      note: formData.get("note").trim(),
+    };
+
+    // Chequeo previo al guardado: si el monto es válido y hace que el
+    // total supere el presupuesto, se confirma antes de persistir en vez
+    // de guardar y avisar después — prevenir el error, no solo reportarlo.
+    const newTotal = spent + amount;
+    const exceedsBudget = trip.budgetLimit > 0 && amount > 0 && newTotal > trip.budgetLimit;
+
+    if (!exceedsBudget) {
+      saveExpense(expenseData);
+      return;
+    }
+
+    const percent = Math.round((newTotal / trip.budgetLimit) * 100);
+    showConfirmModal({
+      title: "Vas a superar el presupuesto",
+      body: `
+        <strong>${escapeHtml(trip.name)}</strong> lleva ${formatCurrency(spent, trip.currency)}
+        gastados. Con este gasto nuevo, el total sería
+        ${formatCurrency(newTotal, trip.currency)} de un presupuesto de
+        ${formatCurrency(trip.budgetLimit, trip.currency)} (${percent}%).
+      `,
+      confirmLabel: "Registrar de todas formas",
+      cancelLabel: "Cancelar",
+      onConfirm: () => saveExpense(expenseData),
+    });
   });
 }
