@@ -1,0 +1,13 @@
+rules_version = '2';
+
+// Cada usuario solo puede leer/escribir sus propios viajes y gastos.
+// Pegar esto en Firebase Console → Firestore Database → Reglas,
+// o desplegar con `firebase deploy --only firestore:rules` si el
+// proyecto está inicializado con Firebase CLI.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+  }
+}
