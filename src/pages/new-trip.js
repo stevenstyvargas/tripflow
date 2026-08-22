@@ -27,6 +27,21 @@ export function render(container) {
           </select>
         </p>
 
+        <p class="field">
+          <label for="trip-start">Fecha de inicio (opcional)</label>
+          <input id="trip-start" name="startDate" type="date" />
+        </p>
+
+        <p class="field">
+          <label for="trip-end">Fecha de fin (opcional)</label>
+          <input id="trip-end" name="endDate" type="date" />
+        </p>
+
+        <p class="field">
+          <label for="trip-photo">URL de foto del destino (opcional)</label>
+          <input id="trip-photo" name="photoUrl" type="url" placeholder="https://..." />
+        </p>
+
         <p class="field-error" id="new-trip-error" role="alert" hidden></p>
 
         <button type="submit">Crear viaje</button>
@@ -49,6 +64,9 @@ export function render(container) {
         name: formData.get("name"),
         budgetLimit: Number(formData.get("budgetLimit")),
         currency: formData.get("currency"),
+        startDate: formData.get("startDate"),
+        endDate: formData.get("endDate"),
+        photoUrl: formData.get("photoUrl"),
       });
       location.hash = "#/";
     } catch (err) {

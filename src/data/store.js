@@ -2,9 +2,11 @@
 // en Firestore, un documento de viajes por usuario autenticado
 // (users/{uid}/trips/{tripId}/expenses/{expenseId}).
 
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, updateDoc, doc, getDocs } from "firebase/firestore";
 import { SUPPORTED_CURRENCIES } from "../utils/currency.js";
 import { db } from "./firebase.js";
+
+export const TRIP_STATUS = { ACTIVE: "active", CLOSED: "closed" };
 
 /**
  * @typedef {Object} Trip
@@ -14,6 +16,8 @@ import { db } from "./firebase.js";
  * @property {number} budgetLimit
  * @property {string} startDate
  * @property {string} endDate
+ * @property {string} photoUrl      // opcional, foto grande del destino
+ * @property {"active" | "closed"} status
  */
 
 /**
@@ -87,6 +91,14 @@ export function getTrips() {
   return state.trips;
 }
 
+export function getActiveTrips() {
+  return state.trips.filter((t) => t.status !== TRIP_STATUS.CLOSED);
+}
+
+export function getClosedTrips() {
+  return state.trips.filter((t) => t.status === TRIP_STATUS.CLOSED);
+}
+
 export function getTrip(tripId) {
   return state.trips.find((t) => t.id === tripId);
 }
@@ -97,10 +109,17 @@ export function getExpensesByTrip(tripId) {
 
 /**
  * Crea y persiste un viaje nuevo en Firestore.
- * @param {{ name: string, budgetLimit: number, currency: string, startDate?: string, endDate?: string }} data
+ * @param {{ name: string, budgetLimit: number, currency: string, startDate?: string, endDate?: string, photoUrl?: string }} data
  * @returns {Promise<Trip>} el viaje creado, con su id asignado
  */
-export async function createTrip({ name, budgetLimit, currency, startDate = "", endDate = "" }) {
+export async function createTrip({
+  name,
+  budgetLimit,
+  currency,
+  startDate = "",
+  endDate = "",
+  photoUrl = "",
+}) {
   validateTripInput({ name, budgetLimit, currency });
 
   const tripData = {
@@ -109,12 +128,23 @@ export async function createTrip({ name, budgetLimit, currency, startDate = "", 
     currency,
     startDate,
     endDate,
+    photoUrl: photoUrl.trim(),
+    status: TRIP_STATUS.ACTIVE,
   };
 
   const docRef = await addDoc(tripsRef(currentUid), tripData);
   const trip = { id: docRef.id, ...tripData };
   state.trips.push(trip);
   return trip;
+}
+
+/** Marca un viaje como cerrado; pasa a mostrarse en Historial. */
+export async function closeTrip(tripId) {
+  await updateDoc(doc(db, "users", currentUid, "trips", tripId), {
+    status: TRIP_STATUS.CLOSED,
+  });
+  const trip = getTrip(tripId);
+  if (trip) trip.status = TRIP_STATUS.CLOSED;
 }
 
 /**
