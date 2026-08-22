@@ -36,14 +36,16 @@ export function render(container) {
 
   const form = container.querySelector("#new-trip-form");
   const errorBox = container.querySelector("#new-trip-error");
+  const submitButton = form.querySelector("button[type=submit]");
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     errorBox.hidden = true;
+    submitButton.disabled = true;
 
     const formData = new FormData(form);
     try {
-      createTrip({
+      await createTrip({
         name: formData.get("name"),
         budgetLimit: Number(formData.get("budgetLimit")),
         currency: formData.get("currency"),
@@ -52,6 +54,8 @@ export function render(container) {
     } catch (err) {
       errorBox.textContent = err.message;
       errorBox.hidden = false;
+    } finally {
+      submitButton.disabled = false;
     }
   });
 }

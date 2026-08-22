@@ -1,11 +1,10 @@
-// Estado central de Tripflow. v1 = un solo usuario, sin backend:
-// todo se persiste en localStorage. El shape de datos ya está pensado
-// para que en una futura versión (perfil compartido) sea fácil migrar
-// a un backend real sin rediseñar el modelo.
+// Estado central de Tripflow. Fase 3 del prompt maestro: persistencia
+// en Firestore, un documento de viajes por usuario autenticado
+// (users/{uid}/trips/{tripId}/expenses/{expenseId}).
 
+import { collection, addDoc, getDocs } from "firebase/firestore";
 import { SUPPORTED_CURRENCIES } from "../utils/currency.js";
-
-const STORAGE_KEY = "tripflow:v1";
+import { db } from "./firebase.js";
 
 /**
  * @typedef {Object} Trip
@@ -28,23 +27,43 @@ const STORAGE_KEY = "tripflow:v1";
  * @property {string} note
  */
 
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : { trips: [], expenses: [] };
-  } catch {
-    return { trips: [], expenses: [] };
+let state = { trips: [], expenses: [] };
+let currentUid = null;
+
+function tripsRef(uid) {
+  return collection(db, "users", uid, "trips");
+}
+
+function expensesRef(uid, tripId) {
+  return collection(db, "users", uid, "trips", tripId, "expenses");
+}
+
+/**
+ * Carga los viajes y gastos del usuario autenticado desde Firestore
+ * hacia el estado en memoria. Se llama una vez por sesión, al hacer login.
+ * @param {string} uid
+ */
+export async function initStore(uid) {
+  currentUid = uid;
+
+  const tripsSnap = await getDocs(tripsRef(uid));
+  const trips = tripsSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+
+  const expenses = [];
+  for (const trip of trips) {
+    const expensesSnap = await getDocs(expensesRef(uid, trip.id));
+    expensesSnap.docs.forEach((d) =>
+      expenses.push({ id: d.id, tripId: trip.id, ...d.data() })
+    );
   }
+
+  state = { trips, expenses };
 }
 
-function saveState(state) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
-
-let state = loadState();
-
-function generateId() {
-  return crypto.randomUUID();
+/** Se llama al cerrar sesión, para no dejar datos del usuario anterior en memoria. */
+export function clearStore() {
+  currentUid = null;
+  state = { trips: [], expenses: [] };
 }
 
 /**
@@ -77,15 +96,14 @@ export function getExpensesByTrip(tripId) {
 }
 
 /**
- * Crea y persiste un viaje nuevo.
+ * Crea y persiste un viaje nuevo en Firestore.
  * @param {{ name: string, budgetLimit: number, currency: string, startDate?: string, endDate?: string }} data
- * @returns {Trip} el viaje creado, con su id asignado
+ * @returns {Promise<Trip>} el viaje creado, con su id asignado
  */
-export function createTrip({ name, budgetLimit, currency, startDate = "", endDate = "" }) {
+export async function createTrip({ name, budgetLimit, currency, startDate = "", endDate = "" }) {
   validateTripInput({ name, budgetLimit, currency });
 
-  const trip = {
-    id: generateId(),
+  const tripData = {
     name: name.trim(),
     budgetLimit,
     currency,
@@ -93,14 +111,21 @@ export function createTrip({ name, budgetLimit, currency, startDate = "", endDat
     endDate,
   };
 
+  const docRef = await addDoc(tripsRef(currentUid), tripData);
+  const trip = { id: docRef.id, ...tripData };
   state.trips.push(trip);
-  saveState(state);
   return trip;
 }
 
-export function addExpense(expense) {
-  state.expenses.push(expense);
-  saveState(state);
+/**
+ * @param {{ tripId: string, category: string, amount: number, currency: string, date: string, note: string }} expense
+ */
+export async function addExpense(expense) {
+  const { tripId, ...data } = expense;
+  const docRef = await addDoc(expensesRef(currentUid, tripId), data);
+  const saved = { id: docRef.id, tripId, ...data };
+  state.expenses.push(saved);
+  return saved;
 }
 
 export function getTripTotal(tripId) {
