@@ -3,7 +3,7 @@
 
 import { signInWithGoogle } from "../data/auth.js";
 
-export function render(container) {
+export function render(container, { error } = {}) {
   container.innerHTML = `
     <main class="page page-login">
       <h1>Tripflow</h1>
@@ -15,6 +15,11 @@ export function render(container) {
 
   const button = container.querySelector("#google-signin");
   const errorBox = container.querySelector("#login-error");
+
+  if (error) {
+    errorBox.textContent = error;
+    errorBox.hidden = false;
+  }
 
   button.addEventListener("click", async () => {
     button.disabled = true;
