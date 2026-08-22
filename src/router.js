@@ -6,7 +6,7 @@
 // las rutas protegidas se renderizan dentro del app-shell (sidebar +
 // contenido).
 
-import { onAuthChange, getGoogleRedirectResult } from "./data/auth.js";
+import { onAuthChange } from "./data/auth.js";
 import { initStore, clearStore } from "./data/store.js";
 import { renderShell } from "./components/app-shell.js";
 
@@ -31,26 +31,13 @@ function matchRoute(path) {
   return loadPage ? { loadPage, params: {} } : null;
 }
 
-export async function initRouter(container) {
+export function initRouter(container) {
   let currentUser = null;
-  let redirectError = null;
-
-  // Captura el resultado de signInWithRedirect al volver de Google, antes
-  // de que se muestre el login. Necesario porque signInWithPopup falla en
-  // Vercel (auth/popup-blocked) por la política Cross-Origin-Opener-Policy
-  // que aplica por defecto.
-  try {
-    await getGoogleRedirectResult();
-  } catch (err) {
-    console.error("[auth] getGoogleRedirectResult falló:", err);
-    redirectError = "No se pudo iniciar sesión. Intenta de nuevo.";
-  }
 
   async function render() {
     if (!currentUser) {
       const login = await import("./pages/login.js");
-      login.render(container, { error: redirectError });
-      redirectError = null;
+      login.render(container);
       return;
     }
 
