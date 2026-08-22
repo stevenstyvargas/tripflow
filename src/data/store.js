@@ -4,6 +4,7 @@
 
 import { collection, addDoc, updateDoc, doc, getDocs } from "firebase/firestore";
 import { SUPPORTED_CURRENCIES } from "../utils/currency.js";
+import { EXPENSE_CATEGORIES } from "../utils/categories.js";
 import { db } from "./firebase.js";
 
 export const TRIP_STATUS = { ACTIVE: "active", CLOSED: "closed" };
@@ -148,10 +149,28 @@ export async function closeTrip(tripId) {
 }
 
 /**
+ * Valida los datos de un gasto nuevo antes de guardarlo.
+ * Lanza un Error con un mensaje apto para mostrar al usuario si algo falla.
+ * @param {{ category: string, amount: number, date: string }} data
+ */
+function validateExpenseInput({ category, amount, date }) {
+  if (!EXPENSE_CATEGORIES.some((c) => c.id === category)) {
+    throw new Error(`Categoría no soportada: ${category}`);
+  }
+  if (typeof amount !== "number" || Number.isNaN(amount) || amount <= 0) {
+    throw new Error("El monto debe ser un número mayor a 0.");
+  }
+  if (!date) {
+    throw new Error("La fecha del gasto es obligatoria.");
+  }
+}
+
+/**
  * @param {{ tripId: string, category: string, amount: number, currency: string, date: string, note: string }} expense
  */
 export async function addExpense(expense) {
   const { tripId, ...data } = expense;
+  validateExpenseInput(data);
   const docRef = await addDoc(expensesRef(currentUid, tripId), data);
   const saved = { id: docRef.id, tripId, ...data };
   state.expenses.push(saved);
