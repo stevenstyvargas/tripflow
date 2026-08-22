@@ -99,6 +99,42 @@ button[type="submit"] {
   margin-bottom: var(--space-6);
 }
 
+.page-dashboard-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.page-dashboard-nav button {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0;
+  font-size: var(--text-sm);
+}
+
+.user-email {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.page-login {
+  text-align: center;
+  padding-top: var(--space-12);
+}
+
+.page-login button {
+  margin-top: var(--space-6);
+  padding: var(--space-3) var(--space-6);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-surface);
+  cursor: pointer;
+}
+
 .trip-list {
   list-style: none;
   margin: 0;

@@ -4,6 +4,7 @@
 
 import { getTrips, getTripTotal } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
+import { getCurrentUser, signOutUser } from "../data/auth.js";
 
 function renderTripCard(trip) {
   const spent = getTripTotal(trip.id);
@@ -19,12 +20,19 @@ function renderTripCard(trip) {
 
 export function render(container) {
   const trips = getTrips();
+  const user = getCurrentUser();
 
   container.innerHTML = `
     <main class="page page-dashboard">
       <header class="page-dashboard-header">
-        <h1>Tus viajes</h1>
-        <a href="#/nuevo-viaje">Nuevo viaje</a>
+        <div>
+          <h1>Tus viajes</h1>
+          ${user ? `<p class="user-email">${user.email}</p>` : ""}
+        </div>
+        <nav class="page-dashboard-nav">
+          <a href="#/nuevo-viaje">Nuevo viaje</a>
+          <button id="signout" type="button">Cerrar sesión</button>
+        </nav>
       </header>
 
       ${
@@ -34,4 +42,8 @@ export function render(container) {
       }
     </main>
   `;
+
+  container.querySelector("#signout").addEventListener("click", () => {
+    signOutUser();
+  });
 }
