@@ -9,7 +9,9 @@ export default defineConfig({
         name: "Tripflow",
         short_name: "Tripflow",
         description: "Controla tu presupuesto de viaje",
-        // theme_color / background_color / icons: se completan en la fase de branding
+        theme_color: "#001860",
+        background_color: "#F5F5F5",
+        // icons: pendiente el set de íconos PWA (192/512px) del logo definitivo
         start_url: "/",
         display: "standalone",
       },

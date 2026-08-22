@@ -1,26 +1,33 @@
 /*
-  Design tokens de Tripflow.
-  Se completan en la fase de branding (ver docs/branding.md).
-  Todo el sistema visual debe derivar de estas variables —
-  ningún color o tamaño se escribe "a mano" en los componentes.
+  Design tokens de Tripflow. Ver docs/branding.md para la justificación
+  de cada decisión. Todo el sistema visual debe derivar de estas
+  variables — ningún color o tamaño se escribe "a mano" en los componentes.
 */
 
 :root {
-  /* Color — placeholder, pendiente de definir narrativa de marca */
-  --color-primary: #000000;
-  --color-secondary: #000000;
-  --color-accent: #000000;
-  --color-bg: #ffffff;
+  /* Color de marca */
+  --color-primary: #001860; /* navy — marca, nav activa, botones primarios */
+  --color-accent: #a1d35b; /* verde — acento, estado "en control" */
+  --color-bg: #f5f5f5;
   --color-surface: #ffffff;
-  --color-text: #000000;
+  --color-text: #111111;
   --color-text-muted: #666666;
-  --color-success: #000000;
-  --color-warning: #000000;
-  --color-danger: #000000;
 
-  /* Tipografía — placeholder */
-  --font-display: system-ui, sans-serif;
-  --font-body: system-ui, sans-serif;
+  /* Semáforo de presupuesto — mismo significado en toda la app */
+  --color-status-ok: #a1d35b; /* < 80% del presupuesto */
+  --color-status-warning: #f79711; /* 80%–100% */
+  --color-status-danger: #dc2e24; /* > 100% */
+
+  /* Categorías de gasto (gráfico de dona) — paleta propia, distinta
+     del semáforo para no mezclar significados de estado con categoría */
+  --color-category-transporte: #001860;
+  --color-category-comida: #a1d35b;
+  --color-category-hotel: #f79711;
+  --color-category-imprevistos: #6b7280;
+
+  /* Tipografía */
+  --font-display: "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
   --font-mono: monospace;
 
   /* Escala tipográfica */
@@ -50,4 +57,8 @@
   /* Sombra */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  /* Layout */
+  --sidebar-width: 15rem;
+  --icon-size: 1.25rem;
 }
