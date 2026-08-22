@@ -6,11 +6,19 @@ de Technical Product Designer en Alegra.
 ## Stack
 - JS vanilla (ES modules) + Vite como build tool — sin frameworks, sin UI kits
 - CSS con design tokens propios en `src/styles/tokens.css`
-- Persistencia local (localStorage) — sin backend para funciones core
-- Deploy: Vercel, con dominio propio (DNS apuntando desde Namecheap)
+- Autenticación: Firebase Auth con Google (`src/data/auth.js`) — sin
+  contraseñas propias que gestionar
+- Persistencia: Firestore, un documento por usuario autenticado
+  (`users/{uid}/trips/{tripId}/expenses/{expenseId}`, ver `src/data/store.js`)
+- Config de Firebase vía variables de entorno `VITE_FIREBASE_*`
+  (`.env`, no versionado — ver `.env.example`); reglas de seguridad en
+  `firestore.rules`
+- Deploy: Vercel, con dominio propio (DNS apuntando desde Namecheap) —
+  las mismas variables `VITE_FIREBASE_*` deben configurarse ahí
 
 ## Alcance v1 (no expandir sin confirmar conmigo)
-- 1 perfil (individual) — el perfil compartido/pareja va a roadmap, NO a v1
+- 1 perfil (individual) autenticado con Google — el perfil
+  compartido/pareja va a roadmap, NO a v1
 - 3 divisas: COP, USD, EUR — otras divisas van a roadmap
 - 3 funcionalidades core: dashboard de gastos, creación de viaje con
   presupuesto límite, registro de gastos
@@ -19,6 +27,10 @@ de Technical Product Designer en Alegra.
 - Bonus opcional (solo si sobra tiempo): escaneo de recibos con IA vía
   función serverless en `api/scan-receipt.js` — el usuario SIEMPRE
   confirma/edita antes de guardar, nunca se guarda automático
+
+> Actualizado 2026-08-21: se agregó Firebase Auth (Google) + Firestore
+> como backend real, reemplazando el localStorage-only planteado
+> originalmente. Decisión confirmada explícitamente, ver `docs/ai-process.md`.
 
 ## Reglas de trabajo
 - Haz commits pequeños y frecuentes que reflejen el proceso real
