@@ -22,6 +22,7 @@ export function render(container) {
     try {
       await signInWithGoogle();
     } catch (err) {
+      console.error("[auth] signInWithGoogle falló:", err);
       errorBox.textContent = "No se pudo iniciar sesión. Intenta de nuevo.";
       errorBox.hidden = false;
     } finally {
