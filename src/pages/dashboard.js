@@ -68,19 +68,21 @@ function renderTripCard(trip) {
 
   return `
     <li class="trip-card">
-      <div class="trip-card-photo"${safePhotoUrl ? ` style="background-image:url('${safePhotoUrl}')"` : ""}>
-        ${!safePhotoUrl ? icon("plane", "trip-card-photo-placeholder") : ""}
-      </div>
-      <div class="trip-card-body">
-        <p class="trip-card-name">${escapeHtml(trip.name)}</p>
-        <p class="trip-card-budget">
-          ${formatCurrency(spent, trip.currency)} / ${formatCurrency(trip.budgetLimit, trip.currency)}
-        </p>
-        ${statusBadge(status)}
-        <button type="button" class="trip-card-close" data-trip-id="${trip.id}">
-          ${icon("history")}<span>Cerrar viaje</span>
-        </button>
-      </div>
+      <a href="#/viaje/${trip.id}" class="trip-card-link">
+        <div class="trip-card-photo"${safePhotoUrl ? ` style="background-image:url('${safePhotoUrl}')"` : ""}>
+          ${!safePhotoUrl ? icon("plane", "trip-card-photo-placeholder") : ""}
+        </div>
+        <div class="trip-card-body">
+          <p class="trip-card-name">${escapeHtml(trip.name)}</p>
+          <p class="trip-card-budget">
+            ${formatCurrency(spent, trip.currency)} / ${formatCurrency(trip.budgetLimit, trip.currency)}
+          </p>
+          ${statusBadge(status)}
+        </div>
+      </a>
+      <button type="button" class="trip-card-close" data-trip-id="${trip.id}">
+        ${icon("history")}<span>Cerrar viaje</span>
+      </button>
     </li>
   `;
 }
