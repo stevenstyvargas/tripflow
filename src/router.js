@@ -6,7 +6,7 @@
 // las rutas protegidas se renderizan dentro del app-shell (sidebar +
 // contenido).
 
-import { onAuthChange } from "./data/auth.js";
+import { onAuthChange, getGoogleRedirectResult } from "./data/auth.js";
 import { initStore, clearStore } from "./data/store.js";
 import { renderShell } from "./components/app-shell.js";
 
@@ -31,13 +31,26 @@ function matchRoute(path) {
   return loadPage ? { loadPage, params: {} } : null;
 }
 
-export function initRouter(container) {
+export async function initRouter(container) {
   let currentUser = null;
+  let redirectError = null;
+
+  // Captura el resultado de signInWithRedirect al volver de Google, antes
+  // de que se muestre el login. Solo aplica cuando signInWithGoogle() cayó
+  // a redirect por un popup bloqueado (ver auth.js); si ese redirect falla
+  // por otra razón (red, cuenta inválida), sí se muestra el error normal.
+  try {
+    await getGoogleRedirectResult();
+  } catch (err) {
+    console.error("[auth] getGoogleRedirectResult falló:", err);
+    redirectError = "No se pudo iniciar sesión. Intenta de nuevo.";
+  }
 
   async function render() {
     if (!currentUser) {
       const login = await import("./pages/login.js");
-      login.render(container);
+      login.render(container, { error: redirectError });
+      redirectError = null;
       return;
     }
 
