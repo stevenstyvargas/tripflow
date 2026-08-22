@@ -1,0 +1,148 @@
+// Página: detalle de viaje. Muestra el estado del presupuesto, el
+// historial de gastos y el formulario para registrar uno nuevo.
+// La dona y el semáforo de Inicio, y las alertas de Alertas, se
+// recalculan solos la próxima vez que se rendericen: leen siempre el
+// estado en memoria de store.js, así que un gasto nuevo ya persistido
+// ahí se refleja sin código adicional.
+
+import { getTrip, getTripTotal, getExpensesByTrip, addExpense } from "../data/store.js";
+import { formatCurrency } from "../utils/currency.js";
+import { getBudgetStatus } from "../utils/status.js";
+import { statusBadge } from "../components/status-badge.js";
+import { EXPENSE_CATEGORIES } from "../utils/categories.js";
+import { icon } from "../utils/icons.js";
+import { escapeHtml } from "../utils/dom.js";
+
+function renderExpenseItem(expense) {
+  const category = EXPENSE_CATEGORIES.find((c) => c.id === expense.category);
+
+  return `
+    <li class="expense-item">
+      ${icon(category?.icon ?? "receipt", "expense-item-icon")}
+      <div class="expense-item-body">
+        <p class="expense-item-category">${escapeHtml(category?.label ?? expense.category)}</p>
+        ${expense.note ? `<p class="expense-item-note">${escapeHtml(expense.note)}</p>` : ""}
+      </div>
+      <div class="expense-item-meta">
+        <p class="expense-item-amount">${formatCurrency(expense.amount, expense.currency)}</p>
+        <p class="expense-item-date">${escapeHtml(expense.date)}</p>
+      </div>
+    </li>
+  `;
+}
+
+function renderExpenseForm() {
+  const today = new Date().toISOString().slice(0, 10);
+
+  return `
+    <form id="expense-form" class="expense-form" novalidate hidden>
+      <p class="field">
+        <label for="expense-amount">Monto</label>
+        <input id="expense-amount" name="amount" type="number" inputmode="decimal" min="0.01" step="any" placeholder="0" required />
+      </p>
+
+      <p class="field">
+        <label for="expense-category">Categoría</label>
+        <select id="expense-category" name="category" required>
+          ${EXPENSE_CATEGORIES.map((c) => `<option value="${c.id}">${c.label}</option>`).join("")}
+        </select>
+      </p>
+
+      <p class="field">
+        <label for="expense-date">Fecha</label>
+        <input id="expense-date" name="date" type="date" value="${today}" required />
+      </p>
+
+      <p class="field">
+        <label for="expense-note">Descripción (opcional)</label>
+        <input id="expense-note" name="note" type="text" placeholder="Ej. Taxi al aeropuerto" />
+      </p>
+
+      <p class="field-error" id="expense-form-error" role="alert" hidden></p>
+
+      <button type="submit">Guardar gasto</button>
+    </form>
+  `;
+}
+
+export function render(container, { tripId } = {}) {
+  const trip = getTrip(tripId);
+
+  if (!trip) {
+    container.innerHTML = `
+      <main class="page page-trip-detail">
+        <p class="empty-state">Este viaje no existe o fue cerrado.</p>
+        <a href="#/" class="button-primary">${icon("home")}<span>Volver a Inicio</span></a>
+      </main>
+    `;
+    return;
+  }
+
+  const spent = getTripTotal(trip.id);
+  const status = getBudgetStatus(spent, trip.budgetLimit);
+  const expenses = getExpensesByTrip(trip.id)
+    .slice()
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  container.innerHTML = `
+    <main class="page page-trip-detail">
+      <header class="page-header">
+        <div>
+          <h1>${escapeHtml(trip.name)}</h1>
+          <p class="trip-detail-budget">
+            ${formatCurrency(spent, trip.currency)} / ${formatCurrency(trip.budgetLimit, trip.currency)}
+          </p>
+          ${statusBadge(status)}
+        </div>
+        <button type="button" id="toggle-expense-form" class="button-primary">
+          ${icon("plus")}<span>Agregar gasto</span>
+        </button>
+      </header>
+
+      ${renderExpenseForm()}
+
+      <section class="section">
+        <h2>Gastos registrados</h2>
+        ${
+          expenses.length === 0
+            ? `<p class="empty-state">Todavía no has registrado gastos en este viaje.</p>`
+            : `<ul class="expense-list">${expenses.map(renderExpenseItem).join("")}</ul>`
+        }
+      </section>
+    </main>
+  `;
+
+  const toggleButton = container.querySelector("#toggle-expense-form");
+  const form = container.querySelector("#expense-form");
+  const errorBox = container.querySelector("#expense-form-error");
+  const submitButton = form.querySelector("button[type=submit]");
+
+  toggleButton.addEventListener("click", () => {
+    form.hidden = !form.hidden;
+    if (!form.hidden) form.querySelector("#expense-amount").focus();
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    errorBox.hidden = true;
+    submitButton.disabled = true;
+
+    const formData = new FormData(form);
+
+    try {
+      await addExpense({
+        tripId: trip.id,
+        category: formData.get("category"),
+        amount: Number(formData.get("amount")),
+        currency: trip.currency,
+        date: formData.get("date"),
+        note: formData.get("note").trim(),
+      });
+      render(container, { tripId: trip.id });
+    } catch (err) {
+      errorBox.textContent = err.message;
+      errorBox.hidden = false;
+      submitButton.disabled = false;
+    }
+  });
+}
