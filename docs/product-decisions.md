@@ -246,6 +246,39 @@ la señal adicional de "tipo de gráfico distinto = vista distinta"; el
 título ya cumple ese rol de diferenciación sin pedirle al usuario que
 aprenda a leer dos gráficos distintos para el mismo tipo de dato.
 
+## KPIs de Inicio separados por divisa, no sumados
+
+**Problema:** "Gastado en el periodo" y "Presupuesto restante" sumaban
+el gasto/presupuesto de TODOS los viajes activos normalizándolos a COP
+con tasas fijas (`convert()`), aunque el usuario tuviera viajes en
+distintas divisas. Eso inflaba artificialmente los totales (una tasa
+fija de conversión no es el tipo de cambio real) y mezclaba números que
+el usuario no puede gastar entre sí — nadie paga un hotel en Europa con
+el "sobrante" de un viaje presupuestado en pesos colombianos.
+
+**Decisión:** los dos KPIs se reemplazan por un bloque por cada divisa
+que esté *realmente* en uso entre los viajes activos (nunca se muestran
+bloques de divisas sin viajes) — cada bloque trae una píldora con el
+código de divisa (mismo tratamiento visual que `.status-badge`: fondo
+tintado + texto oscurecido del mismo tono, no color plano) y, debajo,
+el gastado y el restante de esa divisa específica, sin convertir ni
+sumar con las demás. "Viajes activos" (un conteo, no un monto) se
+mantiene igual. Como consecuencia, el desglose "Gasto por categoría"
+también se quitó por completo de Inicio: tenía el mismo problema de
+mezclar divisas al sumar categorías entre viajes, y ya vive dentro de
+cada viaje (donde todos los gastos comparten una sola divisa) desde una
+decisión anterior en este mismo documento.
+
+**Por qué (y limitación conocida):** mostrar números reales sin
+convertir es más honesto que una suma que parece precisa pero no lo es.
+Este patrón de columnas separadas funciona bien con 2-3 divisas (el
+límite actual de v1: COP/USD/EUR) pero no escala a soportar "todas las
+divisas del mundo" — con 8 o 10 divisas en uso, la fila de KPIs se
+volvería ilegible. Queda como roadmap (ver `README.md`) diseñar un
+patrón distinto (ej. selector de divisa, vista consolidada opcional
+usando `convert()`, que se deja en el código sin uso actual justamente
+para esto) cuando se amplíe el soporte de divisas más allá de v1.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 

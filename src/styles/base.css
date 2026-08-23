@@ -607,6 +607,37 @@ button[type="submit"] {
   color: var(--color-status-danger-text);
 }
 
+/* ---------- Píldora de divisa (KPIs de Inicio) ---------- */
+/* Mismo tratamiento visual que .status-badge (fondo tintado + texto
+   oscurecido del mismo tono, nunca color plano) pero es un concepto
+   distinto — no reutiliza las clases del semáforo para no mezclar
+   significados de estado con divisa. */
+
+.currency-pill {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+
+.currency-pill-cop {
+  background: color-mix(in srgb, var(--color-primary) 16%, white);
+  color: var(--color-primary);
+}
+
+.currency-pill-usd {
+  background: color-mix(in srgb, var(--color-accent) 25%, white);
+  color: var(--color-status-ok-text);
+}
+
+.currency-pill-eur {
+  background: color-mix(in srgb, var(--color-text-muted) 16%, white);
+  color: var(--color-text-muted);
+}
+
 /* ---------- Alertas ---------- */
 
 .alert-list {

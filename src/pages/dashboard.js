@@ -1,60 +1,61 @@
-// Página: Inicio. KPIs del periodo activo, gasto por categoría agregado
-// de todos los viajes (torres, orden fijo) y viajes activos como cards
-// con foto de destino + semáforo de estado. El desglose de UN viaje
-// específico (dona) vive en trip-detail.js, no acá.
+// Página: Inicio. KPIs del periodo activo, separados por divisa (nunca
+// sumados ni convertidos entre sí — ver docs/product-decisions.md), y
+// viajes activos como cards con foto de destino + semáforo de estado.
+// El desglose por categoría de un viaje vive en trip-detail.js, no acá:
+// mezclar categorías de viajes en distintas divisas tenía el mismo
+// problema que mezclar los KPIs.
 
-import { getActiveTrips, getTripTotal, getExpensesByTrip, closeTrip } from "../data/store.js";
-import { formatCurrency, convert } from "../utils/currency.js";
+import { getActiveTrips, getTripTotal, closeTrip } from "../data/store.js";
+import { formatCurrency, SUPPORTED_CURRENCIES } from "../utils/currency.js";
 import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
-import { barChart } from "../components/bar-chart.js";
-import { EXPENSE_CATEGORIES } from "../utils/categories.js";
 import { icon } from "../utils/icons.js";
 import { escapeHtml } from "../utils/dom.js";
 
-// KPIs y torres se normalizan a COP para poder sumar viajes en distintas
-// divisas en un solo número (ver utils/currency.js: convert()).
-const REPORT_CURRENCY = "COP";
+// Píldora navy/verde/gris (mismo estilo visual que .status-badge:
+// fondo tintado + texto oscurecido del mismo tono, no color plano) para
+// distinguir cada bloque de divisa de un vistazo, sin depender solo de
+// leer el código de 3 letras.
+const CURRENCY_PILL_CLASS = {
+  COP: "currency-pill-cop",
+  USD: "currency-pill-usd",
+  EUR: "currency-pill-eur",
+};
 
-function computeKpis(trips) {
-  let totalSpent = 0;
-  let totalBudget = 0;
-
-  for (const trip of trips) {
-    totalSpent += convert(getTripTotal(trip.id), trip.currency, REPORT_CURRENCY);
-    totalBudget += convert(trip.budgetLimit, trip.currency, REPORT_CURRENCY);
-  }
-
-  return {
-    totalSpent,
-    remaining: totalBudget - totalSpent,
-    activeCount: trips.length,
-  };
-}
-
-// Siempre en el orden de EXPENSE_CATEGORIES, nunca ordenado por monto —
-// para que cada categoría quede siempre en la misma posición visual.
-function computeCategoryBreakdown(trips) {
-  const totals = Object.fromEntries(EXPENSE_CATEGORIES.map((c) => [c.id, 0]));
+// Un bloque por cada divisa que REALMENTE esté en uso entre los viajes
+// activos (nunca se fuerzan bloques de divisas sin viajes). Orden fijo
+// según SUPPORTED_CURRENCIES, no según el orden en que se crearon los
+// viajes, para que la posición de cada bloque no cambie entre renders.
+function computeKpisByCurrency(trips) {
+  const totals = {};
 
   for (const trip of trips) {
-    for (const expense of getExpensesByTrip(trip.id)) {
-      if (expense.category in totals) {
-        totals[expense.category] += convert(expense.amount, expense.currency, REPORT_CURRENCY);
-      }
-    }
+    const entry = totals[trip.currency] ?? { spent: 0, budget: 0 };
+    entry.spent += getTripTotal(trip.id);
+    entry.budget += trip.budgetLimit;
+    totals[trip.currency] = entry;
   }
 
-  return EXPENSE_CATEGORIES.map((c) => ({
-    id: c.id,
-    label: c.label,
-    icon: c.icon,
-    value: totals[c.id],
-    color: `var(${c.colorVar})`,
+  return SUPPORTED_CURRENCIES.filter((currency) => currency in totals).map((currency) => ({
+    currency,
+    spent: totals[currency].spent,
+    remaining: totals[currency].budget - totals[currency].spent,
   }));
 }
 
-function renderKpiCard({ iconName, label, value }) {
+function renderCurrencyKpiCard({ currency, spent, remaining }) {
+  return `
+    <li class="kpi-card">
+      <span class="currency-pill ${CURRENCY_PILL_CLASS[currency] ?? ""}">${currency}</span>
+      <div>
+        <p class="kpi-card-label">Gastado / restante</p>
+        <p class="kpi-card-value">${formatCurrency(spent, currency)} / ${formatCurrency(remaining, currency)}</p>
+      </div>
+    </li>
+  `;
+}
+
+function renderCountKpiCard({ iconName, label, value }) {
   return `
     <li class="kpi-card">
       ${icon(iconName, "kpi-card-icon")}
@@ -94,8 +95,7 @@ function renderTripCard(trip) {
 
 export function render(container) {
   const trips = getActiveTrips();
-  const kpis = computeKpis(trips);
-  const categoryBreakdown = computeCategoryBreakdown(trips);
+  const kpisByCurrency = computeKpisByCurrency(trips);
 
   container.innerHTML = `
     <main class="page page-home">
@@ -105,16 +105,9 @@ export function render(container) {
       </header>
 
       <ul class="kpi-row">
-        ${renderKpiCard({ iconName: "wallet", label: "Gastado en el periodo", value: formatCurrency(kpis.totalSpent, REPORT_CURRENCY) })}
-        ${renderKpiCard({ iconName: "piggy-bank", label: "Presupuesto restante", value: formatCurrency(kpis.remaining, REPORT_CURRENCY) })}
-        ${renderKpiCard({ iconName: "plane", label: "Viajes activos", value: kpis.activeCount })}
+        ${kpisByCurrency.map(renderCurrencyKpiCard).join("")}
+        ${renderCountKpiCard({ iconName: "plane", label: "Viajes activos", value: trips.length })}
       </ul>
-
-      <section class="section">
-        <h2>Gasto por categoría</h2>
-        <p class="section-subtitle">Todos tus viajes activos</p>
-        ${barChart(categoryBreakdown, REPORT_CURRENCY)}
-      </section>
 
       <section class="section">
         <h2>Tus viajes activos</h2>

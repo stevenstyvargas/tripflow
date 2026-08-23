@@ -77,5 +77,10 @@ tripflow/
 ## Roadmap (próximas actualizaciones)
 
 - Perfil compartido: viaje en pareja con reparto de gastos
-- Divisas adicionales (peso mexicano y otras de Latinoamérica)
+- Divisas adicionales (peso mexicano y otras de Latinoamérica). Los KPIs
+  de Inicio hoy muestran un bloque separado por divisa en uso (ver
+  `docs/product-decisions.md`) — funciona para 2-3 divisas, pero ese
+  patrón de columnas no escala a soportar muchas; hay que diseñar algo
+  distinto (ej. selector de divisa, vista consolidada opcional) antes de
+  ampliar la lista de divisas soportadas
 - Escaneo de recibos con IA en el flujo de registro de gastos

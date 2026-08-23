@@ -78,6 +78,11 @@ const FIXED_RATES_TO_COP = {
   EUR: 4300,
 };
 
+// Sin uso actual en la UI: Inicio dejó de normalizar KPIs a una sola
+// divisa (ver docs/product-decisions.md — sumar divisas distintas
+// inflaba los totales). Se deja porque una futura "vista consolidada
+// opcional" (roadmap, para cuando se soporten más divisas) sí la
+// necesitaría.
 export function convert(amount, from, to) {
   if (from === to) return amount;
   const amountInCOP = amount * FIXED_RATES_TO_COP[from];
