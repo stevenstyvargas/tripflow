@@ -3,7 +3,8 @@
 // validación (delegada al store), solo cambian los valores iniciales,
 // el texto del botón y qué hace onSubmit con los datos.
 
-import { SUPPORTED_CURRENCIES } from "../utils/currency.js";
+import { SUPPORTED_CURRENCIES, formatStoredAmount } from "../utils/currency.js";
+import { bindAmountInput, reformatAmountInput, readAmountInput } from "../utils/amount-input.js";
 import { escapeHtml } from "../utils/dom.js";
 
 function tripFormMarkup({ trip, submitLabel, lockCurrency }) {
@@ -16,7 +17,7 @@ function tripFormMarkup({ trip, submitLabel, lockCurrency }) {
 
       <p class="field">
         <label for="trip-budget">Presupuesto límite</label>
-        <input id="trip-budget" name="budgetLimit" type="number" inputmode="decimal" min="1" step="any" placeholder="0" value="${trip.budgetLimit ?? ""}" required />
+        <input id="trip-budget" name="budgetLimit" type="text" inputmode="numeric" placeholder="0" value="${formatStoredAmount(trip.budgetLimit, trip.currency ?? "COP")}" required />
       </p>
 
       <p class="field">
@@ -72,6 +73,13 @@ export function mountTripForm(container, { trip = {}, submitLabel, lockCurrency 
   const form = container.querySelector("#trip-form");
   const errorBox = container.querySelector("#trip-form-error");
   const submitButton = form.querySelector("button[type=submit]");
+  const budgetInput = form.querySelector("#trip-budget");
+  const currencySelect = form.querySelector("#trip-currency");
+
+  bindAmountInput(budgetInput, () => currencySelect.value);
+  currencySelect.addEventListener("change", () => {
+    reformatAmountInput(budgetInput, currencySelect.value);
+  });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -82,7 +90,7 @@ export function mountTripForm(container, { trip = {}, submitLabel, lockCurrency 
     try {
       await onSubmit({
         name: formData.get("name"),
-        budgetLimit: Number(formData.get("budgetLimit")),
+        budgetLimit: readAmountInput(budgetInput),
         currency: formData.get("currency"),
         startDate: formData.get("startDate"),
         endDate: formData.get("endDate"),

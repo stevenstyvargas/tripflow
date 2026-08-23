@@ -156,6 +156,41 @@ vuelve a preguntar.
 el momento en que ocurre, no para repetir una advertencia sobre un
 estado que el usuario ya conoce y ya decidió aceptar.
 
+## Formato en vivo de los campos de monto (sin decimales)
+
+**Problema:** "Presupuesto límite" y "Monto" mostraban el número plano
+mientras se escribía (ej. "4000000"), aunque el resto de la app siempre
+formatea con separador de miles — inconsistente y difícil de leer para
+montos grandes en COP, que es la divisa principal del producto.
+
+**Decisión:** esos dos campos pasan de `type="number"` a `type="text"
+inputmode="numeric"` (mismo teclado numérico en mobile) y se formatean
+en vivo con separador de miles según la divisa del viaje, mientras se
+mantiene el número real (sin separadores) como fuente de verdad para
+guardar y calcular. La lógica vive en `utils/currency.js`
+(`formatAmountInput`/`parseAmountInput`/`formatStoredAmount`, reusando
+los mismos locales que `formatCurrency`) y `utils/amount-input.js`
+(`bindAmountInput`), que sigue el cursor por *cantidad de dígitos
+antes de él*, no por posición de caracter — necesario porque el
+separador se inserta y corre en cada tecla. Ambos formularios (viaje y
+gasto) usan el mismo helper.
+
+Alcance explícito: estos campos ya no aceptan decimales (antes sí,
+vía `step="any"`) — cualquier "." o "," que el usuario escriba se
+descarta al quedarse solo con los dígitos. Es una simplificación
+deliberada: la prueba de aceptación que motivó este cambio solo cubre
+enteros, y formatear en vivo con separador de miles Y decimales a la
+vez (dos símbolos distintos, uno de agrupación y otro decimal, en el
+mismo campo) es sustancialmente más complejo de hacer bien con el
+cursor. Si el producto necesita centavos en USD/EUR más adelante, hay
+que revisarlo — por ahora los montos de viaje/gasto son enteros.
+
+**Por qué:** la app es principalmente para COP (que ya no usa decimales
+en `formatCurrency`), así que la pérdida de precisión práctica es baja;
+priorizar que el caso común (COP, enteros) se vea bien mientras se
+escribe, en vez de resolver un caso borde de centavos que ni siquiera
+estaba explícitamente pedido.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 

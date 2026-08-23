@@ -6,7 +6,8 @@
 // ahí se refleja sin código adicional.
 
 import { getTrip, getTripTotal, getExpensesByTrip, addExpense, updateExpense, deleteExpense } from "../data/store.js";
-import { formatCurrency } from "../utils/currency.js";
+import { formatCurrency, formatStoredAmount } from "../utils/currency.js";
+import { bindAmountInput, readAmountInput } from "../utils/amount-input.js";
 import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
 import { showConfirmModal } from "../components/confirm-modal.js";
@@ -47,7 +48,7 @@ function renderExpenseForm() {
     <form id="expense-form" class="expense-form" novalidate hidden>
       <p class="field">
         <label for="expense-amount">Monto</label>
-        <input id="expense-amount" name="amount" type="number" inputmode="decimal" min="0.01" step="any" placeholder="0" required />
+        <input id="expense-amount" name="amount" type="text" inputmode="numeric" placeholder="0" required />
       </p>
 
       <p class="field">
@@ -132,6 +133,9 @@ export function render(container, { tripId } = {}) {
   const errorBox = container.querySelector("#expense-form-error");
   const submitButton = form.querySelector("button[type=submit]");
   const cancelButton = container.querySelector("#expense-form-cancel");
+  const amountInput = form.querySelector("#expense-amount");
+
+  bindAmountInput(amountInput, () => trip.currency);
 
   // Un solo formulario para agregar y editar: editingExpenseId distingue
   // qué hace el submit. Reutiliza el mismo <form>, no uno nuevo, siguiendo
@@ -149,14 +153,14 @@ export function render(container, { tripId } = {}) {
   function enterEditMode(expense) {
     editingExpenseId = expense.id;
     form.hidden = false;
-    form.querySelector("#expense-amount").value = expense.amount;
+    amountInput.value = formatStoredAmount(expense.amount, trip.currency);
     form.querySelector("#expense-category").value = expense.category;
     form.querySelector("#expense-date").value = expense.date;
     form.querySelector("#expense-note").value = expense.note ?? "";
     submitButton.textContent = "Guardar cambios";
     cancelButton.hidden = false;
     errorBox.hidden = true;
-    form.querySelector("#expense-amount").focus();
+    amountInput.focus();
   }
 
   toggleButton.addEventListener("click", () => {
@@ -167,7 +171,7 @@ export function render(container, { tripId } = {}) {
     }
     exitEditMode();
     form.hidden = false;
-    form.querySelector("#expense-amount").focus();
+    amountInput.focus();
   });
 
   cancelButton.addEventListener("click", () => {
@@ -222,7 +226,7 @@ export function render(container, { tripId } = {}) {
     errorBox.hidden = true;
 
     const formData = new FormData(form);
-    const amount = Number(formData.get("amount"));
+    const amount = readAmountInput(amountInput);
     const expenseData = {
       tripId: trip.id,
       category: formData.get("category"),
