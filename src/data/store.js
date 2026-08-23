@@ -210,6 +210,25 @@ export function getTripTotal(tripId) {
 }
 
 /**
+ * Actualiza un gasto existente en Firestore y en el estado en memoria.
+ * Mismo patrón de recálculo automático que addExpense/deleteExpense:
+ * quien llama a render() después ve el total, semáforo, dona y alertas
+ * ya actualizados, porque todos leen state.expenses en vivo.
+ * @param {string} expenseId
+ * @param {{ tripId: string, category: string, amount: number, currency: string, date: string, note: string }} expense
+ */
+export async function updateExpense(expenseId, expense) {
+  const { tripId, ...data } = expense;
+  validateExpenseInput(data);
+
+  const existing = state.expenses.find((e) => e.id === expenseId);
+  if (!existing) throw new Error("Este gasto ya no existe.");
+
+  await updateDoc(doc(db, "users", currentUid, "trips", existing.tripId, "expenses", expenseId), data);
+  Object.assign(existing, data);
+}
+
+/**
  * Elimina un gasto de Firestore y del estado en memoria. El total del
  * viaje, el semáforo, la dona y las alertas se recalculan solos la
  * próxima vez que se rendericen: todos leen `state.expenses` en vivo.

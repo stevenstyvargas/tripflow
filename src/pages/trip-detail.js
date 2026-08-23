@@ -5,7 +5,7 @@
 // estado en memoria de store.js, así que un gasto nuevo ya persistido
 // ahí se refleja sin código adicional.
 
-import { getTrip, getTripTotal, getExpensesByTrip, addExpense, deleteExpense } from "../data/store.js";
+import { getTrip, getTripTotal, getExpensesByTrip, addExpense, updateExpense, deleteExpense } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
 import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
@@ -28,9 +28,14 @@ function renderExpenseItem(expense) {
         <p class="expense-item-amount">${formatCurrency(expense.amount, expense.currency)}</p>
         <p class="expense-item-date">${escapeHtml(expense.date)}</p>
       </div>
-      <button type="button" class="button-danger-outline expense-item-delete" data-expense-id="${expense.id}">
-        ${icon("trash-2")}<span>Eliminar</span>
-      </button>
+      <div class="expense-item-actions">
+        <button type="button" class="icon-button expense-item-edit" data-expense-id="${expense.id}" aria-label="Editar gasto">
+          ${icon("edit-2")}
+        </button>
+        <button type="button" class="button-danger-outline expense-item-delete" data-expense-id="${expense.id}">
+          ${icon("trash-2")}<span>Eliminar</span>
+        </button>
+      </div>
     </li>
   `;
 }
@@ -64,7 +69,10 @@ function renderExpenseForm() {
 
       <p class="field-error" id="expense-form-error" role="alert" hidden></p>
 
-      <button type="submit">Guardar gasto</button>
+      <div class="expense-form-actions">
+        <button type="submit">Guardar gasto</button>
+        <button type="button" class="button-outline" id="expense-form-cancel" hidden>Cancelar</button>
+      </div>
     </form>
   `;
 }
@@ -123,10 +131,55 @@ export function render(container, { tripId } = {}) {
   const form = container.querySelector("#expense-form");
   const errorBox = container.querySelector("#expense-form-error");
   const submitButton = form.querySelector("button[type=submit]");
+  const cancelButton = container.querySelector("#expense-form-cancel");
+
+  // Un solo formulario para agregar y editar: editingExpenseId distingue
+  // qué hace el submit. Reutiliza el mismo <form>, no uno nuevo, siguiendo
+  // el mismo criterio que el punto de "eliminar gasto" (un solo patrón,
+  // no dos comportamientos distintos para casos similares).
+  let editingExpenseId = null;
+
+  function exitEditMode() {
+    editingExpenseId = null;
+    form.reset();
+    submitButton.textContent = "Guardar gasto";
+    cancelButton.hidden = true;
+  }
+
+  function enterEditMode(expense) {
+    editingExpenseId = expense.id;
+    form.hidden = false;
+    form.querySelector("#expense-amount").value = expense.amount;
+    form.querySelector("#expense-category").value = expense.category;
+    form.querySelector("#expense-date").value = expense.date;
+    form.querySelector("#expense-note").value = expense.note ?? "";
+    submitButton.textContent = "Guardar cambios";
+    cancelButton.hidden = false;
+    errorBox.hidden = true;
+    form.querySelector("#expense-amount").focus();
+  }
 
   toggleButton.addEventListener("click", () => {
-    form.hidden = !form.hidden;
-    if (!form.hidden) form.querySelector("#expense-amount").focus();
+    if (!form.hidden) {
+      form.hidden = true;
+      exitEditMode();
+      return;
+    }
+    exitEditMode();
+    form.hidden = false;
+    form.querySelector("#expense-amount").focus();
+  });
+
+  cancelButton.addEventListener("click", () => {
+    exitEditMode();
+    form.hidden = true;
+  });
+
+  container.querySelectorAll(".expense-item-edit").forEach((button) => {
+    button.addEventListener("click", () => {
+      const expense = expenses.find((e) => e.id === button.dataset.expenseId);
+      if (expense) enterEditMode(expense);
+    });
   });
 
   container.querySelectorAll(".expense-item-delete").forEach((button) => {
@@ -148,10 +201,14 @@ export function render(container, { tripId } = {}) {
     });
   });
 
-  async function saveExpense(expenseData) {
+  async function persistExpense(expenseData, expenseId) {
     submitButton.disabled = true;
     try {
-      await addExpense(expenseData);
+      if (expenseId) {
+        await updateExpense(expenseId, expenseData);
+      } else {
+        await addExpense(expenseData);
+      }
       render(container, { tripId: trip.id });
     } catch (err) {
       errorBox.textContent = err.message;
@@ -175,14 +232,23 @@ export function render(container, { tripId } = {}) {
       note: formData.get("note").trim(),
     };
 
+    // spent ya incluye el monto viejo del gasto en edición (si lo hay);
+    // el total proyectado le quita ese monto viejo y suma el nuevo.
+    const original = editingExpenseId ? expenses.find((e) => e.id === editingExpenseId) : null;
+    const newTotal = spent - (original?.amount ?? 0) + amount;
+
     // Chequeo previo al guardado: si el monto es válido y hace que el
     // total supere el presupuesto, se confirma antes de persistir en vez
     // de guardar y avisar después — prevenir el error, no solo reportarlo.
-    const newTotal = spent + amount;
-    const exceedsBudget = trip.budgetLimit > 0 && amount > 0 && newTotal > trip.budgetLimit;
+    // Al editar, solo se pregunta si el cambio es lo que hace cruzar el
+    // límite (si el viaje ya estaba excedido antes de este cambio, no
+    // se vuelve a preguntar por lo mismo).
+    const alreadyExceeded = trip.budgetLimit > 0 && spent > trip.budgetLimit;
+    const willExceed = trip.budgetLimit > 0 && amount > 0 && newTotal > trip.budgetLimit;
+    const needsConfirmation = willExceed && !(editingExpenseId && alreadyExceeded);
 
-    if (!exceedsBudget) {
-      saveExpense(expenseData);
+    if (!needsConfirmation) {
+      persistExpense(expenseData, editingExpenseId);
       return;
     }
 
@@ -191,13 +257,13 @@ export function render(container, { tripId } = {}) {
       title: "Vas a superar el presupuesto",
       body: `
         <strong>${escapeHtml(trip.name)}</strong> lleva ${formatCurrency(spent, trip.currency)}
-        gastados. Con este gasto nuevo, el total sería
+        gastados. Con este ${editingExpenseId ? "cambio" : "gasto nuevo"}, el total sería
         ${formatCurrency(newTotal, trip.currency)} de un presupuesto de
         ${formatCurrency(trip.budgetLimit, trip.currency)} (${percent}%).
       `,
-      confirmLabel: "Registrar de todas formas",
+      confirmLabel: editingExpenseId ? "Guardar de todas formas" : "Registrar de todas formas",
       cancelLabel: "Cancelar",
-      onConfirm: () => saveExpense(expenseData),
+      onConfirm: () => persistExpense(expenseData, editingExpenseId),
     });
   });
 }

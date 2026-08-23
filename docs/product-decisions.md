@@ -118,6 +118,44 @@ lado del store aunque alguien lograra saltarse el bloqueo visual.
 un caso donde el costo de un error silencioso es alto: los totales de
 un viaje quedarían mal calculados sin que nada lo señale.
 
+## Un solo formulario de gasto, no dos, para agregar y editar
+
+**Problema:** el feedback pidió poder editar un gasto ya registrado, con
+los mismos campos que "Agregar gasto". A diferencia de "Editar viaje"
+(que vive en su propia página), agregar/editar un gasto ocurre en la
+misma pantalla de detalle de viaje — duplicar el formulario ahí habría
+significado dos `<form>` casi idénticos compitiendo por el mismo espacio.
+
+**Decisión:** se reusa el mismo `<form id="expense-form">` que ya existía
+para "Agregar gasto". Un estado `editingExpenseId` (nulo cuando se está
+agregando) decide si el submit llama a `addExpense()` o a
+`updateExpense()`, y el botón de editar de cada gasto precarga ese mismo
+formulario con los valores actuales en vez de abrir uno nuevo. El botón
+"Cancelar" (visible solo en modo edición) y el botón "Agregar gasto" del
+encabezado limpian ese estado al cerrar el formulario.
+
+**Por qué:** es el mismo criterio que ya se aplicó para "eliminar gasto":
+un solo patrón para una acción con variantes, en vez de dos flujos
+paralelos que puedan desincronizarse.
+
+## No repetir la confirmación de presupuesto al editar un gasto que ya lo excedía
+
+**Problema:** el modal "Vas a superar el presupuesto" se reusa al editar
+un gasto. Pero si un viaje ya estaba por encima del 100% *antes* de la
+edición, seguir preguntando en cada edición (aunque sea para corregir
+solo la fecha o la categoría) sería una fricción sin valor — el usuario
+ya sabe que el viaje está excedido.
+
+**Decisión:** el modal solo aparece si el cambio es lo que hace que el
+viaje cruce el 100%, comparando el total *antes* de la edición (con el
+monto original del gasto) contra el total proyectado *después* (con el
+monto nuevo). Si el viaje ya estaba excedido antes del cambio, no se
+vuelve a preguntar.
+
+**Por qué:** la confirmación existe para prevenir un error evitable en
+el momento en que ocurre, no para repetir una advertencia sobre un
+estado que el usuario ya conoce y ya decidió aceptar.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 
