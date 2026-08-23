@@ -20,6 +20,7 @@ justificación de cada color.
 | Badge de divisa | — | Pendiente de componente propio; hoy el símbolo sale de `formatCurrency` |
 | Sidebar / nav item | default / hover / activo | `components/sidebar.js`, activo = fondo navy — solo navegación (Inicio/Mis viajes/Alertas), la cuenta vive en el menú de cuenta |
 | Badge de semáforo | ok / warning / danger | Ícono + texto + color, nunca solo color |
+| Badge de estado | en curso / finalizado | `.trip-state-badge`, siempre gris neutro (nunca verde/naranja/rojo) para no mezclarse con el semáforo. Va junto a `.status-badge` en la card de viaje; solo se muestra en la pestaña "Todos" de Mis viajes |
 | KPI card | — | `components/kpi-card.js`, ícono + label + valor. Usada en Inicio, Mis viajes (recalculada según la pestaña activa), y apiladas en columna fija ("Presupuesto"/"Gastado"/"Restante") en el detalle de viaje |
 | Menú de cuenta | cerrado / abierto | `components/account-menu.js`, foto (o inicial en placeholder navy) + nombre + email + chevron; dropdown con "Cerrar sesión". Se monta en el header de las 4 pantallas principales |
 | Campo de búsqueda | default / focus | `components/search-field.js`, ícono de lupa + input; filtra viajes por nombre en vivo. Usado en Inicio y Mis viajes |

@@ -7,7 +7,10 @@
 // con las mismas 4 KPIs que Historial ya traía, recalculadas según la
 // pestaña activa en vez de fijas a "cerrados". Cada card navega al
 // detalle de viaje, que ya decide solo (según trip.status) si se ve
-// editable o de solo lectura — no se duplica esa lógica acá.
+// editable o de solo lectura — no se duplica esa lógica acá. Solo en
+// "Todos" las cards muestran además el badge de ESTADO (En
+// curso/Finalizado) — en "Activos"/"Cerrados" ya está implícito por el
+// filtro y sumaría ruido visual.
 
 import { getAllTrips, getTripTotal, closeTrip, TRIP_STATUS } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
@@ -83,8 +86,13 @@ function renderTripsSection(trips, filter, query) {
   if (filtered.length === 0) {
     return `<p class="empty-state">No se encontraron viajes con ese nombre.</p>`;
   }
+  // El badge de estado (En curso/Finalizado) solo aporta algo en "Todos",
+  // donde conviven activos y cerrados — en "Activos"/"Cerrados" ya está
+  // implícito por el filtro y solo sumaría ruido visual.
+  const showStateBadge = filter === "all";
+
   return `<ul class="trip-list">${filtered
-    .map((trip) => renderTripCard(trip, { showCloseButton: trip.status !== TRIP_STATUS.CLOSED }))
+    .map((trip) => renderTripCard(trip, { showCloseButton: trip.status !== TRIP_STATUS.CLOSED, showStateBadge }))
     .join("")}</ul>`;
 }
 

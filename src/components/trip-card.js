@@ -1,10 +1,12 @@
 // Card de viaje (Inicio, Mis viajes): foto con badge de duración,
-// nombre, presupuesto + barra de progreso, badge de semáforo y,
-// opcionalmente, el botón "Finalizar viaje".
+// nombre, presupuesto + barra de progreso, badge de semáforo,
+// opcionalmente el badge de ESTADO (En curso/Finalizado — distinto del
+// semáforo, que solo habla de presupuesto) y, opcionalmente, el botón
+// "Finalizar viaje".
 
 import { icon } from "../utils/icons.js";
 import { formatCurrency } from "../utils/currency.js";
-import { getTripTotal } from "../data/store.js";
+import { getTripTotal, TRIP_STATUS } from "../data/store.js";
 import { getBudgetStatus, getStatusMeta } from "../utils/status.js";
 import { statusBadge } from "./status-badge.js";
 import { escapeHtml } from "../utils/dom.js";
@@ -41,11 +43,24 @@ function budgetProgressBar(spent, budgetLimit) {
   `;
 }
 
+// Badge de ESTADO del viaje (activo/cerrado) — a propósito en gris
+// neutro, nunca verde/naranja/rojo, para no mezclarlo con el semáforo
+// de presupuesto (que es .status-badge, siempre a su lado).
+function tripStateBadge(trip) {
+  const isClosed = trip.status === TRIP_STATUS.CLOSED;
+  return `
+    <span class="trip-state-badge">
+      ${icon(isClosed ? "lock" : "plane", "trip-state-badge-icon")}
+      <span>${isClosed ? "Finalizado" : "En curso"}</span>
+    </span>
+  `;
+}
+
 /**
  * @param {import("../data/store.js").Trip} trip
- * @param {{ showCloseButton?: boolean }} [options]
+ * @param {{ showCloseButton?: boolean, showStateBadge?: boolean }} [options]
  */
-export function renderTripCard(trip, { showCloseButton = false } = {}) {
+export function renderTripCard(trip, { showCloseButton = false, showStateBadge = false } = {}) {
   const spent = getTripTotal(trip.id);
   const status = getBudgetStatus(spent, trip.budgetLimit);
   const safePhotoUrl = /^https?:\/\//.test(trip.photoUrl || "") ? escapeHtml(trip.photoUrl) : "";
@@ -64,7 +79,10 @@ export function renderTripCard(trip, { showCloseButton = false } = {}) {
             ${formatCurrency(spent)} / ${formatCurrency(trip.budgetLimit)}
           </p>
           ${budgetProgressBar(spent, trip.budgetLimit)}
-          ${statusBadge(status)}
+          <div class="trip-card-badges">
+            ${showStateBadge ? tripStateBadge(trip) : ""}
+            ${statusBadge(status)}
+          </div>
         </div>
       </a>
       ${
