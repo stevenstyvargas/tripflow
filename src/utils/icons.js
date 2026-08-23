@@ -28,6 +28,7 @@ import search from "lucide-static/icons/search.svg?raw";
 import chevronDown from "lucide-static/icons/chevron-down.svg?raw";
 import arrowRight from "lucide-static/icons/arrow-right.svg?raw";
 import map from "lucide-static/icons/map.svg?raw";
+import target from "lucide-static/icons/target.svg?raw";
 
 const ICONS = {
   home,
@@ -56,6 +57,7 @@ const ICONS = {
   "chevron-down": chevronDown,
   "arrow-right": arrowRight,
   map,
+  target,
 };
 
 /**

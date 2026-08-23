@@ -20,7 +20,7 @@ justificación de cada color.
 | Badge de divisa | — | Pendiente de componente propio; hoy el símbolo sale de `formatCurrency` |
 | Sidebar / nav item | default / hover / activo | `components/sidebar.js`, activo = fondo navy — solo navegación, la cuenta vive en el menú de cuenta |
 | Badge de semáforo | ok / warning / danger | Ícono + texto + color, nunca solo color |
-| KPI card | — | `components/kpi-card.js`, ícono + label + valor. Usada en Inicio, Historial y el resumen "Gastado"/"Restante" del detalle de viaje |
+| KPI card | — | `components/kpi-card.js`, ícono + label + valor. Usada en Inicio, Historial, y apiladas en columna fija ("Presupuesto"/"Gastado"/"Restante") en el detalle de viaje |
 | Menú de cuenta | cerrado / abierto | `components/account-menu.js`, foto (o inicial en placeholder navy) + nombre + email + chevron; dropdown con "Cerrar sesión". Se monta en el header de las 4 pantallas principales |
 | Campo de búsqueda | default / focus | `components/search-field.js`, ícono de lupa + input; filtra viajes por nombre en vivo. Usado en Inicio, Historial y Mis viajes |
 | Pestañas de filtro | default / hover / activa | `.tab-list`/`.tab-item`, subrayado navy en la activa. Usadas en Mis viajes (Todos/Activos/Cerrados) |

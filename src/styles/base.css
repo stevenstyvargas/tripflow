@@ -1032,17 +1032,40 @@ button[type="submit"] {
 
 /* ---------- Detalle de viaje ---------- */
 
-.trip-detail-summary {
+/* Barra de 40px: foto miniatura + nombre (trunca con "...", mismo
+   criterio que .trip-card-name/.history-item-name) + editar + badge,
+   todo a la izquierda; .page-header-actions (ya existente) sigue a la
+   derecha. flex:1 + min-width:0 en toda la cadena para que el nombre
+   sea lo único que se recorta, nunca lo que empuja los botones. */
+.trip-detail-title {
   display: flex;
+  flex: 1 1 auto;
   align-items: center;
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
+  gap: var(--space-2);
+  min-width: 0;
 }
 
-.trip-detail-photo {
+.trip-detail-title h1 {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  line-height: 1.25;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.trip-detail-title .icon-button,
+.trip-detail-title .status-badge {
   flex-shrink: 0;
-  width: 4rem;
-  height: 4rem;
+}
+
+.trip-detail-photo-mini {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
@@ -1052,37 +1075,56 @@ button[type="submit"] {
   background-position: center;
 }
 
-.trip-detail-photo .trip-card-photo-placeholder {
-  width: 1.5rem;
-  height: 1.5rem;
+.trip-detail-photo-mini .trip-card-photo-placeholder {
+  width: 1rem;
+  height: 1rem;
 }
 
-.trip-detail-heading {
+/* Badge de semáforo compacto, para convivir con el nombre en la barra
+   de 40px sin ganarle demasiado espacio. */
+.status-badge-sm {
+  padding: 0.125rem 0.375rem;
+}
+
+.status-badge-sm .icon {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+/* Sin esto, .page-header-actions (flex-shrink:1 por default) absorbe
+   parte de la compresión junto con .trip-detail-title y sus botones
+   terminan envolviendo a una segunda línea antes de que el nombre
+   termine de truncarse — todo el shrink debe caer sobre el nombre. */
+.page-trip-detail .page-header-actions {
   flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
 }
 
-.trip-detail-title {
+/* Layout de 2 columnas debajo de la barra: KPIs en un ancho fijo
+   (nunca se comprime ni se expande) + la torre de categorías a la
+   derecha, en el espacio que sobra. */
+.trip-detail-body {
   display: flex;
-  align-items: center;
-  gap: var(--space-2);
+  align-items: flex-start;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
 }
 
-.trip-detail-title h1 {
+.trip-detail-kpis {
+  flex: 0 0 22rem; /* 352px — entre los 350-400px pedidos */
+}
+
+.trip-detail-kpis .kpi-row {
+  grid-template-columns: 1fr;
   margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-2xl);
-  line-height: 1.25;
 }
 
-/* Las 2 kpi-card ("Gastado"/"Restante") del resumen viven en el mismo
-   .kpi-row de Inicio, pero acá comparten fila con la foto y el nombre
-   en vez de ocupar el ancho completo de la página. */
-.trip-detail-summary .kpi-row {
+.trip-detail-content {
   flex: 1;
-  margin: 0;
+  min-width: 0;
+}
+
+.trip-detail-content .section {
+  margin-bottom: 0;
 }
 
 .expense-form {

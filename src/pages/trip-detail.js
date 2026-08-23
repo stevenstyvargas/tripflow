@@ -1,9 +1,12 @@
-// Página: detalle de viaje. Header sin título (solo acciones + menú de
-// cuenta, alineados a la derecha, 40px igual que las demás pantallas),
-// y debajo una fila con foto + nombre/badge + KPI cards de
-// "Gastado"/"Restante" (mismo components/kpi-card.js que Inicio).
-// Luego la torre de gasto por categoría de ESTE viaje, el
-// historial de gastos y el formulario para registrar uno nuevo. El
+// Página: detalle de viaje. Barra de 40px (igual que las demás
+// pantallas) con foto miniatura + nombre (truncado con "...", mismo
+// criterio que las cards) + ícono de editar + badge de semáforo
+// compacto a la izquierda, y las acciones (Google Calendar/Agregar
+// gasto/menú de cuenta) a la derecha. Debajo, 2 columnas: KPIs
+// "Presupuesto"/"Gastado"/"Restante" apiladas en un ancho fijo (mismo
+// components/kpi-card.js que Inicio) y, a la derecha, la torre de
+// gasto por categoría de ESTE viaje. "Gastos registrados" y el
+// formulario para registrar un gasto van debajo, a todo el ancho. El
 // semáforo de Inicio y las alertas de Alertas se recalculan solos la
 // próxima vez que se rendericen: leen siempre el estado en memoria de
 // store.js, así que un gasto nuevo ya persistido ahí se refleja sin
@@ -156,6 +159,14 @@ export function render(container, { tripId } = {}) {
   container.innerHTML = `
     <main class="page page-trip-detail">
       <header class="page-header">
+        <div class="trip-detail-title">
+          <div class="trip-detail-photo-mini"${safePhotoUrl ? ` style="background-image:url('${safePhotoUrl}')"` : ""}>
+            ${!safePhotoUrl ? icon("plane", "trip-card-photo-placeholder") : ""}
+          </div>
+          <h1 title="${escapeHtml(trip.name)}">${escapeHtml(trip.name)}</h1>
+          <a href="#/viaje/${trip.id}/editar" class="icon-button" aria-label="Editar viaje">${icon("edit-2")}</a>
+          ${statusBadge(status, "status-badge-sm")}
+        </div>
         <div class="page-header-actions">
           ${
             trip.startDate && trip.endDate
@@ -179,29 +190,23 @@ export function render(container, { tripId } = {}) {
         </div>
       </header>
 
-      <div class="trip-detail-summary">
-        <div class="trip-detail-photo"${safePhotoUrl ? ` style="background-image:url('${safePhotoUrl}')"` : ""}>
-          ${!safePhotoUrl ? icon("plane", "trip-card-photo-placeholder") : ""}
+      <div class="trip-detail-body">
+        <div class="trip-detail-kpis">
+          <ul class="kpi-row">
+            ${renderKpiCard({ iconName: "target", label: "Presupuesto", value: formatCurrency(trip.budgetLimit) })}
+            ${renderKpiCard({ iconName: "wallet", label: "Gastado", value: formatCurrency(spent) })}
+            ${renderKpiCard({ iconName: "piggy-bank", label: "Restante", value: formatCurrency(trip.budgetLimit - spent) })}
+          </ul>
         </div>
-        <div class="trip-detail-heading">
-          <div class="trip-detail-title">
-            <h1>${escapeHtml(trip.name)}</h1>
-            <a href="#/viaje/${trip.id}/editar" class="icon-button" aria-label="Editar viaje">${icon("edit-2")}</a>
-          </div>
-          ${statusBadge(status)}
+        <div class="trip-detail-content">
+          <section class="section">
+            <h2>Gasto por categoría</h2>
+            ${barChart(computeCategoryBreakdown(expenses))}
+          </section>
         </div>
-        <ul class="kpi-row">
-          ${renderKpiCard({ iconName: "wallet", label: "Gastado", value: formatCurrency(spent) })}
-          ${renderKpiCard({ iconName: "piggy-bank", label: "Restante", value: formatCurrency(trip.budgetLimit - spent) })}
-        </ul>
       </div>
 
       ${renderExpenseForm()}
-
-      <section class="section">
-        <h2>Gasto por categoría de ${escapeHtml(trip.name)}</h2>
-        ${barChart(computeCategoryBreakdown(expenses))}
-      </section>
 
       <section class="section">
         <h2>Gastos registrados</h2>
