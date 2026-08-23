@@ -303,6 +303,11 @@ button[type="submit"] {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-2xl);
+  /* Explícito (no "normal"): sin esto, el emoji del saludo de Inicio
+     usa la métrica de línea de su fuente de reemplazo (más alta que
+     Inter) y el navegador expande el line box al font más alto de la
+     línea, dejando ese <h1> ~3px más alto que uno sin emoji. */
+  line-height: 1.25;
 }
 
 .page-header-actions {
