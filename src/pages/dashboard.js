@@ -1,17 +1,18 @@
-// Página: Inicio. KPIs del periodo activo, gasto por categoría (dona)
-// y viajes activos como cards con foto de destino + semáforo de estado.
-// El registro/monitoreo de gastos por viaje se aborda en otra iteración.
+// Página: Inicio. KPIs del periodo activo, gasto por categoría agregado
+// de todos los viajes (torres, orden fijo) y viajes activos como cards
+// con foto de destino + semáforo de estado. El desglose de UN viaje
+// específico (dona) vive en trip-detail.js, no acá.
 
 import { getActiveTrips, getTripTotal, getExpensesByTrip, closeTrip } from "../data/store.js";
 import { formatCurrency, convert } from "../utils/currency.js";
 import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
-import { donutChart } from "../components/donut-chart.js";
+import { barChart } from "../components/bar-chart.js";
 import { EXPENSE_CATEGORIES } from "../utils/categories.js";
 import { icon } from "../utils/icons.js";
 import { escapeHtml } from "../utils/dom.js";
 
-// KPIs y dona se normalizan a COP para poder sumar viajes en distintas
+// KPIs y torres se normalizan a COP para poder sumar viajes en distintas
 // divisas en un solo número (ver utils/currency.js: convert()).
 const REPORT_CURRENCY = "COP";
 
@@ -31,6 +32,8 @@ function computeKpis(trips) {
   };
 }
 
+// Siempre en el orden de EXPENSE_CATEGORIES, nunca ordenado por monto —
+// para que cada categoría quede siempre en la misma posición visual.
 function computeCategoryBreakdown(trips) {
   const totals = Object.fromEntries(EXPENSE_CATEGORIES.map((c) => [c.id, 0]));
 
@@ -43,7 +46,9 @@ function computeCategoryBreakdown(trips) {
   }
 
   return EXPENSE_CATEGORIES.map((c) => ({
+    id: c.id,
     label: c.label,
+    icon: c.icon,
     value: totals[c.id],
     color: `var(${c.colorVar})`,
   }));
@@ -107,7 +112,7 @@ export function render(container) {
 
       <section class="section">
         <h2>Gasto por categoría</h2>
-        ${donutChart(categoryBreakdown)}
+        ${barChart(categoryBreakdown, REPORT_CURRENCY)}
       </section>
 
       <section class="section">

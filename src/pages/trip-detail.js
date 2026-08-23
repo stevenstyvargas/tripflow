@@ -1,9 +1,10 @@
-// Página: detalle de viaje. Muestra el estado del presupuesto, el
-// historial de gastos y el formulario para registrar uno nuevo.
-// La dona y el semáforo de Inicio, y las alertas de Alertas, se
-// recalculan solos la próxima vez que se rendericen: leen siempre el
-// estado en memoria de store.js, así que un gasto nuevo ya persistido
-// ahí se refleja sin código adicional.
+// Página: detalle de viaje. Muestra el estado del presupuesto, la dona
+// de gasto por categoría de ESTE viaje (no de todos, a diferencia de la
+// torre de barras de Inicio), el historial de gastos y el formulario
+// para registrar uno nuevo. El semáforo de Inicio y las alertas de
+// Alertas se recalculan solos la próxima vez que se rendericen: leen
+// siempre el estado en memoria de store.js, así que un gasto nuevo ya
+// persistido ahí se refleja sin código adicional.
 
 import { getTrip, getTripTotal, getExpensesByTrip, addExpense, updateExpense, deleteExpense } from "../data/store.js";
 import { formatCurrency, formatStoredAmount } from "../utils/currency.js";
@@ -11,6 +12,7 @@ import { bindAmountInput, readAmountInput } from "../utils/amount-input.js";
 import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
 import { showConfirmModal } from "../components/confirm-modal.js";
+import { donutChart } from "../components/donut-chart.js";
 import { EXPENSE_CATEGORIES } from "../utils/categories.js";
 import { icon } from "../utils/icons.js";
 import { escapeHtml } from "../utils/dom.js";
@@ -39,6 +41,24 @@ function renderExpenseItem(expense) {
       </div>
     </li>
   `;
+}
+
+// Dona de este viaje únicamente (no todos los viajes, a diferencia de la
+// torre de barras de Inicio) — mismos colores por categoría que en
+// Inicio, para que el usuario asocie color→categoría sin importar dónde
+// lo vea. Si no hay gastos, donutChart() ya trae su propio estado vacío.
+function computeCategoryBreakdown(expenses) {
+  const totals = Object.fromEntries(EXPENSE_CATEGORIES.map((c) => [c.id, 0]));
+
+  for (const expense of expenses) {
+    if (expense.category in totals) totals[expense.category] += expense.amount;
+  }
+
+  return EXPENSE_CATEGORIES.map((c) => ({
+    label: c.label,
+    value: totals[c.id],
+    color: `var(${c.colorVar})`,
+  }));
 }
 
 function renderExpenseForm() {
@@ -116,6 +136,11 @@ export function render(container, { tripId } = {}) {
       </header>
 
       ${renderExpenseForm()}
+
+      <section class="section">
+        <h2>Gasto por categoría</h2>
+        ${donutChart(computeCategoryBreakdown(expenses))}
+      </section>
 
       <section class="section">
         <h2>Gastos registrados</h2>

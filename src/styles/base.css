@@ -455,6 +455,69 @@ button[type="submit"] {
   display: inline-block;
 }
 
+/* ---------- Gráfico de barras (gasto por categoría, Inicio) ---------- */
+
+.bar-chart {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-6) var(--space-4) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  overflow-x: auto;
+}
+
+.bar-chart-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 4.5rem;
+}
+
+.bar-chart-amount {
+  margin: 0;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.bar-chart-track {
+  width: 100%;
+  max-width: 2.5rem;
+  height: 8rem;
+  display: flex;
+  align-items: flex-end;
+  background: color-mix(in srgb, var(--color-text-muted) 10%, transparent);
+  border-radius: var(--radius-sm);
+}
+
+.bar-chart-fill {
+  width: 100%;
+  min-height: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.bar-chart-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+.bar-chart-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+}
+
 /* ---------- Viajes (Inicio) ---------- */
 
 .trip-list {

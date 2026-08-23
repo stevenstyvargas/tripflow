@@ -191,6 +191,33 @@ priorizar que el caso común (COP, enteros) se vea bien mientras se
 escribe, en vez de resolver un caso borde de centavos que ni siquiera
 estaba explícitamente pedido.
 
+## Torre de barras en Inicio, dona dentro de cada viaje: dos gráficos distintos a propósito
+
+**Problema:** feedback de usuario: la dona de "gasto por categoría" en
+Inicio sumaba todos los viajes activos en un solo número por categoría,
+pero el usuario quería ver cómo se reparte el gasto por categoría
+*dentro de un viaje específico* — la vista agregada no respondía esa
+pregunta, y no había ningún desglose por categoría a nivel de viaje.
+
+**Decisión:** en vez de solo agregar la dona por viaje y dejar también
+la dona agregada en Inicio, se cambió el tipo de gráfico de la vista
+general a una torre de barras verticales (`components/bar-chart.js`),
+una por categoría, siempre en el mismo orden fijo (el de
+`EXPENSE_CATEGORIES`, nunca por monto) — y la dona (`donut-chart.js`,
+ya existente) se reubicó exclusivamente al detalle de viaje, calculada
+solo con los gastos de ese viaje. Ambos gráficos comparten la misma
+paleta de colores por categoría (`--color-category-*` en `tokens.css`),
+así que el color de "Transporte" es el mismo en las dos vistas.
+Categorías sin gasto se muestran en gris (no en su color de marca) con
+la torre en su altura mínima y el monto en `formatCurrency(0, ...)`.
+
+**Por qué:** dos tipos de gráfico distintos (torre vs. dona) para dos
+preguntas distintas ("¿cuánto llevo en cada categoría en total?" vs.
+"¿cómo se reparte ESTE viaje?") ayuda a que el usuario no confunda una
+vista con la otra de un vistazo, incluso antes de leer el título de la
+sección — el tipo de gráfico ya comunica si está viendo un agregado o
+el desglose de un viaje puntual.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 
