@@ -12,6 +12,8 @@ import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
 import { showConfirmModal } from "../components/confirm-modal.js";
 import { barChart } from "../components/bar-chart.js";
+import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
+import { getCurrentUser } from "../data/auth.js";
 import { EXPENSE_CATEGORIES } from "../utils/categories.js";
 import { icon } from "../utils/icons.js";
 import { escapeHtml } from "../utils/dom.js";
@@ -177,6 +179,7 @@ export function render(container, { tripId } = {}) {
           `
               : ""
           }
+          ${accountMenu(getCurrentUser())}
         </div>
       </header>
 
@@ -197,6 +200,8 @@ export function render(container, { tripId } = {}) {
       </section>
     </main>
   `;
+
+  bindAccountMenu(container);
 
   const toggleButton = container.querySelector("#toggle-expense-form");
   const form = container.querySelector("#expense-form");

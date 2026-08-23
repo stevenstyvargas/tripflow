@@ -1,9 +1,9 @@
-// Navegación lateral fija: Inicio, Alertas, Historial + cierre de sesión.
+// Navegación lateral fija: Inicio, Alertas, Historial. La información
+// de cuenta (foto/nombre/email + cerrar sesión) vive en el menú de
+// cuenta del header de cada página (components/account-menu.js), no acá.
 // El item activo se resalta según la ruta actual (currentPath).
 
 import { icon } from "../utils/icons.js";
-import { getCurrentUser, signOutUser } from "../data/auth.js";
-import { escapeHtml } from "../utils/dom.js";
 
 const NAV_ITEMS = [
   { path: "/", label: "Inicio", icon: "home" },
@@ -12,8 +12,6 @@ const NAV_ITEMS = [
 ];
 
 export function renderSidebar(currentPath) {
-  const user = getCurrentUser();
-
   return `
     <aside class="sidebar">
       <div class="sidebar-logo">
@@ -31,20 +29,6 @@ export function renderSidebar(currentPath) {
         `
         ).join("")}
       </nav>
-
-      <div class="sidebar-footer">
-        ${user ? `<p class="sidebar-user">${icon("user")}<span>${escapeHtml(user.email)}</span></p>` : ""}
-        <button id="sidebar-signout" type="button" class="sidebar-nav-item sidebar-signout">
-          ${icon("log-out")}
-          <span>Cerrar sesión</span>
-        </button>
-      </div>
     </aside>
   `;
-}
-
-export function bindSidebar(container) {
-  container.querySelector("#sidebar-signout")?.addEventListener("click", () => {
-    signOutUser();
-  });
 }

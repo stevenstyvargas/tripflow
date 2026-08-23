@@ -18,9 +18,10 @@ justificación de cada color.
 | Input de monto | default / focus / error | Debe soportar formato de las 3 divisas (`utils/currency.js`) |
 | Card de viaje | default / cerca del límite / excedido | Foto de destino + badge de semáforo (`components/status-badge.js`) |
 | Badge de divisa | — | Pendiente de componente propio; hoy el símbolo sale de `formatCurrency` |
-| Sidebar / nav item | default / hover / activo | `components/sidebar.js`, activo = fondo navy |
+| Sidebar / nav item | default / hover / activo | `components/sidebar.js`, activo = fondo navy — solo navegación, la cuenta vive en el menú de cuenta |
 | Badge de semáforo | ok / warning / danger | Ícono + texto + color, nunca solo color |
 | KPI card | — | `.kpi-card`, ícono + label + valor |
+| Menú de cuenta | cerrado / abierto | `components/account-menu.js`, foto (o inicial en placeholder navy) + nombre + email + chevron; dropdown con "Cerrar sesión". Se monta en el header de las 4 pantallas principales |
 | Gráfico de dona | con datos / vacío | SVG puro (`components/donut-chart.js`), sin librería de charting |
 | Alert item | warning / danger | Borde izquierdo del color de severidad |
 | History item | — | Nombre, fechas, presupuesto vs. gasto real |

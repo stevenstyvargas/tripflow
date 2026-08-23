@@ -8,7 +8,6 @@ import history from "lucide-static/icons/history.svg?raw";
 import plane from "lucide-static/icons/plane.svg?raw";
 import wallet from "lucide-static/icons/wallet.svg?raw";
 import piggyBank from "lucide-static/icons/piggy-bank.svg?raw";
-import user from "lucide-static/icons/user.svg?raw";
 import logOut from "lucide-static/icons/log-out.svg?raw";
 import calendar from "lucide-static/icons/calendar.svg?raw";
 import car from "lucide-static/icons/car.svg?raw";
@@ -26,6 +25,7 @@ import edit2 from "lucide-static/icons/edit-2.svg?raw";
 import chevronRight from "lucide-static/icons/chevron-right.svg?raw";
 import calculator from "lucide-static/icons/calculator.svg?raw";
 import search from "lucide-static/icons/search.svg?raw";
+import chevronDown from "lucide-static/icons/chevron-down.svg?raw";
 
 const ICONS = {
   home,
@@ -34,7 +34,6 @@ const ICONS = {
   plane,
   wallet,
   "piggy-bank": piggyBank,
-  user,
   "log-out": logOut,
   calendar,
   car,
@@ -52,6 +51,7 @@ const ICONS = {
   "chevron-right": chevronRight,
   calculator,
   search,
+  "chevron-down": chevronDown,
 };
 
 /**

@@ -7,6 +7,8 @@ import { formatCurrency } from "../utils/currency.js";
 import { getBudgetStatus, STATUS } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
 import { renderKpiCard } from "../components/kpi-card.js";
+import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
+import { getCurrentUser } from "../data/auth.js";
 import { icon } from "../utils/icons.js";
 import { escapeHtml } from "../utils/dom.js";
 
@@ -63,6 +65,9 @@ export function render(container) {
     <main class="page page-history">
       <header class="page-header">
         <h1>Historial</h1>
+        <div class="page-header-actions">
+          ${accountMenu(getCurrentUser())}
+        </div>
       </header>
 
       <ul class="kpi-row">
@@ -79,4 +84,6 @@ export function render(container) {
       }
     </main>
   `;
+
+  bindAccountMenu(container);
 }

@@ -4,6 +4,8 @@
 import { getActiveTrips, getTripTotal } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
 import { getBudgetStatus, getStatusMeta, STATUS } from "../utils/status.js";
+import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
+import { getCurrentUser } from "../data/auth.js";
 import { icon } from "../utils/icons.js";
 import { escapeHtml } from "../utils/dom.js";
 
@@ -44,6 +46,9 @@ export function render(container) {
     <main class="page page-alerts">
       <header class="page-header">
         <h1>Alertas</h1>
+        <div class="page-header-actions">
+          ${accountMenu(getCurrentUser())}
+        </div>
       </header>
 
       ${
@@ -53,4 +58,6 @@ export function render(container) {
       }
     </main>
   `;
+
+  bindAccountMenu(container);
 }

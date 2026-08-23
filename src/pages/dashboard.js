@@ -10,13 +10,14 @@ import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
 import { renderKpiCard } from "../components/kpi-card.js";
 import { donutChart } from "../components/donut-chart.js";
+import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
 import { EXPENSE_CATEGORIES } from "../utils/categories.js";
 import { getCurrentUser } from "../data/auth.js";
 import { icon } from "../utils/icons.js";
 import { escapeHtml } from "../utils/dom.js";
 
-// Mismo dato que el sidebar usa para el email (getCurrentUser().email):
-// preferimos el displayName de Google porque es un nombre real, no un
+// Mismo dato que usa el menú de cuenta (getCurrentUser()): preferimos
+// el displayName de Google porque es un nombre real, no un
 // identificador de cuenta; si no está disponible, la parte del email
 // antes de la @ sigue siendo más personal que "Inicio" a secas.
 function getGreetingName(user) {
@@ -113,7 +114,8 @@ export function render(container) {
   const trips = getActiveTrips();
   const kpis = computeKpis(trips);
   const categoryBreakdown = computeCategoryBreakdown(trips);
-  const greetingName = getGreetingName(getCurrentUser());
+  const user = getCurrentUser();
+  const greetingName = getGreetingName(user);
 
   container.innerHTML = `
     <main class="page page-home">
@@ -128,6 +130,7 @@ export function render(container) {
             <input type="search" id="trip-search" placeholder="Buscar destino o país..." aria-label="Buscar destino o país" />
           </div>
           <a href="#/nuevo-viaje" class="button-primary">${icon("plus")}<span>Nuevo viaje</span></a>
+          ${accountMenu(user)}
         </div>
       </header>
 
@@ -149,6 +152,8 @@ export function render(container) {
       </section>
     </main>
   `;
+
+  bindAccountMenu(container);
 
   const sectionBody = container.querySelector("#trips-section-body");
   bindTripsSection(sectionBody, trips, container);
