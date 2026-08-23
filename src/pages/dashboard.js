@@ -7,6 +7,7 @@ import { getActiveTrips, getTripTotal, closeTrip } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
 import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
+import { renderKpiCard } from "../components/kpi-card.js";
 import { icon } from "../utils/icons.js";
 import { escapeHtml } from "../utils/dom.js";
 
@@ -24,18 +25,6 @@ function computeKpis(trips) {
     remaining: totalBudget - totalSpent,
     activeCount: trips.length,
   };
-}
-
-function renderKpiCard({ iconName, label, value }) {
-  return `
-    <li class="kpi-card">
-      ${icon(iconName, "kpi-card-icon")}
-      <div>
-        <p class="kpi-card-label">${label}</p>
-        <p class="kpi-card-value">${value}</p>
-      </div>
-    </li>
-  `;
 }
 
 function renderTripCard(trip) {

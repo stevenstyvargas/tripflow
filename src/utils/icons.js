@@ -25,6 +25,8 @@ import shoppingBag from "lucide-static/icons/shopping-bag.svg?raw";
 import packageIcon from "lucide-static/icons/package.svg?raw";
 import trash2 from "lucide-static/icons/trash-2.svg?raw";
 import edit2 from "lucide-static/icons/edit-2.svg?raw";
+import chevronRight from "lucide-static/icons/chevron-right.svg?raw";
+import calculator from "lucide-static/icons/calculator.svg?raw";
 
 const ICONS = {
   home,
@@ -50,6 +52,8 @@ const ICONS = {
   package: packageIcon,
   "trash-2": trash2,
   "edit-2": edit2,
+  "chevron-right": chevronRight,
+  calculator,
 };
 
 /**

@@ -407,6 +407,50 @@ necesita multi-divisa más adelante, el roadmap (`README.md`) ya apunta
 a que hay que diseñar el patrón desde otro ángulo, no simplemente
 reactivar lo que se retiró acá.
 
+## Rediseño de Historial, reconstruido con nuestro propio sistema de diseño
+
+**Problema:** Historial se sentía la pantalla más vacía de la app —
+solo una lista de texto (nombre, fechas, badge, un monto) sin ningún
+resumen ni identidad visual, mientras que Inicio ya tenía KPIs y cards
+con foto. El layout se pensó mirando un patrón de referencia externo
+(lista de tarjetas con foto + resumen numérico arriba), pero ese
+patrón no trae consigo su paleta de colores ni su iconografía — la
+referencia es solo de estructura, no de estilo.
+
+**Decisión:** Historial se reconstruye íntegramente con componentes y
+tokens que ya existían en la app, sin introducir ningún color o ícono
+nuevo fuera del sistema:
+- Una fila de KPIs arriba (`components/kpi-card.js`, extraído de
+  Inicio para poder reusarlo acá — mismo componente visual `.kpi-card`
+  en las dos pantallas): "Viajes realizados" (ícono `plane`, mismo que
+  "Viajes activos" en Inicio), "Gasto total" (`wallet`, igual que
+  "Gastado en el periodo"), "Promedio por viaje" (`calculator`) y
+  "Presupuesto cumplido" (`circle-check`, mismo ícono que el badge "En
+  control" del semáforo) — el % de viajes cerrados cuyo badge final fue
+  "En control", sobre el total.
+- Cada card gana una foto (o el mismo placeholder de avión sobre navy
+  que ya usa Inicio — `icon("plane", "trip-card-photo-placeholder")`
+  reutilizado tal cual, no un ícono nuevo) y pasa de layout vertical a
+  horizontal: foto | nombre + fechas | badge + montos + `chevron-right`
+  (Lucide) que señala que la card es clickeable.
+- Cada card navega a `/viaje/:id` (la misma pantalla de detalle que ya
+  existe). Ahí, el botón "Agregar gasto" no se muestra si el viaje está
+  cerrado (`trip.status === TRIP_STATUS.CLOSED`) — el formulario sigue
+  en el DOM oculto porque editar/eliminar un gasto puntual de un viaje
+  cerrado no se pidió bloquear, solo agregar gastos nuevos no tiene
+  sentido en un viaje que ya terminó.
+- El badge de semáforo se deja exactamente igual ("En control"/"Límite
+  superado", `components/status-badge.js` sin tocar) — no se introduce
+  terminología nueva.
+
+**Por qué:** un patrón de referencia externo es útil para pensar la
+*estructura* de una pantalla (qué información va dónde), pero copiar
+también su paleta o iconografía rompería la identidad visual ya
+definida en `docs/branding.md`. Reconstruir con los componentes propios
+(`kpi-card`, `trip-card-photo-placeholder`, `status-badge`) en vez de
+crear piezas nuevas desde cero también evita que Historial e Inicio se
+desincronicen visualmente con el tiempo.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 

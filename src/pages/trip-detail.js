@@ -6,7 +6,7 @@
 // siempre el estado en memoria de store.js, así que un gasto nuevo ya
 // persistido ahí se refleja sin código adicional.
 
-import { getTrip, getTripTotal, getExpensesByTrip, addExpense, updateExpense, deleteExpense } from "../data/store.js";
+import { getTrip, getTripTotal, getExpensesByTrip, addExpense, updateExpense, deleteExpense, TRIP_STATUS } from "../data/store.js";
 import { formatCurrency, formatStoredAmount } from "../utils/currency.js";
 import { bindAmountInput, readAmountInput } from "../utils/amount-input.js";
 import { getBudgetStatus } from "../utils/status.js";
@@ -140,6 +140,12 @@ export function render(container, { tripId } = {}) {
   const expenses = getExpensesByTrip(trip.id)
     .slice()
     .sort((a, b) => b.date.localeCompare(a.date));
+  // Un viaje cerrado se ve en modo solo lectura desde Historial: ya
+  // pasó, no tiene sentido seguir agregando gastos. El botón "Agregar
+  // gasto" no se muestra, pero el formulario sigue en el DOM (oculto)
+  // porque editar/eliminar un gasto puntual de un viaje cerrado sigue
+  // permitido — no se pidió bloquear eso.
+  const isClosed = trip.status === TRIP_STATUS.CLOSED;
 
   container.innerHTML = `
     <main class="page page-trip-detail">
@@ -164,9 +170,15 @@ export function render(container, { tripId } = {}) {
           `
               : ""
           }
-          <button type="button" id="toggle-expense-form" class="button-primary">
-            ${icon("plus")}<span>Agregar gasto</span>
-          </button>
+          ${
+            !isClosed
+              ? `
+            <button type="button" id="toggle-expense-form" class="button-primary">
+              ${icon("plus")}<span>Agregar gasto</span>
+            </button>
+          `
+              : ""
+          }
         </div>
       </header>
 
@@ -223,16 +235,18 @@ export function render(container, { tripId } = {}) {
     amountInput.focus();
   }
 
-  toggleButton.addEventListener("click", () => {
-    if (!form.hidden) {
-      form.hidden = true;
+  if (toggleButton) {
+    toggleButton.addEventListener("click", () => {
+      if (!form.hidden) {
+        form.hidden = true;
+        exitEditMode();
+        return;
+      }
       exitEditMode();
-      return;
-    }
-    exitEditMode();
-    form.hidden = false;
-    amountInput.focus();
-  });
+      form.hidden = false;
+      amountInput.focus();
+    });
+  }
 
   cancelButton.addEventListener("click", () => {
     exitEditMode();
