@@ -1,8 +1,8 @@
 // Página: detalle de viaje. Header sin título (solo acciones + menú de
 // cuenta, alineados a la derecha, 40px igual que las demás pantallas),
-// separador delgado, y debajo una fila con foto + nombre/badge +
-// KPI cards de "Gastado"/"Restante" (mismo components/kpi-card.js que
-// Inicio). Luego la torre de gasto por categoría de ESTE viaje, el
+// y debajo una fila con foto + nombre/badge + KPI cards de
+// "Gastado"/"Restante" (mismo components/kpi-card.js que Inicio).
+// Luego la torre de gasto por categoría de ESTE viaje, el
 // historial de gastos y el formulario para registrar uno nuevo. El
 // semáforo de Inicio y las alertas de Alertas se recalculan solos la
 // próxima vez que se rendericen: leen siempre el estado en memoria de

@@ -319,16 +319,6 @@ button[type="submit"] {
   margin-left: auto;
 }
 
-/* Detalle de viaje: el header ya no tiene título (se movió a
-   .trip-detail-summary), así que gana su propio separador delgado
-   pegado al borde inferior de la barra de 40px — mismo gris tenue que
-   ya usan otros separadores de la app (.sidebar, .tab-list). Sin
-   padding-bottom: el separador va justo debajo de la barra, no le
-   suma alto. */
-.page-trip-detail .page-header {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-
 .search-field {
   position: relative;
   display: flex;
