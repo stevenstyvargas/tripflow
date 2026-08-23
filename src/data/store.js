@@ -3,17 +3,21 @@
 // (users/{uid}/trips/{tripId}/expenses/{expenseId}).
 
 import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs } from "firebase/firestore";
-import { SUPPORTED_CURRENCIES } from "../utils/currency.js";
 import { EXPENSE_CATEGORIES } from "../utils/categories.js";
 import { db } from "./firebase.js";
 
 export const TRIP_STATUS = { ACTIVE: "active", CLOSED: "closed" };
 
+// v1 es de una sola divisa (COP) — ver docs/product-decisions.md. El
+// campo `currency` se mantiene en los documentos por compatibilidad con
+// datos existentes, pero ya no es seleccionable por el usuario.
+const CURRENCY = "COP";
+
 /**
  * @typedef {Object} Trip
  * @property {string} id
  * @property {string} name
- * @property {string} currency      // "COP" | "USD" | "EUR"
+ * @property {string} currency      // siempre "COP" en v1
  * @property {number} budgetLimit
  * @property {string} startDate
  * @property {string} endDate
@@ -27,7 +31,7 @@ export const TRIP_STATUS = { ACTIVE: "active", CLOSED: "closed" };
  * @property {string} tripId
  * @property {string} category
  * @property {number} amount
- * @property {string} currency
+ * @property {string} currency      // siempre "COP" en v1
  * @property {string} date
  * @property {string} note
  */
@@ -74,17 +78,14 @@ export function clearStore() {
 /**
  * Valida los datos de un viaje nuevo antes de guardarlo.
  * Lanza un Error con un mensaje apto para mostrar al usuario si algo falla.
- * @param {{ name: string, budgetLimit: number, currency: string }} data
+ * @param {{ name: string, budgetLimit: number }} data
  */
-function validateTripInput({ name, budgetLimit, currency }) {
+function validateTripInput({ name, budgetLimit }) {
   if (!name || !name.trim()) {
     throw new Error("El viaje necesita un nombre.");
   }
   if (typeof budgetLimit !== "number" || Number.isNaN(budgetLimit) || budgetLimit <= 0) {
     throw new Error("El presupuesto límite debe ser un número mayor a 0.");
-  }
-  if (!SUPPORTED_CURRENCIES.includes(currency)) {
-    throw new Error(`Divisa no soportada: ${currency}`);
   }
 }
 
@@ -110,23 +111,22 @@ export function getExpensesByTrip(tripId) {
 
 /**
  * Crea y persiste un viaje nuevo en Firestore.
- * @param {{ name: string, budgetLimit: number, currency: string, startDate?: string, endDate?: string, photoUrl?: string }} data
+ * @param {{ name: string, budgetLimit: number, startDate?: string, endDate?: string, photoUrl?: string }} data
  * @returns {Promise<Trip>} el viaje creado, con su id asignado
  */
 export async function createTrip({
   name,
   budgetLimit,
-  currency,
   startDate = "",
   endDate = "",
   photoUrl = "",
 }) {
-  validateTripInput({ name, budgetLimit, currency });
+  validateTripInput({ name, budgetLimit });
 
   const tripData = {
     name: name.trim(),
     budgetLimit,
-    currency,
+    currency: CURRENCY,
     startDate,
     endDate,
     photoUrl: photoUrl.trim(),
@@ -141,28 +141,24 @@ export async function createTrip({
 
 /**
  * Actualiza los datos de un viaje ya creado. No toca `status`: se usa
- * para editar nombre/presupuesto/divisa/fechas/foto, no para cerrar.
+ * para editar nombre/presupuesto/fechas/foto, no para cerrar.
  * @param {string} tripId
- * @param {{ name: string, budgetLimit: number, currency: string, startDate?: string, endDate?: string, photoUrl?: string }} data
+ * @param {{ name: string, budgetLimit: number, startDate?: string, endDate?: string, photoUrl?: string }} data
  */
-export async function updateTrip(tripId, { name, budgetLimit, currency, startDate = "", endDate = "", photoUrl = "" }) {
-  validateTripInput({ name, budgetLimit, currency });
-
-  const trip = getTrip(tripId);
-  if (trip && currency !== trip.currency && getExpensesByTrip(tripId).length > 0) {
-    throw new Error("No puedes cambiar la divisa de un viaje que ya tiene gastos registrados.");
-  }
+export async function updateTrip(tripId, { name, budgetLimit, startDate = "", endDate = "", photoUrl = "" }) {
+  validateTripInput({ name, budgetLimit });
 
   const tripData = {
     name: name.trim(),
     budgetLimit,
-    currency,
+    currency: CURRENCY,
     startDate,
     endDate,
     photoUrl: photoUrl.trim(),
   };
 
   await updateDoc(doc(db, "users", currentUid, "trips", tripId), tripData);
+  const trip = getTrip(tripId);
   if (trip) Object.assign(trip, tripData);
   return trip;
 }

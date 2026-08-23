@@ -12,9 +12,9 @@ function describeAlert(trip, spent, status) {
   const percent = Math.round(ratio * 100);
 
   if (status === STATUS.DANGER) {
-    return `Superó el presupuesto: ${percent}% usado (${formatCurrency(spent, trip.currency)} de ${formatCurrency(trip.budgetLimit, trip.currency)}).`;
+    return `Superó el presupuesto: ${percent}% usado (${formatCurrency(spent)} de ${formatCurrency(trip.budgetLimit)}).`;
   }
-  return `Al borde del límite: ${percent}% del presupuesto usado (${formatCurrency(spent, trip.currency)} de ${formatCurrency(trip.budgetLimit, trip.currency)}).`;
+  return `Al borde del límite: ${percent}% del presupuesto usado (${formatCurrency(spent)} de ${formatCurrency(trip.budgetLimit)}).`;
 }
 
 function renderAlert(trip) {

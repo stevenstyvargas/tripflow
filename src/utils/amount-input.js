@@ -1,6 +1,6 @@
 // Conecta un <input type="text"> a formato en vivo de monto (separador
 // de miles mientras se escribe). El truco central es que el cursor se
-// seguimiento por cantidad de dígitos antes de él, no por posición de
+// sigue por cantidad de dígitos antes de él, no por posición de
 // caracter — porque el separador se inserta/corre en cada tecla, así
 // que un índice de caracter fijo saltaría al lugar equivocado.
 
@@ -22,25 +22,17 @@ function indexAfterDigitCount(value, digitCount) {
   return value.length;
 }
 
-/**
- * @param {HTMLInputElement} input
- * @param {() => string} getCurrency divisa actual (puede cambiar, ej. si hay un <select> de divisa)
- */
-export function bindAmountInput(input, getCurrency) {
+/** @param {HTMLInputElement} input */
+export function bindAmountInput(input) {
   input.addEventListener("input", () => {
     const caret = input.selectionStart ?? input.value.length;
     const digitsBeforeCaret = countDigitsBefore(input.value, caret);
 
-    input.value = formatAmountInput(parseAmountInput(input.value), getCurrency());
+    input.value = formatAmountInput(parseAmountInput(input.value));
 
     const newCaret = indexAfterDigitCount(input.value, digitsBeforeCaret);
     input.setSelectionRange(newCaret, newCaret);
   });
-}
-
-/** Reformatea el valor actual de un input de monto con una divisa nueva (ej. al cambiar el <select> de divisa). */
-export function reformatAmountInput(input, currency) {
-  input.value = formatAmountInput(parseAmountInput(input.value), currency);
 }
 
 /** Número real (sin separadores) que contiene un input de monto, para guardar o calcular. */

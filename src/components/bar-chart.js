@@ -9,9 +9,8 @@ import { formatCurrency } from "../utils/currency.js";
 
 /**
  * @param {{ id: string, label: string, icon: string, value: number, color: string }[]} categories en el orden en que deben mostrarse
- * @param {string} currency divisa en la que ya vienen los `value`, para formatear el monto
  */
-export function barChart(categories, currency) {
+export function barChart(categories) {
   const maxValue = Math.max(0, ...categories.map((c) => c.value));
 
   const bars = categories
@@ -22,7 +21,7 @@ export function barChart(categories, currency) {
 
       return `
         <li class="bar-chart-item">
-          <p class="bar-chart-amount">${formatCurrency(c.value, currency)}</p>
+          <p class="bar-chart-amount">${formatCurrency(c.value)}</p>
           <div class="bar-chart-track">
             <div class="bar-chart-fill" style="height:${heightPercent}%;background:${color}"></div>
           </div>

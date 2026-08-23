@@ -13,14 +13,16 @@ Proyecto realizado para el reto técnico de Technical Product Designer en Alegra
 - Creación de viajes con presupuesto límite
 - Registro de gastos
 - Alertas de presupuesto
-- 3 divisas: COP, USD, EUR
+- 1 divisa: COP (peso colombiano)
 - Perfil individual (1 persona)
 - Responsive: desktop y mobile
 - PWA (instalable desde el navegador, sin tienda de apps)
 
 **Fuera de alcance de v1** (roadmap, ver más abajo): perfil compartido/pareja
-con reparto de gastos, divisas adicionales, escaneo de recibos con IA
-(bonus, en evaluación según tiempo disponible).
+con reparto de gastos, soporte multi-divisa (USD, EUR y más — se exploró y
+se decidió simplificar a solo COP para esta entrega, ver
+`docs/product-decisions.md`), escaneo de recibos con IA (bonus, en
+evaluación según tiempo disponible).
 
 ## Stack
 
@@ -77,10 +79,12 @@ tripflow/
 ## Roadmap (próximas actualizaciones)
 
 - Perfil compartido: viaje en pareja con reparto de gastos
-- Divisas adicionales (peso mexicano y otras de Latinoamérica). Los KPIs
-  de Inicio hoy muestran un bloque separado por divisa en uso (ver
-  `docs/product-decisions.md`) — funciona para 2-3 divisas, pero ese
-  patrón de columnas no escala a soportar muchas; hay que diseñar algo
-  distinto (ej. selector de divisa, vista consolidada opcional) antes de
-  ampliar la lista de divisas soportadas
+- Reintroducir soporte multi-divisa (COP, USD, EUR y más) con una UX más
+  simple y clara. Ya se exploró y se construyó una vez (selector de
+  divisa en Inicio, tasas de conversión) pero se retiró por la
+  complejidad y las confusiones de UX que generaba — KPIs mezclados,
+  gráfico de categorías mezclado, ambigüedad de qué representaba el
+  símbolo "$". La próxima versión necesita un patrón de diseño distinto
+  desde el principio, no solo agregar divisas al que ya existía. Ver
+  `docs/product-decisions.md`
 - Escaneo de recibos con IA en el flujo de registro de gastos

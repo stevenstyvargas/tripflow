@@ -91,15 +91,18 @@ que recibe los valores iniciales (vacíos para crear, precargados para
 editar), el texto del botón y qué hacer con los datos. Tanto
 `src/pages/new-trip.js` como el nuevo `src/pages/edit-trip.js` montan el
 mismo componente; solo cambia si llaman a `createTrip()` o `updateTrip()`.
-El único campo con comportamiento distinto entre los dos modos es la
-divisa: si el viaje ya tiene gastos registrados, se bloquea (ver
-siguiente decisión).
+El único campo con comportamiento distinto entre los dos modos era la
+divisa: si el viaje ya tenía gastos registrados, se bloqueaba (ver
+siguiente decisión — hoy superada: v1 se simplificó a una sola divisa,
+así que ese campo ya no existe en el formulario).
 
 **Por qué:** un solo lugar con los campos y la validación evita que
 crear y editar se desincronicen con el tiempo (ej. que alguien agregue
 un campo nuevo a uno de los dos formularios y se olvide del otro).
 
 ## Bloquear la divisa al editar un viaje con gastos
+
+> **Superada:** v1 se simplificó a una sola divisa (COP) — ver "Simplificación a una sola divisa (COP)" al final de este documento. Ya no existe un campo de divisa que bloquear.
 
 **Problema:** cada gasto guarda su propia divisa, pero siempre hereda la
 del viaje al crearse — no hay conversión entre divisas en el modelo de
@@ -283,6 +286,8 @@ para esto) cuando se amplíe el soporte de divisas más allá de v1.
 
 ## Selector de divisa en vez de columnas separadas
 
+> **Superada:** v1 se simplificó a una sola divisa (COP) — ver "Simplificación a una sola divisa (COP)" al final de este documento. Se deja este registro porque documenta el patrón de UI que se exploró antes de decidir simplificar, y es justo lo que el roadmap de `README.md` dice que habría que retomar si se reintroduce multi-divisa más adelante.
+
 **Problema:** las columnas de KPI por divisa (decisión anterior)
 resolvían el problema de no sumar divisas distintas, pero con 2+
 divisas en uso la fila de KPIs se veía como una tabla comparativa en
@@ -347,6 +352,60 @@ sin flujo de consentimiento, sin scope de Calendar que pedir). Si más
 adelante se necesita sincronización real (ej. que un gasto nuevo
 actualice el evento automáticamente), eso sí requeriría OAuth y queda
 fuera de este alcance.
+
+## Simplificación a una sola divisa (COP)
+
+**Problema:** se construyó soporte multi-divisa completo — selección de
+divisa al crear/editar un viaje, bloqueo de divisa una vez el viaje
+tenía gastos, KPIs de Inicio primero normalizados y luego separados por
+divisa en columnas, y finalmente un selector de divisa estilo "cambiar
+idioma" con dropdown dinámico. En la práctica, ese sistema generaba más
+confusión de UX de la que resolvía para esta entrega: KPIs que
+cambiaban de forma según cuántas divisas hubiera en uso, un gráfico de
+categorías que en algún punto tuvo que quitarse de Inicio porque mezclar
+divisas ahí no tenía una respuesta limpia, y una ambigüedad de fondo con
+el símbolo "$" (que representa tanto COP como USD en sus locales
+respectivos) que ningún tratamiento visual del selector terminaba de
+resolver del todo. El costo de mantener y explicar ese sistema no se
+justificaba para un producto que, en la práctica, la mayoría de usuarios
+va a usar en una sola divisa.
+
+**Decisión:** se retira todo el soporte multi-divisa y la app queda fija
+en COP (peso colombiano) para v1:
+- El campo "Divisa" desaparece de "Nuevo viaje"/"Editar viaje"
+  (`components/trip-form.js`) — todo viaje se crea en COP, sin selección
+  ni bloqueo condicional que explicar.
+- El selector de divisa del header de Inicio (píldora + dropdown) se
+  elimina por completo, junto con su CSS (`.currency-pill*`,
+  `.currency-select*`) y el ícono `chevron-down`, que quedó sin otro uso.
+- `formatCurrency()` (`utils/currency.js`) deja de recibir una divisa
+  como parámetro — siempre formatea en COP — y ahora agrega el texto
+  "COP" al final de cada monto (ej. "$190.000 COP"), para que quede
+  explícito y sin ambigüedad en absolutamente todos los lugares donde se
+  muestra dinero (KPIs, cards de viaje, detalle de viaje, gastos,
+  Alertas, Historial) con un solo cambio, sin tocar cada pantalla una
+  por una.
+- Se elimina `convert()`/`FIXED_RATES_TO_COP` (tasas fijas de
+  conversión) de `utils/currency.js`: ya no hay nada que convertir entre
+  divisas.
+- Los viajes de prueba que ya existían en USD/EUR (creados mientras se
+  probaba el sistema multi-divisa) **no se migran ni se convierten** —
+  sus montos van a mostrarse con el texto "COP" igual, aunque el número
+  no represente pesos colombianos reales. Es una decisión consciente:
+  esos registros de prueba se van a borrar manualmente y reemplazar por
+  viajes nuevos ya en COP.
+
+**Por qué:** esto es una decisión consciente de alcance para esta
+entrega, no una limitación técnica — el sistema multi-divisa funcionaba
+y está documentado en las tres decisiones anteriores de este archivo
+(quedan marcadas como superadas, no borradas, porque documentan el
+camino ya explorado). Simplificar a una sola divisa elimina de raíz los
+casos de confusión que esas decisiones fueron parchando una por una
+(KPIs mezclados, gráfico de categorías mezclado, ambigüedad del símbolo
+"$") en vez de seguir agregando UI para manejarlos. Si el producto
+necesita multi-divisa más adelante, el roadmap (`README.md`) ya apunta
+a que hay que diseñar el patrón desde otro ángulo, no simplemente
+reactivar lo que se retiró acá.
 
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:

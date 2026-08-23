@@ -28,7 +28,7 @@ function renderExpenseItem(expense) {
         ${expense.note ? `<p class="expense-item-note">${escapeHtml(expense.note)}</p>` : ""}
       </div>
       <div class="expense-item-meta">
-        <p class="expense-item-amount">${formatCurrency(expense.amount, expense.currency)}</p>
+        <p class="expense-item-amount">${formatCurrency(expense.amount)}</p>
         <p class="expense-item-date">${escapeHtml(expense.date)}</p>
       </div>
       <div class="expense-item-actions">
@@ -81,7 +81,7 @@ function buildGoogleCalendarUrl(trip) {
   const start = trip.startDate.replaceAll("-", "");
   const end = toGoogleCalendarEndDate(trip.endDate);
   const text = encodeURIComponent(trip.name);
-  const details = encodeURIComponent(`Presupuesto: ${formatCurrency(trip.budgetLimit, trip.currency)}`);
+  const details = encodeURIComponent(`Presupuesto: ${formatCurrency(trip.budgetLimit)}`);
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${start}/${end}&details=${details}`;
 }
 
@@ -91,7 +91,7 @@ function renderExpenseForm() {
   return `
     <form id="expense-form" class="expense-form" novalidate hidden>
       <p class="field">
-        <label for="expense-amount">Monto</label>
+        <label for="expense-amount">Monto (COP)</label>
         <input id="expense-amount" name="amount" type="text" inputmode="numeric" placeholder="0" required />
       </p>
 
@@ -150,7 +150,7 @@ export function render(container, { tripId } = {}) {
             <a href="#/viaje/${trip.id}/editar" class="icon-button" aria-label="Editar viaje">${icon("edit-2")}</a>
           </div>
           <p class="trip-detail-budget">
-            ${formatCurrency(spent, trip.currency)} / ${formatCurrency(trip.budgetLimit, trip.currency)}
+            ${formatCurrency(spent)} / ${formatCurrency(trip.budgetLimit)}
           </p>
           ${statusBadge(status)}
         </div>
@@ -174,7 +174,7 @@ export function render(container, { tripId } = {}) {
 
       <section class="section">
         <h2>Gasto por categoría de ${escapeHtml(trip.name)}</h2>
-        ${barChart(computeCategoryBreakdown(expenses), trip.currency)}
+        ${barChart(computeCategoryBreakdown(expenses))}
       </section>
 
       <section class="section">
@@ -195,7 +195,7 @@ export function render(container, { tripId } = {}) {
   const cancelButton = container.querySelector("#expense-form-cancel");
   const amountInput = form.querySelector("#expense-amount");
 
-  bindAmountInput(amountInput, () => trip.currency);
+  bindAmountInput(amountInput);
 
   // Un solo formulario para agregar y editar: editingExpenseId distingue
   // qué hace el submit. Reutiliza el mismo <form>, no uno nuevo, siguiendo
@@ -213,7 +213,7 @@ export function render(container, { tripId } = {}) {
   function enterEditMode(expense) {
     editingExpenseId = expense.id;
     form.hidden = false;
-    amountInput.value = formatStoredAmount(expense.amount, trip.currency);
+    amountInput.value = formatStoredAmount(expense.amount);
     form.querySelector("#expense-category").value = expense.category;
     form.querySelector("#expense-date").value = expense.date;
     form.querySelector("#expense-note").value = expense.note ?? "";
@@ -253,7 +253,7 @@ export function render(container, { tripId } = {}) {
 
       showConfirmModal({
         title: "Eliminar gasto",
-        body: `¿Eliminar este gasto de ${formatCurrency(expense.amount, expense.currency)}?`,
+        body: `¿Eliminar este gasto de ${formatCurrency(expense.amount)}?`,
         confirmLabel: "Eliminar",
         cancelLabel: "Cancelar",
         onConfirm: async () => {
@@ -320,10 +320,10 @@ export function render(container, { tripId } = {}) {
     showConfirmModal({
       title: "Vas a superar el presupuesto",
       body: `
-        <strong>${escapeHtml(trip.name)}</strong> lleva ${formatCurrency(spent, trip.currency)}
+        <strong>${escapeHtml(trip.name)}</strong> lleva ${formatCurrency(spent)}
         gastados. Con este ${editingExpenseId ? "cambio" : "gasto nuevo"}, el total sería
-        ${formatCurrency(newTotal, trip.currency)} de un presupuesto de
-        ${formatCurrency(trip.budgetLimit, trip.currency)} (${percent}%).
+        ${formatCurrency(newTotal)} de un presupuesto de
+        ${formatCurrency(trip.budgetLimit)} (${percent}%).
       `,
       confirmLabel: editingExpenseId ? "Guardar de todas formas" : "Registrar de todas formas",
       cancelLabel: "Cancelar",

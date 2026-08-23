@@ -1,13 +1,15 @@
-// Formulario de viaje (nombre, presupuesto, divisa, fechas, foto),
-// compartido entre "Nuevo viaje" y "Editar viaje" — mismos campos, misma
+// Formulario de viaje (nombre, presupuesto, fechas, foto), compartido
+// entre "Nuevo viaje" y "Editar viaje" — mismos campos, misma
 // validación (delegada al store), solo cambian los valores iniciales,
-// el texto del botón y qué hace onSubmit con los datos.
+// el texto del botón y qué hace onSubmit con los datos. v1 es de una
+// sola divisa (COP), así que no hay campo de divisa que elegir — ver
+// docs/product-decisions.md.
 
-import { SUPPORTED_CURRENCIES, formatStoredAmount } from "../utils/currency.js";
-import { bindAmountInput, reformatAmountInput, readAmountInput } from "../utils/amount-input.js";
+import { formatStoredAmount } from "../utils/currency.js";
+import { bindAmountInput, readAmountInput } from "../utils/amount-input.js";
 import { escapeHtml } from "../utils/dom.js";
 
-function tripFormMarkup({ trip, submitLabel, lockCurrency }) {
+function tripFormMarkup({ trip, submitLabel }) {
   return `
     <form id="trip-form" novalidate>
       <p class="field">
@@ -16,23 +18,8 @@ function tripFormMarkup({ trip, submitLabel, lockCurrency }) {
       </p>
 
       <p class="field">
-        <label for="trip-budget">Presupuesto límite</label>
-        <input id="trip-budget" name="budgetLimit" type="text" inputmode="numeric" placeholder="0" value="${formatStoredAmount(trip.budgetLimit, trip.currency ?? "COP")}" required />
-      </p>
-
-      <p class="field">
-        <label for="trip-currency">Divisa</label>
-        <select id="trip-currency" name="currency" required>
-          ${SUPPORTED_CURRENCIES.map(
-            (c) =>
-              `<option value="${c}" ${c === trip.currency ? "selected" : ""} ${lockCurrency && c !== trip.currency ? "disabled" : ""}>${c}</option>`
-          ).join("")}
-        </select>
-        ${
-          lockCurrency
-            ? `<span class="field-hint">Este viaje ya tiene gastos registrados en ${escapeHtml(trip.currency ?? "")}; cambiar la divisa rompería los totales ya calculados.</span>`
-            : ""
-        }
+        <label for="trip-budget">Presupuesto límite (COP)</label>
+        <input id="trip-budget" name="budgetLimit" type="text" inputmode="numeric" placeholder="0" value="${formatStoredAmount(trip.budgetLimit)}" required />
       </p>
 
       <p class="field">
@@ -60,26 +47,20 @@ function tripFormMarkup({ trip, submitLabel, lockCurrency }) {
 /**
  * Monta el formulario de viaje en `container` y conecta el submit.
  * @param {{
- *   container: HTMLElement,
- *   trip?: { name?, budgetLimit?, currency?, startDate?, endDate?, photoUrl? },
+ *   trip?: { name?, budgetLimit?, startDate?, endDate?, photoUrl? },
  *   submitLabel: string,
- *   lockCurrency?: boolean,
- *   onSubmit: (data: { name, budgetLimit, currency, startDate, endDate, photoUrl }) => Promise<void>,
+ *   onSubmit: (data: { name, budgetLimit, startDate, endDate, photoUrl }) => Promise<void>,
  * }} options
  */
-export function mountTripForm(container, { trip = {}, submitLabel, lockCurrency = false, onSubmit }) {
-  container.innerHTML = tripFormMarkup({ trip, submitLabel, lockCurrency });
+export function mountTripForm(container, { trip = {}, submitLabel, onSubmit }) {
+  container.innerHTML = tripFormMarkup({ trip, submitLabel });
 
   const form = container.querySelector("#trip-form");
   const errorBox = container.querySelector("#trip-form-error");
   const submitButton = form.querySelector("button[type=submit]");
   const budgetInput = form.querySelector("#trip-budget");
-  const currencySelect = form.querySelector("#trip-currency");
 
-  bindAmountInput(budgetInput, () => currencySelect.value);
-  currencySelect.addEventListener("change", () => {
-    reformatAmountInput(budgetInput, currencySelect.value);
-  });
+  bindAmountInput(budgetInput);
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -91,7 +72,6 @@ export function mountTripForm(container, { trip = {}, submitLabel, lockCurrency 
       await onSubmit({
         name: formData.get("name"),
         budgetLimit: readAmountInput(budgetInput),
-        currency: formData.get("currency"),
         startDate: formData.get("startDate"),
         endDate: formData.get("endDate"),
         photoUrl: formData.get("photoUrl"),

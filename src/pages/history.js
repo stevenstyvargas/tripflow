@@ -25,7 +25,7 @@ function renderHistoryItem(trip) {
       </div>
       <p class="history-item-dates">${icon("calendar")}${escapeHtml(formatDateRange(trip.startDate, trip.endDate))}</p>
       <p class="history-item-budget">
-        ${formatCurrency(spent, trip.currency)} gastado / ${formatCurrency(trip.budgetLimit, trip.currency)} presupuestado
+        ${formatCurrency(spent)} gastado / ${formatCurrency(trip.budgetLimit)} presupuestado
       </p>
     </li>
   `;
