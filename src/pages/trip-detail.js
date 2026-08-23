@@ -63,6 +63,28 @@ function computeCategoryBreakdown(expenses) {
   }));
 }
 
+// Suma un día en UTC a una fecha "YYYY-MM-DD" y devuelve "YYYYMMDD".
+// Se usa para el fin de un evento de día completo en Google Calendar,
+// que trata `dates=inicio/fin` como un rango con el fin EXCLUSIVO — sin
+// sumar el día, el último día del viaje quedaría fuera del evento.
+function toGoogleCalendarEndDate(dateStr) {
+  const date = new Date(`${dateStr}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + 1);
+  return date.toISOString().slice(0, 10).replaceAll("-", "");
+}
+
+// Link con parámetros en la URL (sin OAuth ni API de Google Calendar,
+// ver docs/product-decisions.md): basta con abrir la pantalla de
+// "crear evento" ya prellenada, el usuario la confirma o ajusta en
+// Google Calendar directamente.
+function buildGoogleCalendarUrl(trip) {
+  const start = trip.startDate.replaceAll("-", "");
+  const end = toGoogleCalendarEndDate(trip.endDate);
+  const text = encodeURIComponent(trip.name);
+  const details = encodeURIComponent(`Presupuesto: ${formatCurrency(trip.budgetLimit, trip.currency)}`);
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${start}/${end}&details=${details}`;
+}
+
 function renderExpenseForm() {
   const today = new Date().toISOString().slice(0, 10);
 
@@ -132,9 +154,20 @@ export function render(container, { tripId } = {}) {
           </p>
           ${statusBadge(status)}
         </div>
-        <button type="button" id="toggle-expense-form" class="button-primary">
-          ${icon("plus")}<span>Agregar gasto</span>
-        </button>
+        <div class="page-header-actions">
+          ${
+            trip.startDate && trip.endDate
+              ? `
+            <a href="${buildGoogleCalendarUrl(trip)}" target="_blank" rel="noopener noreferrer" class="button-outline">
+              ${icon("calendar")}<span>Agregar a Google Calendar</span>
+            </a>
+          `
+              : ""
+          }
+          <button type="button" id="toggle-expense-form" class="button-primary">
+            ${icon("plus")}<span>Agregar gasto</span>
+          </button>
+        </div>
       </header>
 
       ${renderExpenseForm()}

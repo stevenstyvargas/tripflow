@@ -349,6 +349,7 @@ button[type="submit"] {
 .page-header-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-3);
 }
 
@@ -942,12 +943,16 @@ button[type="submit"] {
 }
 
 .button-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   padding: var(--space-2) var(--space-4);
   border: 1px solid var(--color-text-muted);
   border-radius: var(--radius-sm);
   background: none;
   color: var(--color-text);
   font-weight: 600;
+  text-decoration: none;
   cursor: pointer;
 }
 

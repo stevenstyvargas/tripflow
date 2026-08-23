@@ -312,6 +312,42 @@ ya se había anotado como roadmap), y un solo bloque de KPI es más
 fácil de leer de un vistazo que varias columnas — el usuario elige qué
 divisa quiere ver en vez de tener que escanear todas a la vez.
 
+## "Agregar a Google Calendar" con link plano, sin OAuth ni API
+
+**Problema:** se quería poder agregar un viaje al calendario del
+usuario. Integrar la API de Google Calendar de verdad (crear el evento
+del lado del servidor, o incluso solo leer/escribir en el calendario
+del usuario) requiere OAuth — pantalla de consentimiento, tokens,
+scopes, y para v1 ni siquiera hay backend propio que pueda guardar esos
+tokens de forma segura.
+
+**Decisión:** el botón abre, en pestaña nueva, la URL pública de Google
+Calendar para "crear evento" con los parámetros ya prellenados
+(`calendar.google.com/calendar/render?action=TEMPLATE&...`) — texto,
+fechas y presupuesto en la URL, `url-encoded`. No hay llamada a ninguna
+API, no hay token, no hay backend involucrado: es el mismo mecanismo
+que usan los botones de "agregar al calendario" de sitios de eventos.
+Google Calendar abre su propia pantalla de "guardar evento" ya con los
+datos cargados, y el usuario decide si lo guarda tal cual, lo ajusta o
+lo descarta — la app nunca escribe directamente en su calendario. El
+botón solo aparece si el viaje tiene fecha de inicio Y fin (ambas son
+opcionales al crear un viaje); sin las dos fechas no hay rango de
+evento que armar.
+
+Un detalle no obvio: Google Calendar trata el fin de un evento de día
+completo como *exclusivo* (el evento termina al empezar ese día, no lo
+incluye) — el link usa la fecha de fin del viaje **+1 día**, si no, el
+último día del viaje quedaría fuera del evento creado.
+
+**Por qué:** para el caso de uso ("que me quede el viaje marcado en mi
+calendario") no hace falta escribir directamente en el calendario del
+usuario ni pedirle permisos — un link prellenado resuelve el 90% del
+valor con una fracción de la complejidad (sin secretos que gestionar,
+sin flujo de consentimiento, sin scope de Calendar que pedir). Si más
+adelante se necesita sincronización real (ej. que un gasto nuevo
+actualice el evento automáticamente), eso sí requeriría OAuth y queda
+fuera de este alcance.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 
