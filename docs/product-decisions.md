@@ -193,6 +193,8 @@ estaba explícitamente pedido.
 
 ## Torre de barras en Inicio, dona dentro de cada viaje: dos gráficos distintos a propósito
 
+> **Superada por la siguiente decisión** ("Mismo gráfico de torres en las dos vistas") — se dejó este registro para que quede constancia de por qué se probó primero la variación de tipo de gráfico y por qué se revirtió.
+
 **Problema:** feedback de usuario: la dona de "gasto por categoría" en
 Inicio sumaba todos los viajes activos en un solo número por categoría,
 pero el usuario quería ver cómo se reparte el gasto por categoría
@@ -217,6 +219,32 @@ preguntas distintas ("¿cuánto llevo en cada categoría en total?" vs.
 vista con la otra de un vistazo, incluso antes de leer el título de la
 sección — el tipo de gráfico ya comunica si está viendo un agregado o
 el desglose de un viaje puntual.
+
+## Mismo gráfico de torres en las dos vistas, tras probar la dona en detalle de viaje
+
+**Problema:** en la práctica, la variación de tipo de gráfico (torre en
+Inicio, dona en detalle de viaje) generaba más inconsistencia visual que
+claridad: dos formas distintas de leer el mismo dato (gasto por
+categoría) obligan al usuario a aprender dos lenguajes visuales en vez
+de uno. El usuario pidió explícitamente volver a un solo tipo de
+gráfico en las dos vistas.
+
+**Decisión:** el detalle de viaje pasa de dona a la misma torre de
+barras de Inicio (mismo componente `components/bar-chart.js`, mismos
+colores por categoría), calculada solo con los gastos de ese viaje. Al
+quedar el mismo tipo de gráfico en ambas vistas, la diferenciación pasa
+a hacerla el título de cada sección en vez del tipo de gráfico: Inicio
+dice "Gasto por categoría" con el subtítulo "Todos tus viajes activos",
+y el detalle de viaje dice "Gasto por categoría de **[nombre del
+viaje]**" con el nombre real insertado dinámicamente. Como la dona dejó
+de usarse en cualquier lugar de la app, se eliminó `donut-chart.js` y su
+CSS (`.donut-chart`, `.donut-legend*`) en vez de dejarlos sin usar.
+
+**Por qué:** consistencia visual entre pantallas (un solo tipo de
+gráfico para "gasto por categoría" en toda la app) es más valioso que
+la señal adicional de "tipo de gráfico distinto = vista distinta"; el
+título ya cumple ese rol de diferenciación sin pedirle al usuario que
+aprenda a leer dos gráficos distintos para el mismo tipo de dato.
 
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:

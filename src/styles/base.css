@@ -374,6 +374,12 @@ button[type="submit"] {
   font-size: var(--text-lg);
 }
 
+.section-subtitle {
+  margin: calc(-1 * var(--space-3)) 0 var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
 /* ---------- KPI cards ---------- */
 
 .kpi-row {
@@ -414,48 +420,7 @@ button[type="submit"] {
   font-weight: 700;
 }
 
-/* ---------- Gráfico de dona (gasto por categoría) ---------- */
-
-.donut-chart {
-  display: flex;
-  align-items: center;
-  gap: var(--space-6);
-  flex-wrap: wrap;
-  padding: var(--space-4);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
-}
-
-.donut-chart-empty {
-  flex-direction: column;
-  text-align: center;
-}
-
-.donut-legend {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.donut-legend-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--text-sm);
-}
-
-.donut-legend-swatch {
-  width: 0.75rem;
-  height: 0.75rem;
-  border-radius: var(--radius-full);
-  display: inline-block;
-}
-
-/* ---------- Gráfico de barras (gasto por categoría, Inicio) ---------- */
+/* ---------- Gráfico de barras (gasto por categoría) ---------- */
 
 .bar-chart {
   list-style: none;

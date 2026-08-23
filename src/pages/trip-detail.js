@@ -1,6 +1,6 @@
-// Página: detalle de viaje. Muestra el estado del presupuesto, la dona
-// de gasto por categoría de ESTE viaje (no de todos, a diferencia de la
-// torre de barras de Inicio), el historial de gastos y el formulario
+// Página: detalle de viaje. Muestra el estado del presupuesto, la torre
+// de gasto por categoría de ESTE viaje (no de todos — la de Inicio suma
+// todos los viajes activos), el historial de gastos y el formulario
 // para registrar uno nuevo. El semáforo de Inicio y las alertas de
 // Alertas se recalculan solos la próxima vez que se rendericen: leen
 // siempre el estado en memoria de store.js, así que un gasto nuevo ya
@@ -12,7 +12,7 @@ import { bindAmountInput, readAmountInput } from "../utils/amount-input.js";
 import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
 import { showConfirmModal } from "../components/confirm-modal.js";
-import { donutChart } from "../components/donut-chart.js";
+import { barChart } from "../components/bar-chart.js";
 import { EXPENSE_CATEGORIES } from "../utils/categories.js";
 import { icon } from "../utils/icons.js";
 import { escapeHtml } from "../utils/dom.js";
@@ -43,10 +43,10 @@ function renderExpenseItem(expense) {
   `;
 }
 
-// Dona de este viaje únicamente (no todos los viajes, a diferencia de la
-// torre de barras de Inicio) — mismos colores por categoría que en
-// Inicio, para que el usuario asocie color→categoría sin importar dónde
-// lo vea. Si no hay gastos, donutChart() ya trae su propio estado vacío.
+// Mismo componente y misma paleta que Inicio (bar-chart.js,
+// --color-category-*), pero calculado solo con los gastos de ESTE
+// viaje — para que el usuario asocie color→categoría sin importar
+// dónde lo vea, y a la vez no confunda esta vista con la agregada.
 function computeCategoryBreakdown(expenses) {
   const totals = Object.fromEntries(EXPENSE_CATEGORIES.map((c) => [c.id, 0]));
 
@@ -55,7 +55,9 @@ function computeCategoryBreakdown(expenses) {
   }
 
   return EXPENSE_CATEGORIES.map((c) => ({
+    id: c.id,
     label: c.label,
+    icon: c.icon,
     value: totals[c.id],
     color: `var(${c.colorVar})`,
   }));
@@ -138,8 +140,8 @@ export function render(container, { tripId } = {}) {
       ${renderExpenseForm()}
 
       <section class="section">
-        <h2>Gasto por categoría</h2>
-        ${donutChart(computeCategoryBreakdown(expenses))}
+        <h2>Gasto por categoría de ${escapeHtml(trip.name)}</h2>
+        ${barChart(computeCategoryBreakdown(expenses), trip.currency)}
       </section>
 
       <section class="section">

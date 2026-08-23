@@ -112,6 +112,7 @@ export function render(container) {
 
       <section class="section">
         <h2>Gasto por categoría</h2>
+        <p class="section-subtitle">Todos tus viajes activos</p>
         ${barChart(categoryBreakdown, REPORT_CURRENCY)}
       </section>
 

@@ -1,10 +1,8 @@
 // Gráfico de barras verticales por categoría, en orden fijo (el orden de
-// EXPENSE_CATEGORIES, nunca por monto) — para la vista agregada de
-// Inicio. A propósito es un tipo de gráfico distinto al de la dona que
-// vive en el detalle de viaje: la dona es "cómo se reparte ESTE viaje",
-// la torre es "cuánto llevas en cada categoría en total" — tipos de
-// gráfico distintos ayudan a que el usuario no confunda una vista con
-// la otra de un vistazo.
+// EXPENSE_CATEGORIES, nunca por monto). Lo usan tanto Inicio (agregado
+// de todos los viajes activos) como el detalle de un viaje (solo ese
+// viaje) — mismo componente y misma paleta en las dos vistas, el título
+// de cada sección es lo que distingue qué se está viendo.
 
 import { icon } from "../utils/icons.js";
 import { formatCurrency } from "../utils/currency.js";
