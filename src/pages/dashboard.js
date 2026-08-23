@@ -53,6 +53,28 @@ function renderTripCard(trip) {
   `;
 }
 
+function renderTripsSection(trips, query) {
+  const filtered = query ? trips.filter((trip) => trip.name.toLowerCase().includes(query)) : trips;
+
+  if (trips.length === 0) {
+    return `<p class="empty-state">Todavía no tienes viajes activos. Crea el primero para empezar a controlar tu presupuesto.</p>`;
+  }
+  if (filtered.length === 0) {
+    return `<p class="empty-state">No se encontraron viajes con ese nombre.</p>`;
+  }
+  return `<ul class="trip-list">${filtered.map(renderTripCard).join("")}</ul>`;
+}
+
+function bindTripsSection(sectionBody, trips, container) {
+  sectionBody.querySelectorAll(".trip-card-close").forEach((button) => {
+    button.addEventListener("click", async () => {
+      button.disabled = true;
+      await closeTrip(button.dataset.tripId);
+      render(container);
+    });
+  });
+}
+
 export function render(container) {
   const trips = getActiveTrips();
   const kpis = computeKpis(trips);
@@ -61,7 +83,13 @@ export function render(container) {
     <main class="page page-home">
       <header class="page-header">
         <h1>Inicio</h1>
-        <a href="#/nuevo-viaje" class="button-primary">${icon("plus")}<span>Nuevo viaje</span></a>
+        <div class="page-header-actions">
+          <div class="search-field">
+            ${icon("search", "search-field-icon")}
+            <input type="search" id="trip-search" placeholder="Buscar destino o país..." aria-label="Buscar destino o país" />
+          </div>
+          <a href="#/nuevo-viaje" class="button-primary">${icon("plus")}<span>Nuevo viaje</span></a>
+        </div>
       </header>
 
       <ul class="kpi-row">
@@ -72,20 +100,17 @@ export function render(container) {
 
       <section class="section">
         <h2>Tus viajes activos</h2>
-        ${
-          trips.length === 0
-            ? `<p class="empty-state">Todavía no tienes viajes activos. Crea el primero para empezar a controlar tu presupuesto.</p>`
-            : `<ul class="trip-list">${trips.map(renderTripCard).join("")}</ul>`
-        }
+        <div id="trips-section-body">${renderTripsSection(trips, "")}</div>
       </section>
     </main>
   `;
 
-  container.querySelectorAll(".trip-card-close").forEach((button) => {
-    button.addEventListener("click", async () => {
-      button.disabled = true;
-      await closeTrip(button.dataset.tripId);
-      render(container);
-    });
+  const sectionBody = container.querySelector("#trips-section-body");
+  bindTripsSection(sectionBody, trips, container);
+
+  container.querySelector("#trip-search").addEventListener("input", (event) => {
+    const query = event.target.value.trim().toLowerCase();
+    sectionBody.innerHTML = renderTripsSection(trips, query);
+    bindTripsSection(sectionBody, trips, container);
   });
 }

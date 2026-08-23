@@ -25,6 +25,7 @@ import trash2 from "lucide-static/icons/trash-2.svg?raw";
 import edit2 from "lucide-static/icons/edit-2.svg?raw";
 import chevronRight from "lucide-static/icons/chevron-right.svg?raw";
 import calculator from "lucide-static/icons/calculator.svg?raw";
+import search from "lucide-static/icons/search.svg?raw";
 
 const ICONS = {
   home,
@@ -50,6 +51,7 @@ const ICONS = {
   "edit-2": edit2,
   "chevron-right": chevronRight,
   calculator,
+  search,
 };
 
 /**
