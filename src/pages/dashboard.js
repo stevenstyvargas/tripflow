@@ -80,8 +80,8 @@ function renderTripCard(trip) {
           ${statusBadge(status)}
         </div>
       </a>
-      <button type="button" class="trip-card-close" data-trip-id="${trip.id}">
-        ${icon("history")}<span>Cerrar viaje</span>
+      <button type="button" class="trip-card-close button-danger-outline" data-trip-id="${trip.id}">
+        ${icon("trash-2")}<span>Finalizar viaje</span>
       </button>
     </li>
   `;
