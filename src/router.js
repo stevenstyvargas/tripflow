@@ -17,14 +17,18 @@ const routes = {
   "/historial": () => import("./pages/history.js"),
 };
 
-// "/viaje/{tripId}" no es una ruta fija: se resuelve aparte para extraer
-// el id del viaje como parámetro en vez de listarla una por una en routes.
+// "/viaje/{tripId}" y "/viaje/{tripId}/editar" no son rutas fijas: se
+// resuelven aparte para extraer el id del viaje como parámetro en vez
+// de listarlas una por una en routes.
 function matchRoute(path) {
   if (path.startsWith("/viaje/")) {
-    return {
-      loadPage: () => import("./pages/trip-detail.js"),
-      params: { tripId: decodeURIComponent(path.slice("/viaje/".length)) },
-    };
+    const [rawId, sub] = path.slice("/viaje/".length).split("/");
+    const tripId = decodeURIComponent(rawId);
+
+    if (sub === "editar") {
+      return { loadPage: () => import("./pages/edit-trip.js"), params: { tripId } };
+    }
+    return { loadPage: () => import("./pages/trip-detail.js"), params: { tripId } };
   }
 
   const loadPage = routes[path];

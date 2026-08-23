@@ -24,6 +24,7 @@ import lock from "lucide-static/icons/lock.svg?raw";
 import shoppingBag from "lucide-static/icons/shopping-bag.svg?raw";
 import packageIcon from "lucide-static/icons/package.svg?raw";
 import trash2 from "lucide-static/icons/trash-2.svg?raw";
+import edit2 from "lucide-static/icons/edit-2.svg?raw";
 
 const ICONS = {
   home,
@@ -48,6 +49,7 @@ const ICONS = {
   "shopping-bag": shoppingBag,
   package: packageIcon,
   "trash-2": trash2,
+  "edit-2": edit2,
 };
 
 /**

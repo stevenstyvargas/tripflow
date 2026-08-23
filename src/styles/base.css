@@ -89,6 +89,32 @@ select {
   margin: 0 0 var(--space-4);
 }
 
+.field-hint {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+/* Botón/link de solo ícono, para acciones secundarias junto a un título
+   (editar viaje, editar gasto) que no necesitan el peso de un botón con
+   texto. */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  background: color-mix(in srgb, var(--color-primary) 8%, white);
+  color: var(--color-primary);
+}
+
 button[type="submit"] {
   padding: var(--space-2) var(--space-4);
   border: none;
@@ -649,6 +675,12 @@ button[type="submit"] {
 }
 
 /* ---------- Detalle de viaje ---------- */
+
+.trip-detail-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
 
 .trip-detail-budget {
   margin: var(--space-1) 0 var(--space-2);

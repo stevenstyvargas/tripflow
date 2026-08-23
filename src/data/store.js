@@ -139,6 +139,34 @@ export async function createTrip({
   return trip;
 }
 
+/**
+ * Actualiza los datos de un viaje ya creado. No toca `status`: se usa
+ * para editar nombre/presupuesto/divisa/fechas/foto, no para cerrar.
+ * @param {string} tripId
+ * @param {{ name: string, budgetLimit: number, currency: string, startDate?: string, endDate?: string, photoUrl?: string }} data
+ */
+export async function updateTrip(tripId, { name, budgetLimit, currency, startDate = "", endDate = "", photoUrl = "" }) {
+  validateTripInput({ name, budgetLimit, currency });
+
+  const trip = getTrip(tripId);
+  if (trip && currency !== trip.currency && getExpensesByTrip(tripId).length > 0) {
+    throw new Error("No puedes cambiar la divisa de un viaje que ya tiene gastos registrados.");
+  }
+
+  const tripData = {
+    name: name.trim(),
+    budgetLimit,
+    currency,
+    startDate,
+    endDate,
+    photoUrl: photoUrl.trim(),
+  };
+
+  await updateDoc(doc(db, "users", currentUid, "trips", tripId), tripData);
+  if (trip) Object.assign(trip, tripData);
+  return trip;
+}
+
 /** Marca un viaje como cerrado; pasa a mostrarse en Historial. */
 export async function closeTrip(tripId) {
   await updateDoc(doc(db, "users", currentUid, "trips", tripId), {

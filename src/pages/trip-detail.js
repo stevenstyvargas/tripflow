@@ -92,7 +92,10 @@ export function render(container, { tripId } = {}) {
     <main class="page page-trip-detail">
       <header class="page-header">
         <div>
-          <h1>${escapeHtml(trip.name)}</h1>
+          <div class="trip-detail-title">
+            <h1>${escapeHtml(trip.name)}</h1>
+            <a href="#/viaje/${trip.id}/editar" class="icon-button" aria-label="Editar viaje">${icon("edit-2")}</a>
+          </div>
           <p class="trip-detail-budget">
             ${formatCurrency(spent, trip.currency)} / ${formatCurrency(trip.budgetLimit, trip.currency)}
           </p>

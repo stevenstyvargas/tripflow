@@ -78,6 +78,46 @@ navegadores con bloqueadores de popups o restricciones de terceros — el
 usuario nunca debería ver el login fallar por algo fuera de su control
 cuando hay una alternativa automática disponible.
 
+## Formulario de viaje compartido entre crear y editar
+
+**Problema:** el feedback de usuario pidió poder editar un viaje ya
+creado (nombre, presupuesto, divisa, fechas, foto) — los mismos campos
+que "Nuevo viaje". Construir un formulario de edición aparte hubiera
+duplicado seis campos, su validación y su manejo de errores.
+
+**Decisión:** el formulario (markup + submit + manejo de error) se
+extrajo a `src/components/trip-form.js`, con una función `mountTripForm()`
+que recibe los valores iniciales (vacíos para crear, precargados para
+editar), el texto del botón y qué hacer con los datos. Tanto
+`src/pages/new-trip.js` como el nuevo `src/pages/edit-trip.js` montan el
+mismo componente; solo cambia si llaman a `createTrip()` o `updateTrip()`.
+El único campo con comportamiento distinto entre los dos modos es la
+divisa: si el viaje ya tiene gastos registrados, se bloquea (ver
+siguiente decisión).
+
+**Por qué:** un solo lugar con los campos y la validación evita que
+crear y editar se desincronicen con el tiempo (ej. que alguien agregue
+un campo nuevo a uno de los dos formularios y se olvide del otro).
+
+## Bloquear la divisa al editar un viaje con gastos
+
+**Problema:** cada gasto guarda su propia divisa, pero siempre hereda la
+del viaje al crearse — no hay conversión entre divisas en el modelo de
+datos. Si se permitiera cambiar la divisa de un viaje que ya tiene
+gastos, `getTripTotal()` empezaría a sumar montos en divisas distintas
+como si fueran la misma, rompiendo el total, el semáforo y la dona sin
+ningún aviso.
+
+**Decisión:** al editar un viaje, si ya tiene al menos un gasto
+registrado, el campo de divisa queda bloqueado (las demás opciones se
+deshabilitan en el `<select>`, dejando solo la actual seleccionable) con
+un texto explicando por qué. `updateTrip()` además rechaza el cambio del
+lado del store aunque alguien lograra saltarse el bloqueo visual.
+
+**Por qué:** dos capas de protección (UI + validación en el store) para
+un caso donde el costo de un error silencioso es alto: los totales de
+un viaje quedarían mal calculados sin que nada lo señale.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 
