@@ -412,8 +412,18 @@ button[type="submit"] {
 .kpi-card-value {
   margin: 0;
   font-family: var(--font-display);
-  font-size: var(--text-xl);
+  font-size: var(--text-lg);
   font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.kpi-card-unit {
+  margin-left: var(--space-1);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--color-text-muted);
 }
 
 /* ---------- Gráfico de barras (gasto por categoría) ---------- */
