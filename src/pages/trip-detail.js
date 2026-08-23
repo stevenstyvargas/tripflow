@@ -1,8 +1,10 @@
 // Página: detalle de viaje. Barra de 40px (igual que las demás
 // pantallas) con foto miniatura + nombre (truncado con "...", mismo
 // criterio que las cards) + ícono de editar + badge de semáforo
-// compacto a la izquierda, y las acciones (Google Calendar/Agregar
-// gasto/menú de cuenta) a la derecha. Debajo, 2 columnas: KPIs
+// compacto a la izquierda, y las acciones (Google Calendar/Compartir
+// por WhatsApp — link wa.me con texto plano, sin backend ni PDF, ver
+// docs/product-decisions.md — /Agregar gasto/menú de cuenta) a la
+// derecha. Debajo, 2 columnas: KPIs
 // "Presupuesto"/"Gastado"/"Restante" apiladas en un ancho fijo (mismo
 // components/kpi-card.js que Inicio) y, a la derecha, la torre de
 // gasto por categoría de ESTE viaje. "Gastos registrados" y el
@@ -93,6 +95,66 @@ function buildGoogleCalendarUrl(trip) {
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${start}/${end}&details=${details}`;
 }
 
+// Mismo texto que usa el anillo "Gasto vs presupuesto" de Inicio
+// (components/budget-ring.js) para este mismo estado, con la primera
+// letra en mayúscula porque acá va como una oración del mensaje de
+// WhatsApp, no como una etiqueta chica junto a un ícono.
+const STATUS_SHARE_LABELS = {
+  ok: "En rango",
+  warning: "Cerca del límite",
+  danger: "Presupuesto excedido",
+};
+
+const MONTHS_SHORT_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+
+// "12-16 nov" si el rango cae en el mismo mes/año, o "28 oct - 3 nov"
+// si cruza de mes — mismo parseo en UTC que toGoogleCalendarEndDate(),
+// para no repetir el bug de zona horaria que esa función ya evita.
+function formatShareDateRange(startDate, endDate) {
+  const start = new Date(`${startDate}T00:00:00Z`);
+  const end = new Date(`${endDate}T00:00:00Z`);
+  const startMonth = MONTHS_SHORT_ES[start.getUTCMonth()];
+  const endMonth = MONTHS_SHORT_ES[end.getUTCMonth()];
+
+  if (start.getUTCFullYear() === end.getUTCFullYear() && start.getUTCMonth() === end.getUTCMonth()) {
+    return `${start.getUTCDate()}-${end.getUTCDate()} ${endMonth}`;
+  }
+  return `${start.getUTCDate()} ${startMonth} - ${end.getUTCDate()} ${endMonth}`;
+}
+
+// Texto plano para compartir por WhatsApp — mismo cálculo de estado
+// (status, ya calculado en render() con getBudgetStatus(), el mismo
+// que usa el modal de "vas a superar el presupuesto") y las mismas
+// categorías con gasto real de computeCategoryBreakdown(), sin volver
+// a calcular nada de eso acá.
+function buildShareMessage(trip, spent, status, expenses) {
+  const remaining = trip.budgetLimit - spent;
+  const dateRange = trip.startDate && trip.endDate ? ` (${formatShareDateRange(trip.startDate, trip.endDate)})` : "";
+
+  const topCategories = computeCategoryBreakdown(expenses)
+    .filter((c) => c.value > 0)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 3)
+    .map((c) => `${c.label} ${formatCurrency(c.value)}`)
+    .join(", ");
+
+  const lines = [
+    `Viaje: ${trip.name}${dateRange}`,
+    `Presupuesto: ${formatCurrency(trip.budgetLimit)} | Gastado: ${formatCurrency(spent)} | Restante: ${formatCurrency(remaining)}`,
+    `Estado: ${STATUS_SHARE_LABELS[status]}`,
+  ];
+
+  if (topCategories) {
+    lines.push(`Top gastos: ${topCategories}`);
+  }
+
+  return lines.join("\n");
+}
+
+function buildWhatsAppShareUrl(trip, spent, status, expenses) {
+  return `https://wa.me/?text=${encodeURIComponent(buildShareMessage(trip, spent, status, expenses))}`;
+}
+
 function renderExpenseForm() {
   const today = new Date().toISOString().slice(0, 10);
 
@@ -177,6 +239,9 @@ export function render(container, { tripId } = {}) {
           `
               : ""
           }
+          <a href="${buildWhatsAppShareUrl(trip, spent, status, expenses)}" target="_blank" rel="noopener noreferrer" class="button-outline">
+            ${icon("message-circle")}<span>Compartir por WhatsApp</span>
+          </a>
           ${
             !isClosed
               ? `

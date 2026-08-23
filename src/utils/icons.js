@@ -28,6 +28,7 @@ import arrowRight from "lucide-static/icons/arrow-right.svg?raw";
 import map from "lucide-static/icons/map.svg?raw";
 import target from "lucide-static/icons/target.svg?raw";
 import lock from "lucide-static/icons/lock.svg?raw";
+import messageCircle from "lucide-static/icons/message-circle.svg?raw";
 
 const ICONS = {
   home,
@@ -56,6 +57,7 @@ const ICONS = {
   map,
   target,
   lock,
+  "message-circle": messageCircle,
 };
 
 /**
