@@ -11,6 +11,7 @@ import { statusBadge } from "../components/status-badge.js";
 import { renderKpiCard } from "../components/kpi-card.js";
 import { donutChart } from "../components/donut-chart.js";
 import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
+import { searchField } from "../components/search-field.js";
 import { EXPENSE_CATEGORIES } from "../utils/categories.js";
 import { getCurrentUser } from "../data/auth.js";
 import { icon } from "../utils/icons.js";
@@ -124,10 +125,7 @@ export function render(container) {
       <header class="page-header">
         <h1>Hola, ${escapeHtml(greetingName)} 👋</h1>
         <div class="page-header-actions">
-          <div class="search-field">
-            ${icon("search", "search-field-icon")}
-            <input type="search" id="trip-search" placeholder="Buscar destino o país..." aria-label="Buscar destino o país" />
-          </div>
+          ${searchField({ id: "trip-search" })}
           <a href="#/nuevo-viaje" class="button-primary">${icon("plus")}<span>Nuevo viaje</span></a>
           ${accountMenu(user)}
         </div>
