@@ -60,7 +60,7 @@ select {
 .page-alerts,
 .page-history,
 .page-trip-detail {
-  max-width: 64rem;
+  max-width: 112.5rem; /* 1800px — aprovecha pantallas de laptop/desktop */
 }
 
 .field {
@@ -496,7 +496,7 @@ button[type="submit"] {
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(17.5rem, 1fr));
   gap: var(--space-4);
 }
 
