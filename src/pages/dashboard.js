@@ -19,9 +19,11 @@ import { escapeHtml } from "../utils/dom.js";
 // Mismo dato que usa el menú de cuenta (getCurrentUser()): preferimos
 // el displayName de Google porque es un nombre real, no un
 // identificador de cuenta; si no está disponible, la parte del email
-// antes de la @ sigue siendo más personal que "Inicio" a secas.
+// antes de la @ sigue siendo más personal que "Inicio" a secas. Solo
+// el primer nombre, para que el saludo-título no se vea largo con
+// nombres compuestos.
 function getGreetingName(user) {
-  if (user?.displayName) return user.displayName;
+  if (user?.displayName) return user.displayName.trim().split(/\s+/)[0];
   if (user?.email) return user.email.split("@")[0];
   return "";
 }
@@ -120,10 +122,7 @@ export function render(container) {
   container.innerHTML = `
     <main class="page page-home">
       <header class="page-header">
-        <div>
-          <p class="page-greeting">Hola, ${escapeHtml(greetingName)} 👋</p>
-          <h1>Inicio</h1>
-        </div>
+        <h1>Hola, ${escapeHtml(greetingName)} 👋</h1>
         <div class="page-header-actions">
           <div class="search-field">
             ${icon("search", "search-field-icon")}
