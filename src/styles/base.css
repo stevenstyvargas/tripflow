@@ -89,11 +89,6 @@ select {
   margin: 0 0 var(--space-4);
 }
 
-.field-hint {
-  color: var(--color-text-muted);
-  font-size: var(--text-xs);
-}
-
 /* Botón/link de solo ícono, para acciones secundarias junto a un título
    (editar viaje, editar gasto) que no necesitan el peso de un botón con
    texto. */
@@ -379,12 +374,6 @@ button[type="submit"] {
   margin: 0 0 var(--space-4);
   font-family: var(--font-display);
   font-size: var(--text-lg);
-}
-
-.section-subtitle {
-  margin: calc(-1 * var(--space-3)) 0 var(--space-4);
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
 }
 
 /* ---------- KPI cards ---------- */
