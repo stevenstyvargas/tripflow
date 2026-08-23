@@ -30,6 +30,8 @@
   --color-category-comida: #a1d35b;
   --color-category-hotel: #f79711;
   --color-category-imprevistos: #6b7280;
+  --color-category-compras: #2e6ddc;
+  --color-category-otros: #7c5cbf;
 
   /* Tipografía */
   --font-display: "Inter", system-ui, sans-serif;
