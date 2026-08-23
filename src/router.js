@@ -13,6 +13,7 @@ import { renderShell } from "./components/app-shell.js";
 const routes = {
   "/": () => import("./pages/dashboard.js"),
   "/nuevo-viaje": () => import("./pages/new-trip.js"),
+  "/viajes": () => import("./pages/my-trips.js"),
   "/alertas": () => import("./pages/alerts.js"),
   "/historial": () => import("./pages/history.js"),
 };

@@ -22,7 +22,8 @@ justificación de cada color.
 | Badge de semáforo | ok / warning / danger | Ícono + texto + color, nunca solo color |
 | KPI card | — | `.kpi-card`, ícono + label + valor |
 | Menú de cuenta | cerrado / abierto | `components/account-menu.js`, foto (o inicial en placeholder navy) + nombre + email + chevron; dropdown con "Cerrar sesión". Se monta en el header de las 4 pantallas principales |
-| Campo de búsqueda | default / focus | `components/search-field.js`, ícono de lupa + input; filtra viajes por nombre en vivo. Usado en Inicio e Historial |
+| Campo de búsqueda | default / focus | `components/search-field.js`, ícono de lupa + input; filtra viajes por nombre en vivo. Usado en Inicio, Historial y Mis viajes |
+| Pestañas de filtro | default / hover / activa | `.tab-list`/`.tab-item`, subrayado navy en la activa. Usadas en Mis viajes (Todos/Activos/Cerrados) |
 | Gráfico de dona | con datos / vacío | SVG puro (`components/donut-chart.js`), sin librería de charting |
 | Alert item | warning / danger | Borde completo (1px) del color de severidad |
 | History item | — | Nombre, fechas, presupuesto vs. gasto real |
