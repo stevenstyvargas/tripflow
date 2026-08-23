@@ -3,12 +3,13 @@
 Controla tu presupuesto de viaje: crea viajes con un límite de gasto,
 registra tus gastos en segundos y recibe alertas antes de excederte.
 
-**Demo:** _(link público — se agrega al desplegar)_
+**Demo:** [tripflow-ashen-chi.vercel.app](https://tripflow-ashen-chi.vercel.app)
 
 Proyecto realizado para el reto técnico de Technical Product Designer en Alegra.
 
 ## Alcance de esta versión (v1)
 
+- Autenticación con Google (Firebase Auth) — sin contraseñas propias que gestionar
 - Dashboard de control de gastos
 - Creación de viajes con presupuesto límite
 - Registro de gastos
@@ -28,7 +29,11 @@ evaluación según tiempo disponible).
 
 - JavaScript vanilla (sin frameworks ni UI kits) + Vite como herramienta de build
 - CSS con variables/design tokens propios (ver `docs/design-system.md`)
-- Persistencia local (localStorage) — sin backend para las funciones core
+- Autenticación: Firebase Auth con Google — sin contraseñas propias que gestionar
+- Persistencia: Firestore, un documento por usuario autenticado
+  (`users/{uid}/trips/{tripId}/expenses/{expenseId}`), con reglas de
+  seguridad en `firestore.rules` para que cada usuario solo pueda leer
+  y escribir sus propios datos
 - Despliegue: Vercel, con dominio propio
 
 ## Cómo correr el proyecto localmente
@@ -37,11 +42,32 @@ evaluación según tiempo disponible).
 git clone <url-del-repo>
 cd tripflow
 npm install
+cp .env.example .env   # completar con las credenciales de tu proyecto Firebase
 npm run dev
 ```
 
 Esto levanta un servidor local (Vite) — la terminal mostrará la URL
 (normalmente `http://localhost:5173`).
+
+### Variables de entorno
+
+La app necesita un proyecto de Firebase propio (Authentication con el
+proveedor de Google habilitado + Firestore) y sus credenciales en
+`.env` (no versionado — ver `.env.example` como plantilla):
+
+```
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+```
+
+Sin estas variables, Firebase no se inicializa y la app no llega ni a
+mostrar la pantalla de login. Al desplegar en Vercel, las mismas
+variables deben configurarse ahí (Project Settings → Environment
+Variables).
 
 Para generar la build de producción:
 
@@ -59,12 +85,15 @@ tripflow/
 ├── public/               # Assets estáticos, íconos
 ├── src/
 │   ├── components/       # Componentes de UI reutilizables
-│   ├── data/             # Store central (estado + persistencia)
-│   ├── pages/            # Vistas: dashboard, nuevo viaje, registrar gasto
+│   ├── data/             # Firebase (auth.js, firebase.js) + store central en memoria
+│   ├── pages/            # Vistas: Inicio, Mis viajes, Alertas, detalle de
+│   │                     # viaje (registro de gastos), nuevo/editar viaje, login
 │   ├── styles/           # tokens.css (design tokens) + base.css
-│   ├── utils/            # Helpers (divisas, formato, etc.)
+│   ├── utils/            # Helpers (formato de moneda, íconos, categorías, etc.)
 │   ├── main.js           # Punto de entrada
 │   └── router.js         # Router simple basado en hash
+├── firestore.rules       # Reglas de seguridad de Firestore
+├── .env.example          # Plantilla de variables de entorno (ver más abajo)
 ├── index.html
 └── vite.config.js
 ```
@@ -74,6 +103,7 @@ tripflow/
 - [`docs/branding.md`](./docs/branding.md) — sistema de color, tipografía y logo, con justificación de cada decisión
 - [`docs/design-system.md`](./docs/design-system.md) — tokens, componentes y estados
 - [`docs/research.md`](./docs/research.md) — referencias revisadas (ej. Tickelia) y qué se aprendió de cada una
+- [`docs/product-decisions.md`](./docs/product-decisions.md) — decisiones de producto/UX tomadas durante el desarrollo, con el problema y el porqué de cada una
 - [`docs/ai-process.md`](./docs/ai-process.md) — registro de qué se le pidió a la IA y qué se ajustó manualmente
 
 ## Roadmap (próximas actualizaciones)
