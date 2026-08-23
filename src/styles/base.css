@@ -723,6 +723,10 @@ button[type="submit"] {
   font-size: var(--text-xs);
 }
 
+.expense-item-delete {
+  flex-shrink: 0;
+}
+
 /* ---------- Modal de confirmación ---------- */
 
 .modal-overlay {

@@ -5,7 +5,7 @@
 // estado en memoria de store.js, así que un gasto nuevo ya persistido
 // ahí se refleja sin código adicional.
 
-import { getTrip, getTripTotal, getExpensesByTrip, addExpense } from "../data/store.js";
+import { getTrip, getTripTotal, getExpensesByTrip, addExpense, deleteExpense } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
 import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
@@ -28,6 +28,9 @@ function renderExpenseItem(expense) {
         <p class="expense-item-amount">${formatCurrency(expense.amount, expense.currency)}</p>
         <p class="expense-item-date">${escapeHtml(expense.date)}</p>
       </div>
+      <button type="button" class="button-danger-outline expense-item-delete" data-expense-id="${expense.id}">
+        ${icon("trash-2")}<span>Eliminar</span>
+      </button>
     </li>
   `;
 }
@@ -121,6 +124,25 @@ export function render(container, { tripId } = {}) {
   toggleButton.addEventListener("click", () => {
     form.hidden = !form.hidden;
     if (!form.hidden) form.querySelector("#expense-amount").focus();
+  });
+
+  container.querySelectorAll(".expense-item-delete").forEach((button) => {
+    button.addEventListener("click", () => {
+      const expense = expenses.find((e) => e.id === button.dataset.expenseId);
+      if (!expense) return;
+
+      showConfirmModal({
+        title: "Eliminar gasto",
+        body: `¿Eliminar este gasto de ${formatCurrency(expense.amount, expense.currency)}?`,
+        confirmLabel: "Eliminar",
+        cancelLabel: "Cancelar",
+        onConfirm: async () => {
+          button.disabled = true;
+          await deleteExpense(expense.id);
+          render(container, { tripId: trip.id });
+        },
+      });
+    });
   });
 
   async function saveExpense(expenseData) {

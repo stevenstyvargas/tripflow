@@ -2,7 +2,7 @@
 // en Firestore, un documento de viajes por usuario autenticado
 // (users/{uid}/trips/{tripId}/expenses/{expenseId}).
 
-import { collection, addDoc, updateDoc, doc, getDocs } from "firebase/firestore";
+import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { SUPPORTED_CURRENCIES } from "../utils/currency.js";
 import { EXPENSE_CATEGORIES } from "../utils/categories.js";
 import { db } from "./firebase.js";
@@ -179,4 +179,18 @@ export async function addExpense(expense) {
 
 export function getTripTotal(tripId) {
   return getExpensesByTrip(tripId).reduce((sum, e) => sum + e.amount, 0);
+}
+
+/**
+ * Elimina un gasto de Firestore y del estado en memoria. El total del
+ * viaje, el semáforo, la dona y las alertas se recalculan solos la
+ * próxima vez que se rendericen: todos leen `state.expenses` en vivo.
+ * @param {string} expenseId
+ */
+export async function deleteExpense(expenseId) {
+  const expense = state.expenses.find((e) => e.id === expenseId);
+  if (!expense) return;
+
+  await deleteDoc(doc(db, "users", currentUid, "trips", expense.tripId, "expenses", expenseId));
+  state.expenses = state.expenses.filter((e) => e.id !== expenseId);
 }
