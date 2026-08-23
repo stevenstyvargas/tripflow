@@ -1,10 +1,9 @@
 // Página: detalle de viaje. Muestra el estado del presupuesto, la torre
-// de gasto por categoría de ESTE viaje (no de todos — la de Inicio suma
-// todos los viajes activos), el historial de gastos y el formulario
-// para registrar uno nuevo. El semáforo de Inicio y las alertas de
-// Alertas se recalculan solos la próxima vez que se rendericen: leen
-// siempre el estado en memoria de store.js, así que un gasto nuevo ya
-// persistido ahí se refleja sin código adicional.
+// de gasto por categoría de ESTE viaje, el historial de gastos y el
+// formulario para registrar uno nuevo. El semáforo de Inicio y las
+// alertas de Alertas se recalculan solos la próxima vez que se
+// rendericen: leen siempre el estado en memoria de store.js, así que un
+// gasto nuevo ya persistido ahí se refleja sin código adicional.
 
 import { getTrip, getTripTotal, getExpensesByTrip, addExpense, updateExpense, deleteExpense, TRIP_STATUS } from "../data/store.js";
 import { formatCurrency, formatStoredAmount } from "../utils/currency.js";
@@ -43,10 +42,9 @@ function renderExpenseItem(expense) {
   `;
 }
 
-// Mismo componente y misma paleta que Inicio (bar-chart.js,
-// --color-category-*), pero calculado solo con los gastos de ESTE
-// viaje — para que el usuario asocie color→categoría sin importar
-// dónde lo vea, y a la vez no confunda esta vista con la agregada.
+// Mismos colores por categoría que el resto de la app
+// (--color-category-* en tokens.css), calculado solo con los gastos de
+// ESTE viaje.
 function computeCategoryBreakdown(expenses) {
   const totals = Object.fromEntries(EXPENSE_CATEGORIES.map((c) => [c.id, 0]));
 

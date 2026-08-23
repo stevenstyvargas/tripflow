@@ -24,8 +24,9 @@
   --color-status-warning-text: #92530a;
   --color-status-danger-text: #8f1f19;
 
-  /* Categorías de gasto (gráfico de dona) — paleta propia, distinta
-     del semáforo para no mezclar significados de estado con categoría */
+  /* Categorías de gasto (torre de barras en detalle de viaje) — paleta
+     propia, distinta del semáforo para no mezclar significados de
+     estado con categoría */
   --color-category-transporte: #001860;
   --color-category-comida: #a1d35b;
   --color-category-hotel: #f79711;

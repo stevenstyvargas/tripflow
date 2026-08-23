@@ -1,8 +1,6 @@
 // Gráfico de barras verticales por categoría, en orden fijo (el orden de
-// EXPENSE_CATEGORIES, nunca por monto). Lo usan tanto Inicio (agregado
-// de todos los viajes activos) como el detalle de un viaje (solo ese
-// viaje) — mismo componente y misma paleta en las dos vistas, el título
-// de cada sección es lo que distingue qué se está viendo.
+// EXPENSE_CATEGORIES, nunca por monto). Se usa en el detalle de viaje
+// para mostrar cómo se reparte el gasto de ESE viaje entre categorías.
 
 import { icon } from "../utils/icons.js";
 import { formatCurrency } from "../utils/currency.js";
