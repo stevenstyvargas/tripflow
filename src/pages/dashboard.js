@@ -1,13 +1,16 @@
 // Página: Inicio. KPIs del periodo activo (una sola divisa, COP — ver
-// docs/product-decisions.md) y viajes activos como cards con foto de
-// destino + semáforo de estado. El desglose por categoría de un viaje
-// vive en trip-detail.js, no acá.
+// docs/product-decisions.md), dona de gasto por categoría agregada de
+// todos los viajes activos, y viajes activos como cards con foto de
+// destino + semáforo de estado. El desglose por categoría de UN viaje
+// (torre de barras) vive en trip-detail.js, no acá.
 
-import { getActiveTrips, getTripTotal, closeTrip } from "../data/store.js";
+import { getActiveTrips, getTripTotal, getExpensesByTrip, closeTrip } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
 import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
 import { renderKpiCard } from "../components/kpi-card.js";
+import { donutChart } from "../components/donut-chart.js";
+import { EXPENSE_CATEGORIES } from "../utils/categories.js";
 import { getCurrentUser } from "../data/auth.js";
 import { icon } from "../utils/icons.js";
 import { escapeHtml } from "../utils/dom.js";
@@ -36,6 +39,26 @@ function computeKpis(trips) {
     remaining: totalBudget - totalSpent,
     activeCount: trips.length,
   };
+}
+
+// Suma el gasto por categoría de TODOS los viajes activos — válido
+// porque la app usa una única divisa (COP), sin nada que convertir ni
+// mezclar entre viajes. Mismos colores por categoría que el resto de
+// la app (--color-category-* en tokens.css).
+function computeCategoryBreakdown(trips) {
+  const totals = Object.fromEntries(EXPENSE_CATEGORIES.map((c) => [c.id, 0]));
+
+  for (const trip of trips) {
+    for (const expense of getExpensesByTrip(trip.id)) {
+      if (expense.category in totals) totals[expense.category] += expense.amount;
+    }
+  }
+
+  return EXPENSE_CATEGORIES.map((c) => ({
+    label: c.label,
+    value: totals[c.id],
+    color: `var(${c.colorVar})`,
+  }));
 }
 
 function renderTripCard(trip) {
@@ -89,6 +112,7 @@ function bindTripsSection(sectionBody, trips, container) {
 export function render(container) {
   const trips = getActiveTrips();
   const kpis = computeKpis(trips);
+  const categoryBreakdown = computeCategoryBreakdown(trips);
   const greetingName = getGreetingName(getCurrentUser());
 
   container.innerHTML = `
@@ -112,6 +136,12 @@ export function render(container) {
         ${renderKpiCard({ iconName: "piggy-bank", label: "Presupuesto restante", value: formatCurrency(kpis.remaining) })}
         ${renderKpiCard({ iconName: "plane", label: "Viajes activos", value: kpis.activeCount })}
       </ul>
+
+      <section class="section">
+        <h2>Gasto por categoría</h2>
+        <p class="section-subtitle">Todos tus viajes activos</p>
+        ${donutChart(categoryBreakdown)}
+      </section>
 
       <section class="section">
         <h2>Tus viajes activos</h2>

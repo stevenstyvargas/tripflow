@@ -1,7 +1,8 @@
 // Categorías de gasto para el registro de gastos y su desglose por
-// categoría (torre de barras en el detalle de cada viaje). El color de
-// cada una vive en tokens.css como --color-category-*, separado del
-// semáforo de estado.
+// categoría: dona en Inicio (agregado de todos los viajes activos) y
+// torre de barras en el detalle de cada viaje. El color de cada una
+// vive en tokens.css como --color-category-*, separado del semáforo
+// de estado.
 
 export const EXPENSE_CATEGORIES = [
   { id: "transporte", label: "Transporte", icon: "car", colorVar: "--color-category-transporte" },

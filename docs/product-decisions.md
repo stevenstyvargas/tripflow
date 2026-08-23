@@ -451,6 +451,52 @@ definida en `docs/branding.md`. Reconstruir con los componentes propios
 crear piezas nuevas desde cero también evita que Historial e Inicio se
 desincronicen visualmente con el tiempo.
 
+## Vuelve la dona de "Gasto por categoría" a Inicio, ahora que es matemáticamente válida
+
+**Contexto:** la dona de categorías (`components/donut-chart.js`) vivió
+originalmente en Inicio, sumando el gasto por categoría de todos los
+viajes activos. Se quitó de ahí dos veces, por dos razones distintas
+(ver "Torre de barras en Inicio, dona dentro de cada viaje" y "KPIs de
+Inicio separados por divisa" más arriba en este documento):
+1. Primero se cambió por una torre de barras para diferenciar
+   visualmente la vista agregada (Inicio) del detalle de un viaje.
+2. Después, al construirse el sistema multi-divisa, sumar categorías
+   entre viajes en distintas divisas dejó de ser una operación válida
+   — normalizar con `convert()` mezclaba montos que el usuario no
+   podía gastar entre sí (el mismo problema que afectó a los KPIs de
+   "Gastado en el periodo"/"Presupuesto restante" en su momento). El
+   gráfico se eliminó de Inicio por completo en ese punto, y
+   `donut-chart.js` se borró del proyecto al no tener ya ningún uso.
+
+**Decisión:** con la simplificación a una sola divisa (COP — ver
+"Simplificación a una sola divisa (COP)" en este mismo documento), el
+problema de fondo desaparece: todos los montos de todos los viajes
+activos están en la misma unidad, así que sumarlos por categoría vuelve
+a ser una operación matemáticamente correcta, no solo visualmente
+plausible. Se restaura `donut-chart.js` (SVG puro, sin librerías,
+idéntico al original) y se agrega de nuevo a Inicio bajo "Gasto por
+categoría" / "Todos tus viajes activos", calculado sobre
+`getExpensesByTrip()` de cada viaje activo. La torre de barras
+(`components/bar-chart.js`) se mantiene sin cambios en el detalle de
+cada viaje ("Gasto por categoría de [nombre del viaje]") — ambos
+gráficos conviven, cada uno respondiendo una pregunta distinta: la
+dona da la proporción del total agregado, la torre da el detalle con
+montos de un viaje puntual. Mismos colores por categoría
+(`--color-category-*`) y mismo estado vacío (`.donut-chart-empty`) que
+ya usaba el componente antes de eliminarse.
+
+**Por qué:** la razón original para sacar la dona de Inicio (mezcla de
+divisas) ya no aplica — mantenerla afuera por la razón de
+diferenciación visual (torre vs. dona) tampoco se sostenía sola, según
+quedó documentado en "Mismo gráfico de torres en las dos vistas": dos
+tipos de gráfico para el mismo dato generaba más inconsistencia que
+claridad. Ahora que Inicio agrega TODOS los viajes y el detalle de
+viaje muestra solo UNO, el título de cada sección ya comunica esa
+diferencia sin necesitar dos lenguajes visuales — la dona en Inicio no
+reintroduce la confusión que motivó cambiarla por la torre en su
+momento, porque esa decisión fue sobre uniformar el tipo de gráfico
+entre pantallas, no sobre preferir la torre en sí.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 
