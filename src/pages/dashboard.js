@@ -1,9 +1,9 @@
-// Página: Inicio. KPIs del periodo activo, separados por divisa (nunca
-// sumados ni convertidos entre sí — ver docs/product-decisions.md), y
-// viajes activos como cards con foto de destino + semáforo de estado.
-// El desglose por categoría de un viaje vive en trip-detail.js, no acá:
-// mezclar categorías de viajes en distintas divisas tenía el mismo
-// problema que mezclar los KPIs.
+// Página: Inicio. KPIs del periodo activo de UNA divisa a la vez,
+// elegida con el selector del header (nunca sumados ni convertidos
+// entre divisas — ver docs/product-decisions.md), y viajes activos
+// como cards con foto de destino + semáforo de estado, sin filtrar por
+// la divisa seleccionada. El desglose por categoría de un viaje vive en
+// trip-detail.js, no acá.
 
 import { getActiveTrips, getTripTotal, closeTrip } from "../data/store.js";
 import { formatCurrency, SUPPORTED_CURRENCIES } from "../utils/currency.js";
@@ -12,50 +12,58 @@ import { statusBadge } from "../components/status-badge.js";
 import { icon } from "../utils/icons.js";
 import { escapeHtml } from "../utils/dom.js";
 
-// Píldora navy/verde/gris (mismo estilo visual que .status-badge:
-// fondo tintado + texto oscurecido del mismo tono, no color plano) para
-// distinguir cada bloque de divisa de un vistazo, sin depender solo de
-// leer el código de 3 letras.
+// Píldora navy/verde/gris (mismo estilo visual que .status-badge: fondo
+// tintado + texto oscurecido del mismo tono, no color plano), reusada
+// como botón del selector de divisa.
 const CURRENCY_PILL_CLASS = {
   COP: "currency-pill-cop",
   USD: "currency-pill-usd",
   EUR: "currency-pill-eur",
 };
 
-// Un bloque por cada divisa que REALMENTE esté en uso entre los viajes
-// activos (nunca se fuerzan bloques de divisas sin viajes). Orden fijo
-// según SUPPORTED_CURRENCIES, no según el orden en que se crearon los
-// viajes, para que la posición de cada bloque no cambie entre renders.
-function computeKpisByCurrency(trips) {
-  const totals = {};
+// Divisa elegida en el selector de Inicio. Vive en memoria del módulo
+// (no en Firestore): se mantiene mientras se navega dentro de la app y
+// se resetea solo al recargar la página, tal como se pidió.
+let selectedCurrency = null;
 
-  for (const trip of trips) {
-    const entry = totals[trip.currency] ?? { spent: 0, budget: 0 };
-    entry.spent += getTripTotal(trip.id);
-    entry.budget += trip.budgetLimit;
-    totals[trip.currency] = entry;
+// Divisas que están REALMENTE en uso entre los viajes activos, en el
+// orden fijo de SUPPORTED_CURRENCIES. Si no hay ningún viaje activo,
+// igual se deja COP disponible para que el selector no quede vacío.
+function getCurrenciesInUse(trips) {
+  const inUse = SUPPORTED_CURRENCIES.filter((currency) => trips.some((t) => t.currency === currency));
+  return inUse.length > 0 ? inUse : ["COP"];
+}
+
+// La divisa con más viajes activos; empate (incluido "nadie tiene
+// viajes") se resuelve a favor de COP.
+function getDefaultCurrency(trips) {
+  const counts = {};
+  for (const trip of trips) counts[trip.currency] = (counts[trip.currency] ?? 0) + 1;
+
+  let best = "COP";
+  let bestCount = counts.COP ?? 0;
+  for (const currency of SUPPORTED_CURRENCIES) {
+    const count = counts[currency] ?? 0;
+    if (count > bestCount) {
+      best = currency;
+      bestCount = count;
+    }
   }
-
-  return SUPPORTED_CURRENCIES.filter((currency) => currency in totals).map((currency) => ({
-    currency,
-    spent: totals[currency].spent,
-    remaining: totals[currency].budget - totals[currency].spent,
-  }));
+  return best;
 }
 
-function renderCurrencyKpiCard({ currency, spent, remaining }) {
-  return `
-    <li class="kpi-card">
-      <span class="currency-pill ${CURRENCY_PILL_CLASS[currency] ?? ""}">${currency}</span>
-      <div>
-        <p class="kpi-card-label">Gastado / restante</p>
-        <p class="kpi-card-value">${formatCurrency(spent, currency)} / ${formatCurrency(remaining, currency)}</p>
-      </div>
-    </li>
-  `;
+function computeKpiForCurrency(trips, currency) {
+  let spent = 0;
+  let budget = 0;
+  for (const trip of trips) {
+    if (trip.currency !== currency) continue;
+    spent += getTripTotal(trip.id);
+    budget += trip.budgetLimit;
+  }
+  return { spent, remaining: budget - spent };
 }
 
-function renderCountKpiCard({ iconName, label, value }) {
+function renderKpiCard({ iconName, label, value }) {
   return `
     <li class="kpi-card">
       ${icon(iconName, "kpi-card-icon")}
@@ -64,6 +72,40 @@ function renderCountKpiCard({ iconName, label, value }) {
         <p class="kpi-card-value">${value}</p>
       </div>
     </li>
+  `;
+}
+
+function renderCurrencySelect(currenciesInUse, currency) {
+  const options = currenciesInUse
+    .map(
+      (c) => `
+      <li role="presentation">
+        <button
+          type="button"
+          role="option"
+          aria-selected="${c === currency}"
+          class="currency-select-option"
+          data-currency="${c}"
+        >${c}</button>
+      </li>
+    `
+    )
+    .join("");
+
+  return `
+    <div class="currency-select">
+      <button
+        type="button"
+        id="currency-select-toggle"
+        class="currency-pill ${CURRENCY_PILL_CLASS[currency] ?? ""} currency-select-toggle"
+        aria-haspopup="listbox"
+        aria-expanded="false"
+      >
+        <span>${currency}</span>
+        ${icon("chevron-down", "currency-select-caret")}
+      </button>
+      <ul class="currency-select-menu" role="listbox" hidden>${options}</ul>
+    </div>
   `;
 }
 
@@ -95,18 +137,30 @@ function renderTripCard(trip) {
 
 export function render(container) {
   const trips = getActiveTrips();
-  const kpisByCurrency = computeKpisByCurrency(trips);
+  const currenciesInUse = getCurrenciesInUse(trips);
+
+  // Si nunca se eligió divisa, o la elegida ya no tiene ningún viaje
+  // activo (se cerró/eliminó), se vuelve a calcular el default.
+  if (!selectedCurrency || !currenciesInUse.includes(selectedCurrency)) {
+    selectedCurrency = getDefaultCurrency(trips);
+  }
+
+  const kpi = computeKpiForCurrency(trips, selectedCurrency);
 
   container.innerHTML = `
     <main class="page page-home">
       <header class="page-header">
         <h1>Inicio</h1>
-        <a href="#/nuevo-viaje" class="button-primary">${icon("plus")}<span>Nuevo viaje</span></a>
+        <div class="page-header-actions">
+          ${renderCurrencySelect(currenciesInUse, selectedCurrency)}
+          <a href="#/nuevo-viaje" class="button-primary">${icon("plus")}<span>Nuevo viaje</span></a>
+        </div>
       </header>
 
       <ul class="kpi-row">
-        ${kpisByCurrency.map(renderCurrencyKpiCard).join("")}
-        ${renderCountKpiCard({ iconName: "plane", label: "Viajes activos", value: trips.length })}
+        ${renderKpiCard({ iconName: "wallet", label: "Gastado en el periodo", value: formatCurrency(kpi.spent, selectedCurrency) })}
+        ${renderKpiCard({ iconName: "piggy-bank", label: "Presupuesto restante", value: formatCurrency(kpi.remaining, selectedCurrency) })}
+        ${renderKpiCard({ iconName: "plane", label: "Viajes activos", value: trips.length })}
       </ul>
 
       <section class="section">
@@ -119,6 +173,46 @@ export function render(container) {
       </section>
     </main>
   `;
+
+  const currencySelect = container.querySelector(".currency-select");
+  const currencyToggle = container.querySelector("#currency-select-toggle");
+  const currencyMenu = container.querySelector(".currency-select-menu");
+
+  function onDocumentClick(event) {
+    if (!currencySelect.contains(event.target)) closeCurrencyMenu();
+  }
+
+  function onKeydown(event) {
+    if (event.key === "Escape") closeCurrencyMenu();
+  }
+
+  function openCurrencyMenu() {
+    currencyMenu.hidden = false;
+    currencyToggle.setAttribute("aria-expanded", "true");
+    document.addEventListener("click", onDocumentClick);
+    document.addEventListener("keydown", onKeydown);
+  }
+
+  function closeCurrencyMenu() {
+    currencyMenu.hidden = true;
+    currencyToggle.setAttribute("aria-expanded", "false");
+    document.removeEventListener("click", onDocumentClick);
+    document.removeEventListener("keydown", onKeydown);
+  }
+
+  currencyToggle.addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (currencyMenu.hidden) openCurrencyMenu();
+    else closeCurrencyMenu();
+  });
+
+  container.querySelectorAll(".currency-select-option").forEach((button) => {
+    button.addEventListener("click", () => {
+      selectedCurrency = button.dataset.currency;
+      closeCurrencyMenu();
+      render(container);
+    });
+  });
 
   container.querySelectorAll(".trip-card-close").forEach((button) => {
     button.addEventListener("click", async () => {

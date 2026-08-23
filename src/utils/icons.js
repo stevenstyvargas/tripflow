@@ -25,6 +25,7 @@ import shoppingBag from "lucide-static/icons/shopping-bag.svg?raw";
 import packageIcon from "lucide-static/icons/package.svg?raw";
 import trash2 from "lucide-static/icons/trash-2.svg?raw";
 import edit2 from "lucide-static/icons/edit-2.svg?raw";
+import chevronDown from "lucide-static/icons/chevron-down.svg?raw";
 
 const ICONS = {
   home,
@@ -50,6 +51,7 @@ const ICONS = {
   package: packageIcon,
   "trash-2": trash2,
   "edit-2": edit2,
+  "chevron-down": chevronDown,
 };
 
 /**

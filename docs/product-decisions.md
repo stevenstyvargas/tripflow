@@ -248,6 +248,8 @@ aprenda a leer dos gráficos distintos para el mismo tipo de dato.
 
 ## KPIs de Inicio separados por divisa, no sumados
 
+> **Superada por la siguiente decisión** ("Selector de divisa en vez de columnas separadas") — el problema de fondo (no sumar divisas distintas) sigue resuelto igual, pero la solución de UI cambió de "una columna de KPI por divisa" a "un selector que muestra una divisa a la vez", justo la migración que esta misma entrada ya anticipaba como roadmap.
+
 **Problema:** "Gastado en el periodo" y "Presupuesto restante" sumaban
 el gasto/presupuesto de TODOS los viajes activos normalizándolos a COP
 con tasas fijas (`convert()`), aunque el usuario tuviera viajes en
@@ -278,6 +280,37 @@ volvería ilegible. Queda como roadmap (ver `README.md`) diseñar un
 patrón distinto (ej. selector de divisa, vista consolidada opcional
 usando `convert()`, que se deja en el código sin uso actual justamente
 para esto) cuando se amplíe el soporte de divisas más allá de v1.
+
+## Selector de divisa en vez de columnas separadas
+
+**Problema:** las columnas de KPI por divisa (decisión anterior)
+resolvían el problema de no sumar divisas distintas, pero con 2+
+divisas en uso la fila de KPIs se veía como una tabla comparativa en
+vez de un resumen del periodo — y esa misma decisión ya anotaba que
+las columnas no escalan bien más allá de 2-3 divisas.
+
+**Decisión:** las columnas se reemplazan por un selector de divisa en
+el header (patrón "cambiar idioma" tipo Amazon): una píldora con la
+divisa activa y una flecha (reusa `.currency-pill`, ya existente) que
+al hacer clic despliega un menú con las divisas *realmente* en uso
+entre los viajes activos — dinámico, no una lista fija de 3. Los KPIs
+"Gastado en el periodo" y "Presupuesto restante" vuelven a ser un solo
+bloque limpio (como antes de separar por divisa), mostrando solo los
+montos de la divisa seleccionada. Por defecto se selecciona la divisa
+con más viajes activos (empate → COP). La selección vive en una
+variable a nivel de módulo en `dashboard.js` (no en Firestore): se
+mantiene mientras se navega dentro de la app y se resetea solo al
+recargar la página, tal como se pidió. Si la divisa seleccionada deja
+de tener viajes activos (se cerraron o eliminaron todos), se recalcula
+el default automáticamente en el siguiente render. Las cards de "Tus
+viajes activos" no se filtran por la divisa seleccionada — siguen
+mostrando todos los viajes con su propia divisa nativa.
+
+**Por qué:** un selector escala mejor que columnas de ancho variable a
+medida que se agreguen más divisas (el problema de escalabilidad que
+ya se había anotado como roadmap), y un solo bloque de KPI es más
+fácil de leer de un vistazo que varias columnas — el usuario elige qué
+divisa quiere ver en vez de tener que escanear todas a la vez.
 
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
