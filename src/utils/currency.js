@@ -10,10 +10,13 @@ const CURRENCY_LOCALES = {
   EUR: "de-DE",
 };
 
+// Sin decimales en ninguna divisa: es solo para mostrar en pantalla, los
+// montos se siguen guardando y sumando con precisión completa (ver
+// store.js/status.js) — esto no redondea nada salvo lo que el usuario ve.
 const CURRENCY_FORMATTERS = {
   COP: new Intl.NumberFormat(CURRENCY_LOCALES.COP, { style: "currency", currency: "COP", maximumFractionDigits: 0 }),
-  USD: new Intl.NumberFormat(CURRENCY_LOCALES.USD, { style: "currency", currency: "USD" }),
-  EUR: new Intl.NumberFormat(CURRENCY_LOCALES.EUR, { style: "currency", currency: "EUR" }),
+  USD: new Intl.NumberFormat(CURRENCY_LOCALES.USD, { style: "currency", currency: "USD", maximumFractionDigits: 0 }),
+  EUR: new Intl.NumberFormat(CURRENCY_LOCALES.EUR, { style: "currency", currency: "EUR", maximumFractionDigits: 0 }),
 };
 
 export function formatCurrency(amount, currency) {
