@@ -1,5 +1,8 @@
 // Página: Alertas. Viajes activos que cruzaron el umbral naranja (80%)
 // o rojo (100%) del presupuesto — mismo semáforo que Inicio/Historial.
+// Cards con foto de destino (mismo patrón visual que Historial): borde
+// completo del color de severidad, ícono+texto de alerta, y botón
+// "Ver viaje" hacia el detalle de ese viaje.
 
 import { getActiveTrips, getTripTotal } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
@@ -23,14 +26,21 @@ function renderAlert(trip) {
   const spent = getTripTotal(trip.id);
   const status = getBudgetStatus(spent, trip.budgetLimit);
   const meta = getStatusMeta(status);
+  const safePhotoUrl = /^https?:\/\//.test(trip.photoUrl || "") ? escapeHtml(trip.photoUrl) : "";
 
   return `
     <li class="alert-item alert-item-${status}">
+      <div class="alert-item-photo"${safePhotoUrl ? ` style="background-image:url('${safePhotoUrl}')"` : ""}>
+        ${!safePhotoUrl ? icon("plane", "trip-card-photo-placeholder") : ""}
+      </div>
       ${icon(meta.icon, "alert-item-icon")}
-      <div>
+      <div class="alert-item-body">
         <p class="alert-item-title">${escapeHtml(trip.name)}</p>
         <p class="alert-item-text">${describeAlert(trip, spent, status)}</p>
       </div>
+      <a href="#/viaje/${trip.id}" class="button-outline alert-item-action">
+        <span>Ver viaje</span>${icon("arrow-right")}
+      </a>
     </li>
   `;
 }

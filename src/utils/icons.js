@@ -26,6 +26,7 @@ import chevronRight from "lucide-static/icons/chevron-right.svg?raw";
 import calculator from "lucide-static/icons/calculator.svg?raw";
 import search from "lucide-static/icons/search.svg?raw";
 import chevronDown from "lucide-static/icons/chevron-down.svg?raw";
+import arrowRight from "lucide-static/icons/arrow-right.svg?raw";
 
 const ICONS = {
   home,
@@ -52,6 +53,7 @@ const ICONS = {
   calculator,
   search,
   "chevron-down": chevronDown,
+  "arrow-right": arrowRight,
 };
 
 /**
