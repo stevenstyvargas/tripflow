@@ -3,7 +3,10 @@
 // Usado en Inicio para el gasto por categoría de TODOS los viajes
 // activos: solo es matemáticamente válido sumar montos entre viajes
 // porque la app usa una única divisa (COP) — ver
-// docs/product-decisions.md.
+// docs/product-decisions.md. El centro muestra el total gastado, y
+// cada fila de la leyenda su % y monto sobre ese mismo total.
+
+import { formatCurrency, splitCurrencyUnit } from "../utils/currency.js";
 
 const RADIUS = 60;
 const STROKE = 24;
@@ -44,22 +47,34 @@ export function donutChart(segments) {
     })
     .join("");
 
+  const { amount: totalAmount, unit: totalUnit } = splitCurrencyUnit(formatCurrency(total));
+
   const legend = visibleSegments
-    .map(
-      (s) => `
+    .map((s) => {
+      const percent = Math.round((s.value / total) * 100);
+      return `
       <li class="donut-legend-item">
-        <span class="donut-legend-swatch" style="background:${s.color}"></span>
-        <span>${s.label}</span>
+        <span class="donut-legend-left">
+          <span class="donut-legend-swatch" style="background:${s.color}"></span>
+          <span>${s.label}</span>
+        </span>
+        <span class="donut-legend-value">${percent}% · ${formatCurrency(s.value)}</span>
       </li>
-    `
-    )
+    `;
+    })
     .join("");
 
   return `
     <div class="donut-chart">
-      <svg viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Gasto por categoría">
-        ${arcs}
-      </svg>
+      <div class="donut-chart-visual">
+        <svg viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Gasto por categoría">
+          ${arcs}
+        </svg>
+        <div class="donut-chart-total">
+          <p class="donut-chart-total-amount">${totalAmount}${totalUnit ? `<span class="donut-chart-total-unit">${totalUnit}</span>` : ""}</p>
+          <p class="donut-chart-total-label">total</p>
+        </div>
+      </div>
       <ul class="donut-legend">${legend}</ul>
     </div>
   `;

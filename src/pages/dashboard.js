@@ -1,6 +1,8 @@
 // Página: Inicio. KPIs del periodo activo (una sola divisa, COP — ver
-// docs/product-decisions.md), dona de gasto por categoría agregada de
-// todos los viajes activos, y viajes activos como cards con foto de
+// docs/product-decisions.md), un grid 50/50 con "Gasto por categoría"
+// (dona, components/donut-chart.js) y "Gasto vs presupuesto" (anillo
+// de semáforo, components/budget-ring.js) — ambos agregados de todos
+// los viajes activos — y viajes activos como cards con foto de
 // destino + semáforo de estado (components/trip-card.js, compartido
 // con Mis viajes). El desglose por categoría de UN viaje (torre de
 // barras) vive en trip-detail.js, no acá.
@@ -9,6 +11,7 @@ import { getActiveTrips, getTripTotal, getExpensesByTrip, closeTrip } from "../d
 import { formatCurrency } from "../utils/currency.js";
 import { renderKpiCard } from "../components/kpi-card.js";
 import { donutChart } from "../components/donut-chart.js";
+import { budgetRing } from "../components/budget-ring.js";
 import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
 import { searchField } from "../components/search-field.js";
 import { renderTripCard } from "../components/trip-card.js";
@@ -40,6 +43,7 @@ function computeKpis(trips) {
 
   return {
     totalSpent,
+    totalBudget,
     remaining: totalBudget - totalSpent,
     activeCount: trips.length,
   };
@@ -111,11 +115,19 @@ export function render(container) {
         ${renderKpiCard({ iconName: "plane", label: "Viajes activos", value: kpis.activeCount })}
       </ul>
 
-      <section class="section">
-        <h2>Gasto por categoría</h2>
-        <p class="section-subtitle">Todos tus viajes activos</p>
-        ${donutChart(categoryBreakdown)}
-      </section>
+      <div class="dashboard-charts-grid">
+        <section class="section">
+          <h2>Gasto por categoría</h2>
+          <p class="section-subtitle">Todos tus viajes activos</p>
+          ${donutChart(categoryBreakdown)}
+        </section>
+
+        <section class="section">
+          <h2>Gasto vs presupuesto</h2>
+          <p class="section-subtitle">Todos tus viajes activos</p>
+          ${budgetRing(kpis.totalSpent, kpis.totalBudget)}
+        </section>
+      </div>
 
       <section class="section">
         <h2>Tus viajes activos</h2>

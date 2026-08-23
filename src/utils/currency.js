@@ -14,6 +14,18 @@ export function formatCurrency(amount) {
   return `${CURRENCY_FORMATTER.format(amount)} COP`;
 }
 
+/**
+ * Separa el sufijo " COP" que formatCurrency() siempre agrega, para
+ * poder mostrarlo en un tono/tamaño distinto del monto (kpi-card,
+ * donut-chart, budget-ring) en vez de que ambos se vean como un solo
+ * bloque.
+ * @param {string} value resultado de formatCurrency()
+ */
+export function splitCurrencyUnit(value) {
+  const match = /^(.*)\s(COP)$/.exec(value);
+  return match ? { amount: match[1], unit: match[2] } : { amount: value, unit: null };
+}
+
 // Formato en vivo para inputs de monto (Presupuesto límite, Monto de
 // gasto): mismo locale que formatCurrency, para que el separador de
 // miles sea el mismo que se ve luego en el resto de la app, pero sin
