@@ -531,6 +531,40 @@ Recalcular los KPIs por pestaña (en vez de dejarlos fijos a
 usuario también puede ver "¿cuánto gasté en promedio en mis viajes
 activos?" sin tener que hacer la cuenta a mano.
 
+## Compartir viaje por WhatsApp en vez de exportar PDF
+
+**Problema:** "Exportar PDF por viaje" estaba planeado como funcionalidad
+pendiente, pero implementarla bien requiere una librería de generación
+de PDF en el cliente (o un endpoint serverless que arme el documento) y
+definir desde cero un layout de impresión — presupuesto de tiempo real
+antes de la entrega del martes, para un caso de uso (guardar/imprimir
+un PDF) que no es el más natural: cuando alguien quiere avisarle a un
+acompañante de viaje cómo va el presupuesto, lo típico no es enviarle
+un archivo adjunto, es escribirle.
+
+**Decisión:** se descarta el PDF y se reemplaza por un botón "Compartir
+por WhatsApp" en el detalle de viaje, junto al de Google Calendar y con
+el mismo tratamiento visual (`.button-outline`). Abre
+`https://wa.me/?text=` con un mensaje de texto plano armado con
+`encodeURIComponent()` — nombre del viaje y rango de fechas,
+presupuesto/gastado/restante en COP, el estado del semáforo **en texto
+explícito** ("En rango"/"Cerca del límite"/"Presupuesto excedido", nunca
+solo un emoji de color — misma regla de accesibilidad que ya aplica en
+toda la app) y las 3 categorías con más gasto. Sin librerías nuevas, sin
+backend: reusa `formatCurrency()` y el mismo `status` que ya calcula
+`getBudgetStatus()` para el modal de "vas a superar el presupuesto",
+nada de esa lógica se duplica.
+
+**Por qué:** un link `wa.me` con texto prellenado resuelve el 90% del
+valor de "compartir el estado del viaje con alguien" con una fracción
+de la complejidad de generar y renderizar un PDF — mismo criterio que
+ya se usó para "Agregar a Google Calendar" (link plano en vez de
+integrar la API completa). Si más adelante hace falta un documento
+formal descargable (ej. para un reembolso corporativo), ese es un caso
+de uso distinto y más específico que sí justificaría volver a evaluar
+un export a PDF — no es que la idea esté descartada para siempre, es
+que no es la prioridad para esta entrega.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 
