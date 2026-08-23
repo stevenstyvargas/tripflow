@@ -316,6 +316,17 @@ button[type="submit"] {
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-3);
+  margin-left: auto;
+}
+
+/* Detalle de viaje: el header ya no tiene título (se movió a
+   .trip-detail-summary), así que gana su propio separador delgado
+   pegado al borde inferior de la barra de 40px — mismo gris tenue que
+   ya usan otros separadores de la app (.sidebar, .tab-list). Sin
+   padding-bottom: el separador va justo debajo de la barra, no le
+   suma alto. */
+.page-trip-detail .page-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .search-field {
@@ -1024,15 +1035,57 @@ button[type="submit"] {
 
 /* ---------- Detalle de viaje ---------- */
 
+.trip-detail-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.trip-detail-photo {
+  flex-shrink: 0;
+  width: 4rem;
+  height: 4rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary);
+  background-size: cover;
+  background-position: center;
+}
+
+.trip-detail-photo .trip-card-photo-placeholder {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.trip-detail-heading {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
 .trip-detail-title {
   display: flex;
   align-items: center;
   gap: var(--space-2);
 }
 
-.trip-detail-budget {
-  margin: var(--space-1) 0 var(--space-2);
-  color: var(--color-text-muted);
+.trip-detail-title h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  line-height: 1.25;
+}
+
+/* Las 2 kpi-card ("Gastado"/"Restante") del resumen viven en el mismo
+   .kpi-row de Inicio, pero acá comparten fila con la foto y el nombre
+   en vez de ocupar el ancho completo de la página. */
+.trip-detail-summary .kpi-row {
+  flex: 1;
+  margin: 0;
 }
 
 .expense-form {

@@ -1,15 +1,20 @@
-// Página: detalle de viaje. Muestra el estado del presupuesto, la torre
-// de gasto por categoría de ESTE viaje, el historial de gastos y el
-// formulario para registrar uno nuevo. El semáforo de Inicio y las
-// alertas de Alertas se recalculan solos la próxima vez que se
-// rendericen: leen siempre el estado en memoria de store.js, así que un
-// gasto nuevo ya persistido ahí se refleja sin código adicional.
+// Página: detalle de viaje. Header sin título (solo acciones + menú de
+// cuenta, alineados a la derecha, 40px igual que las demás pantallas),
+// separador delgado, y debajo una fila con foto + nombre/badge +
+// KPI cards de "Gastado"/"Restante" (mismo components/kpi-card.js que
+// Inicio). Luego la torre de gasto por categoría de ESTE viaje, el
+// historial de gastos y el formulario para registrar uno nuevo. El
+// semáforo de Inicio y las alertas de Alertas se recalculan solos la
+// próxima vez que se rendericen: leen siempre el estado en memoria de
+// store.js, así que un gasto nuevo ya persistido ahí se refleja sin
+// código adicional.
 
 import { getTrip, getTripTotal, getExpensesByTrip, addExpense, updateExpense, deleteExpense, TRIP_STATUS } from "../data/store.js";
 import { formatCurrency, formatStoredAmount } from "../utils/currency.js";
 import { bindAmountInput, readAmountInput } from "../utils/amount-input.js";
 import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
+import { renderKpiCard } from "../components/kpi-card.js";
 import { showConfirmModal } from "../components/confirm-modal.js";
 import { barChart } from "../components/bar-chart.js";
 import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
@@ -146,20 +151,11 @@ export function render(container, { tripId } = {}) {
   // porque editar/eliminar un gasto puntual de un viaje cerrado sigue
   // permitido — no se pidió bloquear eso.
   const isClosed = trip.status === TRIP_STATUS.CLOSED;
+  const safePhotoUrl = /^https?:\/\//.test(trip.photoUrl || "") ? escapeHtml(trip.photoUrl) : "";
 
   container.innerHTML = `
     <main class="page page-trip-detail">
       <header class="page-header">
-        <div>
-          <div class="trip-detail-title">
-            <h1>${escapeHtml(trip.name)}</h1>
-            <a href="#/viaje/${trip.id}/editar" class="icon-button" aria-label="Editar viaje">${icon("edit-2")}</a>
-          </div>
-          <p class="trip-detail-budget">
-            ${formatCurrency(spent)} / ${formatCurrency(trip.budgetLimit)}
-          </p>
-          ${statusBadge(status)}
-        </div>
         <div class="page-header-actions">
           ${
             trip.startDate && trip.endDate
@@ -182,6 +178,23 @@ export function render(container, { tripId } = {}) {
           ${accountMenu(getCurrentUser())}
         </div>
       </header>
+
+      <div class="trip-detail-summary">
+        <div class="trip-detail-photo"${safePhotoUrl ? ` style="background-image:url('${safePhotoUrl}')"` : ""}>
+          ${!safePhotoUrl ? icon("plane", "trip-card-photo-placeholder") : ""}
+        </div>
+        <div class="trip-detail-heading">
+          <div class="trip-detail-title">
+            <h1>${escapeHtml(trip.name)}</h1>
+            <a href="#/viaje/${trip.id}/editar" class="icon-button" aria-label="Editar viaje">${icon("edit-2")}</a>
+          </div>
+          ${statusBadge(status)}
+        </div>
+        <ul class="kpi-row">
+          ${renderKpiCard({ iconName: "wallet", label: "Gastado", value: formatCurrency(spent) })}
+          ${renderKpiCard({ iconName: "piggy-bank", label: "Restante", value: formatCurrency(trip.budgetLimit - spent) })}
+        </ul>
+      </div>
 
       ${renderExpenseForm()}
 
