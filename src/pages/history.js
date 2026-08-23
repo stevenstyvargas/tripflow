@@ -2,6 +2,8 @@
 // KPIs de resumen arriba (mismo componente que Inicio), buscador por
 // nombre (mismo componente y filtrado en vivo que Inicio) y cards con
 // foto, clickeables hacia el detalle de viaje en modo solo lectura.
+// La fila horizontal no cambia de estructura, pero reusa el cálculo de
+// duración y la barra de progreso de components/trip-card.js.
 
 import { getClosedTrips, getTripTotal } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
@@ -10,6 +12,7 @@ import { statusBadge } from "../components/status-badge.js";
 import { renderKpiCard } from "../components/kpi-card.js";
 import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
 import { searchField } from "../components/search-field.js";
+import { budgetProgressBar, computeDurationBadge } from "../components/trip-card.js";
 import { getCurrentUser } from "../data/auth.js";
 import { icon } from "../utils/icons.js";
 import { escapeHtml } from "../utils/dom.js";
@@ -38,12 +41,14 @@ function renderHistoryItem(trip) {
   const spent = getTripTotal(trip.id);
   const status = getBudgetStatus(spent, trip.budgetLimit);
   const safePhotoUrl = /^https?:\/\//.test(trip.photoUrl || "") ? escapeHtml(trip.photoUrl) : "";
+  const duration = computeDurationBadge(trip);
 
   return `
     <li class="history-item">
       <a href="#/viaje/${trip.id}" class="history-item-link">
         <div class="history-item-photo"${safePhotoUrl ? ` style="background-image:url('${safePhotoUrl}')"` : ""}>
           ${!safePhotoUrl ? icon("plane", "trip-card-photo-placeholder") : ""}
+          ${duration ? `<span class="duration-badge duration-badge-sm">${duration}</span>` : ""}
         </div>
         <div class="history-item-body">
           <p class="history-item-name">${escapeHtml(trip.name)}</p>
@@ -52,6 +57,7 @@ function renderHistoryItem(trip) {
         <div class="history-item-meta">
           ${statusBadge(status)}
           <p class="history-item-budget">${formatCurrency(spent)} / ${formatCurrency(trip.budgetLimit)}</p>
+          ${budgetProgressBar(spent, trip.budgetLimit)}
         </div>
         ${icon("chevron-right", "history-item-chevron")}
       </a>

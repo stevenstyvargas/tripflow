@@ -1,17 +1,17 @@
 // Página: Inicio. KPIs del periodo activo (una sola divisa, COP — ver
 // docs/product-decisions.md), dona de gasto por categoría agregada de
 // todos los viajes activos, y viajes activos como cards con foto de
-// destino + semáforo de estado. El desglose por categoría de UN viaje
-// (torre de barras) vive en trip-detail.js, no acá.
+// destino + semáforo de estado (components/trip-card.js, compartido
+// con Mis viajes). El desglose por categoría de UN viaje (torre de
+// barras) vive en trip-detail.js, no acá.
 
 import { getActiveTrips, getTripTotal, getExpensesByTrip, closeTrip } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
-import { getBudgetStatus } from "../utils/status.js";
-import { statusBadge } from "../components/status-badge.js";
 import { renderKpiCard } from "../components/kpi-card.js";
 import { donutChart } from "../components/donut-chart.js";
 import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
 import { searchField } from "../components/search-field.js";
+import { renderTripCard } from "../components/trip-card.js";
 import { EXPENSE_CATEGORIES } from "../utils/categories.js";
 import { getCurrentUser } from "../data/auth.js";
 import { icon } from "../utils/icons.js";
@@ -65,32 +65,6 @@ function computeCategoryBreakdown(trips) {
   }));
 }
 
-function renderTripCard(trip) {
-  const spent = getTripTotal(trip.id);
-  const status = getBudgetStatus(spent, trip.budgetLimit);
-  const safePhotoUrl = /^https?:\/\//.test(trip.photoUrl || "") ? escapeHtml(trip.photoUrl) : "";
-
-  return `
-    <li class="trip-card">
-      <a href="#/viaje/${trip.id}" class="trip-card-link">
-        <div class="trip-card-photo"${safePhotoUrl ? ` style="background-image:url('${safePhotoUrl}')"` : ""}>
-          ${!safePhotoUrl ? icon("plane", "trip-card-photo-placeholder") : ""}
-        </div>
-        <div class="trip-card-body">
-          <p class="trip-card-name">${escapeHtml(trip.name)}</p>
-          <p class="trip-card-budget">
-            ${formatCurrency(spent)} / ${formatCurrency(trip.budgetLimit)}
-          </p>
-          ${statusBadge(status)}
-        </div>
-      </a>
-      <button type="button" class="trip-card-close button-danger-outline" data-trip-id="${trip.id}">
-        ${icon("trash-2")}<span>Finalizar viaje</span>
-      </button>
-    </li>
-  `;
-}
-
 function renderTripsSection(trips, query) {
   const filtered = query ? trips.filter((trip) => trip.name.toLowerCase().includes(query)) : trips;
 
@@ -100,7 +74,7 @@ function renderTripsSection(trips, query) {
   if (filtered.length === 0) {
     return `<p class="empty-state">No se encontraron viajes con ese nombre.</p>`;
   }
-  return `<ul class="trip-list">${filtered.map(renderTripCard).join("")}</ul>`;
+  return `<ul class="trip-list">${filtered.map((trip) => renderTripCard(trip, { showCloseButton: true })).join("")}</ul>`;
 }
 
 function bindTripsSection(sectionBody, trips, container) {

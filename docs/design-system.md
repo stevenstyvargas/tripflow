@@ -16,7 +16,7 @@ justificación de cada color.
 |---|---|---|
 | Botón primario | default / hover / focus / disabled | `.button-primary`, navy sólido |
 | Input de monto | default / focus / error | Debe soportar formato de las 3 divisas (`utils/currency.js`) |
-| Card de viaje | default / cerca del límite / excedido | Foto de destino + badge de semáforo (`components/status-badge.js`) |
+| Card de viaje | default / hover (elevación) | `components/trip-card.js`, compartido por Inicio y Mis viajes: foto (con badge de duración si hay fechas) + barra de progreso de presupuesto + badge de semáforo. Historial reusa el cálculo de duración/progreso en su propia fila horizontal |
 | Badge de divisa | — | Pendiente de componente propio; hoy el símbolo sale de `formatCurrency` |
 | Sidebar / nav item | default / hover / activo | `components/sidebar.js`, activo = fondo navy — solo navegación, la cuenta vive en el menú de cuenta |
 | Badge de semáforo | ok / warning / danger | Ícono + texto + color, nunca solo color |
@@ -24,7 +24,7 @@ justificación de cada color.
 | Menú de cuenta | cerrado / abierto | `components/account-menu.js`, foto (o inicial en placeholder navy) + nombre + email + chevron; dropdown con "Cerrar sesión". Se monta en el header de las 4 pantallas principales |
 | Campo de búsqueda | default / focus | `components/search-field.js`, ícono de lupa + input; filtra viajes por nombre en vivo. Usado en Inicio e Historial |
 | Gráfico de dona | con datos / vacío | SVG puro (`components/donut-chart.js`), sin librería de charting |
-| Alert item | warning / danger | Borde izquierdo del color de severidad |
+| Alert item | warning / danger | Borde completo (1px) del color de severidad |
 | History item | — | Nombre, fechas, presupuesto vs. gasto real |
 
 ## Alertas de presupuesto (semáforo)
