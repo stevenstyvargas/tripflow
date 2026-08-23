@@ -51,7 +51,7 @@ function renderHistoryItem(trip) {
           ${duration ? `<span class="duration-badge duration-badge-sm">${duration}</span>` : ""}
         </div>
         <div class="history-item-body">
-          <p class="history-item-name">${escapeHtml(trip.name)}</p>
+          <p class="history-item-name" title="${escapeHtml(trip.name)}">${escapeHtml(trip.name)}</p>
           <p class="history-item-dates">${icon("calendar")}${escapeHtml(formatDateRange(trip.startDate, trip.endDate))}</p>
         </div>
         <div class="history-item-meta">

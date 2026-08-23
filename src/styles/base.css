@@ -742,9 +742,13 @@ button[type="submit"] {
 }
 
 .trip-card-name {
+  width: 100%;
   margin: 0;
+  overflow: hidden;
   font-weight: 600;
   font-size: var(--text-lg);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .trip-card-budget {
@@ -991,8 +995,11 @@ button[type="submit"] {
 
 .history-item-name {
   margin: 0 0 var(--space-1);
+  overflow: hidden;
   font-weight: 600;
   font-size: var(--text-lg);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .history-item-dates {

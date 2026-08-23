@@ -62,7 +62,7 @@ export function renderTripCard(trip, { showCloseButton = false } = {}) {
           ${duration ? `<span class="duration-badge">${duration}</span>` : ""}
         </div>
         <div class="trip-card-body">
-          <p class="trip-card-name">${escapeHtml(trip.name)}</p>
+          <p class="trip-card-name" title="${escapeHtml(trip.name)}">${escapeHtml(trip.name)}</p>
           <p class="trip-card-budget">
             ${formatCurrency(spent)} / ${formatCurrency(trip.budgetLimit)}
           </p>
