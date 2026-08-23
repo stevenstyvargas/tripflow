@@ -10,7 +10,6 @@ import wallet from "lucide-static/icons/wallet.svg?raw";
 import piggyBank from "lucide-static/icons/piggy-bank.svg?raw";
 import user from "lucide-static/icons/user.svg?raw";
 import logOut from "lucide-static/icons/log-out.svg?raw";
-import mapPin from "lucide-static/icons/map-pin.svg?raw";
 import calendar from "lucide-static/icons/calendar.svg?raw";
 import car from "lucide-static/icons/car.svg?raw";
 import utensils from "lucide-static/icons/utensils.svg?raw";
@@ -20,7 +19,6 @@ import plus from "lucide-static/icons/plus.svg?raw";
 import circleCheck from "lucide-static/icons/circle-check.svg?raw";
 import alertTriangle from "lucide-static/icons/alert-triangle.svg?raw";
 import alertOctagon from "lucide-static/icons/alert-octagon.svg?raw";
-import lock from "lucide-static/icons/lock.svg?raw";
 import shoppingBag from "lucide-static/icons/shopping-bag.svg?raw";
 import packageIcon from "lucide-static/icons/package.svg?raw";
 import trash2 from "lucide-static/icons/trash-2.svg?raw";
@@ -37,7 +35,6 @@ const ICONS = {
   "piggy-bank": piggyBank,
   user,
   "log-out": logOut,
-  "map-pin": mapPin,
   calendar,
   car,
   utensils,
@@ -47,7 +44,6 @@ const ICONS = {
   "circle-check": circleCheck,
   "alert-triangle": alertTriangle,
   "alert-octagon": alertOctagon,
-  lock,
   "shopping-bag": shoppingBag,
   package: packageIcon,
   "trash-2": trash2,

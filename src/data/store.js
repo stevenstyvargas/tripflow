@@ -89,10 +89,6 @@ function validateTripInput({ name, budgetLimit }) {
   }
 }
 
-export function getTrips() {
-  return state.trips;
-}
-
 export function getActiveTrips() {
   return state.trips.filter((t) => t.status !== TRIP_STATUS.CLOSED);
 }
