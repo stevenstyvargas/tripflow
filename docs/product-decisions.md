@@ -497,6 +497,40 @@ reintroduce la confusión que motivó cambiarla por la torre en su
 momento, porque esa decisión fue sobre uniformar el tipo de gráfico
 entre pantallas, no sobre preferir la torre en sí.
 
+## Historial se fusiona con Mis viajes: eliminaba la redundancia de mostrar viajes cerrados en 2 pantallas
+
+**Problema:** al agregar "Mis viajes" (con sus pestañas Todos/Activos/
+Cerrados) quedaron dos pantallas mostrando lo mismo: la pestaña
+"Cerrados" de Mis viajes y la pantalla de Historial eran, en esencia,
+la misma lista de viajes cerrados con el mismo componente de card,
+solo que Historial además traía 4 KPIs de resumen (Viajes realizados,
+Gasto total, Promedio por viaje, Presupuesto cumplido) que "Cerrados"
+no tenía. Dos entradas de sidebar para llegar al mismo tipo de dato es
+justo la clase de redundancia que confunde más de lo que ayuda.
+
+**Decisión:** se elimina la pantalla de Historial (ruta, ítem de
+sidebar, componente) y sus 4 KPIs se mueven a Mis viajes, debajo del
+buscador y arriba de las pestañas — pero ya no fijos a "cerrados": se
+recalculan sobre el subconjunto de viajes de la pestaña activa
+(Todos/Activos/Cerrados). La pestaña "Cerrados" reproduce exactamente
+lo que Historial mostraba antes (mismos viajes, mismas 4 KPIs con los
+mismos valores), así que no se pierde ninguna vista que existiera
+antes — se llega a ella por pestaña en vez de por otra pantalla. El
+label de la primera KPI se ajusta según la pestaña ("Viajes
+realizados" solo en Cerrados, "Viajes" en Todos/Activos, porque
+"realizados" no tiene sentido para un viaje que sigue activo). Un link
+o bookmark viejo a `/historial` redirige automáticamente a
+`/viajes?tab=closed` (`router.js`), en vez de dar página en blanco.
+
+**Por qué:** menos pantallas para el mismo dato reduce la carga
+cognitiva de navegación sin quitarle nada al usuario — toda la
+información que tenía Historial sigue disponible, solo que accesible
+por pestaña en el mismo lugar donde ya puede ver todos sus viajes.
+Recalcular los KPIs por pestaña (en vez de dejarlos fijos a
+"cerrados") es más útil que el comportamiento anterior: ahora el
+usuario también puede ver "¿cuánto gasté en promedio en mis viajes
+activos?" sin tener que hacer la cuenta a mano.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 

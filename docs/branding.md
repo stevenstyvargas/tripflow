@@ -53,11 +53,13 @@ archivo, se reemplaza aquí.
 
 ## Aplicación
 
-- **Sidebar:** navegación fija (Inicio/Alertas/Historial), logo arriba,
-  usuario + cerrar sesión abajo. Item activo con fondo navy.
+- **Sidebar:** navegación fija (Inicio/Mis viajes/Alertas), solo logo y
+  navegación — la cuenta (foto/nombre/email/cerrar sesión) vive en el
+  menú de cuenta del header de cada página. Item activo con fondo navy.
 - **Inicio:** KPIs arriba, dona de gasto por categoría, cards de viajes
   activos con foto de destino grande + badge de semáforo.
 - **Alertas:** mismo semáforo que Inicio, listado de viajes que cruzaron
   80% o 100% del presupuesto.
-- **Historial:** viajes cerrados (acción manual desde su card en
-  Inicio), con fechas y presupuesto vs. gasto real.
+- **Mis viajes:** todos los viajes del usuario, con KPIs de resumen y
+  pestañas Todos/Activos/Cerrados (la pestaña Cerrados reemplaza a la
+  antigua pantalla de Historial — ver `docs/product-decisions.md`).

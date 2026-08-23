@@ -1,9 +1,6 @@
 // Card de viaje (Inicio, Mis viajes): foto con badge de duración,
 // nombre, presupuesto + barra de progreso, badge de semáforo y,
-// opcionalmente, el botón "Finalizar viaje". Historial usa el mismo
-// layout horizontal de siempre (no se le cambia la estructura), pero
-// reusa computeDurationBadge()/budgetProgressBar() de acá para no
-// duplicar el cálculo de duración ni el color/ancho de la barra.
+// opcionalmente, el botón "Finalizar viaje".
 
 import { icon } from "../utils/icons.js";
 import { formatCurrency } from "../utils/currency.js";
@@ -17,7 +14,7 @@ import { escapeHtml } from "../utils/dom.js";
  * válido (fin > inicio); si falta alguna fecha, no se fuerza el badge.
  * @param {{ startDate?: string, endDate?: string }} trip
  */
-export function computeDurationBadge(trip) {
+function computeDurationBadge(trip) {
   if (!trip.startDate || !trip.endDate) return "";
   const start = new Date(`${trip.startDate}T00:00:00Z`);
   const end = new Date(`${trip.endDate}T00:00:00Z`);
@@ -31,7 +28,7 @@ export function computeDurationBadge(trip) {
  * criterio que statusBadge). El ancho se topa al 100% aunque el gasto
  * real supere el presupuesto, para no desbordar el contenedor.
  */
-export function budgetProgressBar(spent, budgetLimit) {
+function budgetProgressBar(spent, budgetLimit) {
   const status = getBudgetStatus(spent, budgetLimit);
   const ratio = budgetLimit > 0 ? spent / budgetLimit : 0;
   const widthPercent = Math.min(Math.max(ratio, 0), 1) * 100;

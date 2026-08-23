@@ -15,7 +15,14 @@ const routes = {
   "/nuevo-viaje": () => import("./pages/new-trip.js"),
   "/viajes": () => import("./pages/my-trips.js"),
   "/alertas": () => import("./pages/alerts.js"),
-  "/historial": () => import("./pages/history.js"),
+};
+
+// Historial se fusionó con Mis viajes (ver docs/product-decisions.md):
+// mostraban lo mismo, viajes cerrados, en 2 lugares distintos. Un link
+// o bookmark viejo a /historial cae acá en vez de a una página en
+// blanco, y se redirige a la pestaña "Cerrados" de /viajes.
+const REDIRECTS = {
+  "/historial": "/viajes?tab=closed",
 };
 
 // "/viaje/{tripId}" y "/viaje/{tripId}/editar" no son rutas fijas: se
@@ -59,7 +66,14 @@ export async function initRouter(container) {
       return;
     }
 
-    const path = location.hash.replace("#", "") || "/";
+    const rawPath = location.hash.replace("#", "") || "/";
+    const [path, queryString] = rawPath.split("?");
+
+    if (REDIRECTS[path]) {
+      location.hash = `#${REDIRECTS[path]}`;
+      return;
+    }
+
     const match = matchRoute(path);
     const content = renderShell(container, path);
 
@@ -68,8 +82,9 @@ export async function initRouter(container) {
       return;
     }
 
+    const queryParams = Object.fromEntries(new URLSearchParams(queryString ?? ""));
     const page = await match.loadPage();
-    page.render(content, match.params);
+    page.render(content, { ...match.params, ...queryParams });
   }
 
   window.addEventListener("hashchange", render);

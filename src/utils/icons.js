@@ -4,7 +4,6 @@
 
 import home from "lucide-static/icons/home.svg?raw";
 import bell from "lucide-static/icons/bell.svg?raw";
-import history from "lucide-static/icons/history.svg?raw";
 import plane from "lucide-static/icons/plane.svg?raw";
 import wallet from "lucide-static/icons/wallet.svg?raw";
 import piggyBank from "lucide-static/icons/piggy-bank.svg?raw";
@@ -22,7 +21,6 @@ import shoppingBag from "lucide-static/icons/shopping-bag.svg?raw";
 import packageIcon from "lucide-static/icons/package.svg?raw";
 import trash2 from "lucide-static/icons/trash-2.svg?raw";
 import edit2 from "lucide-static/icons/edit-2.svg?raw";
-import chevronRight from "lucide-static/icons/chevron-right.svg?raw";
 import calculator from "lucide-static/icons/calculator.svg?raw";
 import search from "lucide-static/icons/search.svg?raw";
 import chevronDown from "lucide-static/icons/chevron-down.svg?raw";
@@ -33,7 +31,6 @@ import target from "lucide-static/icons/target.svg?raw";
 const ICONS = {
   home,
   bell,
-  history,
   plane,
   wallet,
   "piggy-bank": piggyBank,
@@ -51,7 +48,6 @@ const ICONS = {
   package: packageIcon,
   "trash-2": trash2,
   "edit-2": edit2,
-  "chevron-right": chevronRight,
   calculator,
   search,
   "chevron-down": chevronDown,

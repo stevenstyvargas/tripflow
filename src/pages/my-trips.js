@@ -1,15 +1,21 @@
 // Página: Mis viajes (/viajes). Todos los viajes del usuario (activos
 // y cerrados) en un grid de cards (components/trip-card.js, mismo
-// componente que Inicio), con 3 pestañas de filtro (Todos/Activos/
-// Cerrados) y el mismo buscador por nombre que Inicio/Historial. Cada
-// card navega al detalle de viaje, que ya decide solo (según
-// trip.status) si se ve editable o de solo lectura — no se duplica
-// esa lógica acá.
+// componente que Inicio), con buscador, KPIs de resumen y 3 pestañas
+// de filtro (Todos/Activos/Cerrados). Reemplaza a la antigua pantalla
+// de Historial — ver docs/product-decisions.md: ambas mostraban los
+// viajes cerrados por separado, ahora es la pestaña "Cerrados" de acá,
+// con las mismas 4 KPIs que Historial ya traía, recalculadas según la
+// pestaña activa en vez de fijas a "cerrados". Cada card navega al
+// detalle de viaje, que ya decide solo (según trip.status) si se ve
+// editable o de solo lectura — no se duplica esa lógica acá.
 
-import { getAllTrips, closeTrip, TRIP_STATUS } from "../data/store.js";
+import { getAllTrips, getTripTotal, closeTrip, TRIP_STATUS } from "../data/store.js";
+import { formatCurrency } from "../utils/currency.js";
+import { getBudgetStatus, STATUS } from "../utils/status.js";
 import { getCurrentUser } from "../data/auth.js";
 import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
 import { searchField } from "../components/search-field.js";
+import { renderKpiCard } from "../components/kpi-card.js";
 import { renderTripCard } from "../components/trip-card.js";
 
 const FILTERS = [
@@ -30,6 +36,43 @@ function emptyMessage(filter) {
   return "Todavía no has creado ningún viaje.";
 }
 
+// "Viajes realizados" solo tiene sentido para la pestaña de cerrados
+// (mismo texto que ya usaba Historial); en Todos/Activos el label
+// genérico "Viajes" es el único que no suena raro.
+function countLabel(filter) {
+  return filter === "closed" ? "Viajes realizados" : "Viajes";
+}
+
+// Mismas 4 KPIs que Historial mostraba antes de fusionarse acá, ahora
+// calculadas sobre el subconjunto de viajes de la pestaña activa (ver
+// docs/product-decisions.md).
+function computeKpis(trips) {
+  const spentTotal = trips.reduce((sum, trip) => sum + getTripTotal(trip.id), 0);
+  const fulfilledCount = trips.filter(
+    (trip) => getBudgetStatus(getTripTotal(trip.id), trip.budgetLimit) === STATUS.OK
+  ).length;
+
+  return {
+    count: trips.length,
+    spentTotal,
+    average: trips.length > 0 ? spentTotal / trips.length : 0,
+    fulfilledPercent: trips.length > 0 ? Math.round((fulfilledCount / trips.length) * 100) : 0,
+  };
+}
+
+function renderKpis(tripsInFilter, filter) {
+  const kpis = computeKpis(tripsInFilter);
+
+  return `
+    <ul class="kpi-row">
+      ${renderKpiCard({ iconName: "plane", label: countLabel(filter), value: kpis.count })}
+      ${renderKpiCard({ iconName: "wallet", label: "Gasto total", value: formatCurrency(kpis.spentTotal) })}
+      ${renderKpiCard({ iconName: "calculator", label: "Promedio por viaje", value: formatCurrency(kpis.average) })}
+      ${renderKpiCard({ iconName: "circle-check", label: "Presupuesto cumplido", value: `${kpis.fulfilledPercent}%` })}
+    </ul>
+  `;
+}
+
 function renderTripsSection(trips, filter, query) {
   const byFilter = filterByStatus(trips, filter);
   const filtered = query ? byFilter.filter((trip) => trip.name.toLowerCase().includes(query)) : byFilter;
@@ -45,9 +88,14 @@ function renderTripsSection(trips, filter, query) {
     .join("")}</ul>`;
 }
 
-export function render(container) {
+/**
+ * @param {HTMLElement} container
+ * @param {{ tab?: string }} [params] "tab" preselecciona una pestaña —
+ *   usado por el redirect de la antigua ruta /historial (ver router.js).
+ */
+export function render(container, { tab } = {}) {
   const trips = getAllTrips();
-  let activeFilter = "all";
+  let activeFilter = FILTERS.some((f) => f.id === tab) ? tab : "all";
 
   container.innerHTML = `
     <main class="page page-my-trips">
@@ -59,10 +107,12 @@ export function render(container) {
         </div>
       </header>
 
+      <div id="my-trips-kpis">${renderKpis(filterByStatus(trips, activeFilter), activeFilter)}</div>
+
       <div class="tab-list" role="tablist">
         ${FILTERS.map(
           (f) => `
-          <button type="button" class="tab-item${f.id === "all" ? " is-active" : ""}" role="tab" aria-selected="${f.id === "all"}" data-filter="${f.id}">
+          <button type="button" class="tab-item${f.id === activeFilter ? " is-active" : ""}" role="tab" aria-selected="${f.id === activeFilter}" data-filter="${f.id}">
             ${f.label}
           </button>
         `
@@ -75,6 +125,7 @@ export function render(container) {
 
   bindAccountMenu(container);
 
+  const kpisBody = container.querySelector("#my-trips-kpis");
   const sectionBody = container.querySelector("#trips-section-body");
   const searchInput = container.querySelector("#trip-search");
   const tabButtons = container.querySelectorAll(".tab-item");
@@ -84,7 +135,7 @@ export function render(container) {
       button.addEventListener("click", async () => {
         button.disabled = true;
         await closeTrip(button.dataset.tripId);
-        render(container);
+        render(container, { tab: activeFilter });
       });
     });
   }
@@ -107,6 +158,7 @@ export function render(container) {
         b.classList.toggle("is-active", isActive);
         b.setAttribute("aria-selected", String(isActive));
       });
+      kpisBody.innerHTML = renderKpis(filterByStatus(trips, activeFilter), activeFilter);
       update();
     });
   });
