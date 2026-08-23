@@ -8,8 +8,19 @@ import { formatCurrency } from "../utils/currency.js";
 import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
 import { renderKpiCard } from "../components/kpi-card.js";
+import { getCurrentUser } from "../data/auth.js";
 import { icon } from "../utils/icons.js";
 import { escapeHtml } from "../utils/dom.js";
+
+// Mismo dato que el sidebar usa para el email (getCurrentUser().email):
+// preferimos el displayName de Google porque es un nombre real, no un
+// identificador de cuenta; si no está disponible, la parte del email
+// antes de la @ sigue siendo más personal que "Inicio" a secas.
+function getGreetingName(user) {
+  if (user?.displayName) return user.displayName;
+  if (user?.email) return user.email.split("@")[0];
+  return "";
+}
 
 function computeKpis(trips) {
   let totalSpent = 0;
@@ -78,11 +89,15 @@ function bindTripsSection(sectionBody, trips, container) {
 export function render(container) {
   const trips = getActiveTrips();
   const kpis = computeKpis(trips);
+  const greetingName = getGreetingName(getCurrentUser());
 
   container.innerHTML = `
     <main class="page page-home">
       <header class="page-header">
-        <h1>Inicio</h1>
+        <div>
+          <p class="page-greeting">Hola, ${escapeHtml(greetingName)} 👋</p>
+          <h1>Inicio</h1>
+        </div>
         <div class="page-header-actions">
           <div class="search-field">
             ${icon("search", "search-field-icon")}
