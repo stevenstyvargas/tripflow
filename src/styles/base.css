@@ -156,11 +156,22 @@ button[type="submit"] {
   min-height: 100dvh;
 }
 
+/* z-index explícito: sin esto, el header (sticky) y varios elementos
+   del contenido (.donut-chart-visual, .trip-card-photo, .search-field
+   dentro de .mobile-search-row — todos position:relative sin z-index
+   propio) quedan en el mismo nivel de apilamiento (z-index:auto) y el
+   navegador desempata por orden de DOM: como esos elementos viven en
+   .app-shell-content, DESPUÉS del header en el HTML, terminan
+   pintándose por encima suyo al hacer scroll en dispositivo real (no
+   siempre reproducible en el emulador de escritorio). 60 queda por
+   encima del FAB (z-index:50) y por debajo del modal (100) y el
+   drawer/overlay del menú hamburguesa (200) — nunca debe taparlos. */
 .sidebar {
   width: var(--sidebar-width);
   flex-shrink: 0;
   position: sticky;
   top: 0;
+  z-index: 60;
   height: 100dvh;
   display: flex;
   flex-direction: column;
