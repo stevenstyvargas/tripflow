@@ -56,5 +56,8 @@ y el color hereda de `currentColor` en el texto vecino.
 - Escaneo de recibos con IA (ver `docs/ai-process.md`)
 - Registro de gastos por categoría desde una pantalla dedicada (hoy
   `addExpense()` existe en el store pero aún no tiene UI propia)
-- Subida real de foto de destino (hoy es una URL opcional en la
-  creación del viaje; falta Firebase Storage o similar)
+- Subida real de foto de destino desde cámara/galería del dispositivo
+  (falta Firebase Storage o similar) — resuelto parcialmente con fotos
+  sugeridas vía Pexels API dentro del mismo formulario (el usuario ya
+  no tiene que salir de la app a buscar una URL a mano, aunque sigue
+  sin poder subir un archivo propio)

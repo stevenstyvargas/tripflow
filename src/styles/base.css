@@ -92,6 +92,60 @@ select {
   background: var(--color-surface);
 }
 
+/* ---------- Foto sugerida del destino (trip-form.js, vía Pexels) ----------
+   .photo-helper es un único slot debajo del input de URL que alterna
+   entre 3 estados (texto de ayuda / cargando / thumbnails) según la
+   búsqueda en Pexels — nunca los 3 a la vez. */
+.field-hint {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.photo-suggestions-loading {
+  animation: photo-suggestions-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes photo-suggestions-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.photo-suggestions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.photo-suggestion {
+  padding: 0;
+  line-height: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: none;
+  cursor: pointer;
+}
+
+.photo-suggestion img {
+  width: 5rem;
+  height: 3.5rem;
+  object-fit: cover;
+}
+
+.photo-suggestion:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+}
+
+/* Selección: mismo verde de acento que el resto de la app usa para
+   "elegido/activo" (franja de nav activa, dropdown de divisa, etc). */
+.photo-suggestion.is-selected {
+  border-color: var(--color-accent);
+}
+
 .field-error {
   color: var(--color-status-danger);
   font-size: var(--text-sm);
