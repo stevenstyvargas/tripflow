@@ -632,6 +632,37 @@ que el botón destructivo sea el default del teclado — mismo criterio de
 "prevenir el error, no solo advertirlo" que ya se aplicó en el modal de
 "vas a superar el presupuesto".
 
+## Eliminar "Gasto vs presupuesto" de Inicio: redundante con el KPI "Presupuesto restante"
+
+**Problema:** Inicio mostraba el mismo dato dos veces con dos
+presentaciones distintas: el KPI "Presupuesto restante" (arriba, un
+número) y el bloque "Gasto vs presupuesto" (un anillo de progreso con
+el % gastado, el estado del semáforo en texto y una leyenda
+Gastado/Restante) — ambos calculados sobre exactamente el mismo
+agregado (todos los viajes activos). El anillo no aportaba una
+pregunta distinta a la que ya respondía el KPI, solo la mismo respuesta
+en un formato más grande y más caro de escanear de un vistazo.
+
+**Decisión:** se elimina por completo el bloque "Gasto vs presupuesto"
+de Inicio, en desktop y mobile. "Gasto por categoría" (la dona), que
+compartía la fila 50/50 con este bloque en desktop, pasa a ocupar todo
+el ancho — en mobile ya estaba en su propia fila (columna), así que no
+necesitó ningún ajuste de layout adicional, solo dejó de tener un hueco
+vacío al lado. El componente (`components/budget-ring.js`) se borró
+completo, no solo se dejó de usar: era exclusivo de Inicio (confirmado
+con `grep` antes de borrar, sin otro `import` en el resto de la app),
+así que no había riesgo de romper otra pantalla.
+
+**Por qué:** el criterio del semáforo (ícono + texto + color, nunca
+solo color) sigue cumpliéndose en el resto de la app sin este bloque —
+los badges de estado de las cards de viaje (`.status-badge`, Inicio y
+Mis viajes) y el badge compacto del header de Detalle de viaje ya
+comunican el mismo semáforo por viaje individual; el KPI "Presupuesto
+restante" sigue comunicando el agregado. Quitar la redundancia deja
+Inicio más liviano sin perder ninguna información que el usuario no
+pueda seguir viendo en otro lugar de la misma pantalla o del detalle de
+cada viaje.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 

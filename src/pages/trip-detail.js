@@ -112,10 +112,12 @@ function buildGoogleCalendarUrl(trip) {
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${start}/${end}&details=${details}`;
 }
 
-// Mismo texto que usa el anillo "Gasto vs presupuesto" de Inicio
-// (components/budget-ring.js) para este mismo estado, con la primera
-// letra en mayúscula porque acá va como una oración del mensaje de
-// WhatsApp, no como una etiqueta chica junto a un ícono.
+// Texto explícito del estado del semáforo para el mensaje de WhatsApp,
+// con la primera letra en mayúscula porque acá va como una oración,
+// no como una etiqueta chica junto a un ícono (mismas 3 frases que
+// usaba el bloque "Gasto vs presupuesto" de Inicio, eliminado por
+// redundante con el KPI "Presupuesto restante" — ver
+// docs/product-decisions.md).
 const STATUS_SHARE_LABELS = {
   ok: "En rango",
   warning: "Cerca del límite",

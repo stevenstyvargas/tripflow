@@ -26,9 +26,9 @@ justificación de cada color.
 | Menú de cuenta | cerrado / abierto | `components/account-menu.js`, foto (o inicial en placeholder navy) + nombre + email + chevron; dropdown con "Cerrar sesión". Se monta en el header de las 4 pantallas principales |
 | Campo de búsqueda | default / focus | `components/search-field.js`, ícono de lupa + input; filtra viajes por nombre en vivo. Usado en Inicio y Mis viajes. En mobile (≤45rem) el input inline de cada página se oculta y se reemplaza por la lupa + fila expandible del header compartido (`components/sidebar.js`) — mismo `<input>`, cada página bindea su filtro a los dos |
 | Pestañas de filtro | default / hover / activa | `.tab-list`/`.tab-item`, subrayado navy en la activa. Usadas en Mis viajes (Todos/Activos/Cerrados) |
-| Gráfico de dona | con datos / vacío | SVG puro (`components/donut-chart.js`), sin librería de charting. Centro con el total gastado; leyenda con % y monto por categoría, calculados sobre ese total |
-| Anillo de progreso | ok / warning / danger | SVG puro (`components/budget-ring.js`), mismo radio/grosor que la dona. % real del presupuesto gastado (across viajes activos) en el centro, con ícono+texto+color del semáforo debajo (mismo criterio que `.status-badge`, nunca solo color); leyenda Gastado (navy)/Restante (verde), Restante en rojo si el gasto excede el presupuesto |
+| Gráfico de dona | con datos / vacío | SVG puro (`components/donut-chart.js`), sin librería de charting. Centro con el total gastado; leyenda con % y monto por categoría, calculados sobre ese total. En mobile (≤45rem) pasa de fila (dona + leyenda lado a lado) a columna, dona a todo el ancho de la tarjeta |
 | Alert item | warning / danger | Borde completo (1px) del color de severidad |
+| FAB "Nuevo viaje" | default / hover | `.fab`, solo en Inicio en mobile (≤45rem) — reemplaza al botón del header en ese breakpoint. Circular, fondo `--color-accent` (verde) con ícono navy (blanco da ~1.75:1 de contraste sobre este verde, navy da ~9:1), fixed en la esquina inferior derecha con margen de `env(safe-area-inset-bottom)` |
 
 ## Alertas de presupuesto (semáforo)
 

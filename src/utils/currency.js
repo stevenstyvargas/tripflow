@@ -17,8 +17,7 @@ export function formatCurrency(amount) {
 /**
  * Separa el sufijo " COP" que formatCurrency() siempre agrega, para
  * poder mostrarlo en un tono/tamaño distinto del monto (kpi-card,
- * donut-chart, budget-ring) en vez de que ambos se vean como un solo
- * bloque.
+ * donut-chart) en vez de que ambos se vean como un solo bloque.
  * @param {string} value resultado de formatCurrency()
  */
 export function splitCurrencyUnit(value) {

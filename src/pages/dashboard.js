@@ -1,11 +1,13 @@
 // Página: Inicio. KPIs del periodo activo (una sola divisa, COP — ver
-// docs/product-decisions.md), un grid 50/50 con "Gasto por categoría"
-// (dona, components/donut-chart.js) y "Gasto vs presupuesto" (anillo
-// de semáforo, components/budget-ring.js) — ambos agregados de todos
-// los viajes activos — y viajes activos como cards con foto de
-// destino + semáforo de estado (components/trip-card.js, compartido
-// con Mis viajes). El desglose por categoría de UN viaje (torre de
-// barras) vive en trip-detail.js, no acá. Las acciones de editar/
+// docs/product-decisions.md), "Gasto por categoría" (dona,
+// components/donut-chart.js, a todo el ancho — el bloque "Gasto vs
+// presupuesto" que compartía la fila con esta dona se eliminó por
+// redundante con el KPI "Presupuesto restante" de arriba, ver
+// docs/product-decisions.md) — agregado de todos los viajes activos —
+// y viajes activos como cards con foto de destino + semáforo de
+// estado (components/trip-card.js, compartido con Mis viajes). El
+// desglose por categoría de UN viaje (torre de barras) vive en
+// trip-detail.js, no acá. Las acciones de editar/
 // finalizar viaje viven en el Detalle de viaje, no en estas cards. En
 // mobile, el buscador inline de acá se oculta (ver .search-field en
 // base.css) — la lupa y el input equivalente viven en el header
@@ -21,7 +23,6 @@ import { getActiveTrips, getTripTotal, getExpensesByTrip } from "../data/store.j
 import { formatCurrency } from "../utils/currency.js";
 import { renderKpiCard } from "../components/kpi-card.js";
 import { donutChart } from "../components/donut-chart.js";
-import { budgetRing } from "../components/budget-ring.js";
 import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
 import { searchField } from "../components/search-field.js";
 import { renderTripCard } from "../components/trip-card.js";
@@ -53,7 +54,6 @@ function computeKpis(trips) {
 
   return {
     totalSpent,
-    totalBudget,
     remaining: totalBudget - totalSpent,
     activeCount: trips.length,
   };
@@ -115,19 +115,11 @@ export function render(container) {
         ${renderKpiCard({ iconName: "plane", label: "Viajes activos", value: kpis.activeCount })}
       </ul>
 
-      <div class="dashboard-charts-grid">
-        <section class="section">
-          <h2>Gasto por categoría</h2>
-          <p class="section-subtitle">Todos tus viajes activos</p>
-          ${donutChart(categoryBreakdown)}
-        </section>
-
-        <section class="section">
-          <h2>Gasto vs presupuesto</h2>
-          <p class="section-subtitle">Todos tus viajes activos</p>
-          ${budgetRing(kpis.totalSpent, kpis.totalBudget)}
-        </section>
-      </div>
+      <section class="section">
+        <h2>Gasto por categoría</h2>
+        <p class="section-subtitle">Todos tus viajes activos</p>
+        ${donutChart(categoryBreakdown)}
+      </section>
 
       <section class="section">
         <h2>Tus viajes activos</h2>

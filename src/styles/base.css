@@ -699,6 +699,12 @@ button[type="submit"] {
     display: none;
   }
 
+  /* Verde de marca (--color-accent) en vez de navy: blanco sobre este
+     verde da ~1.75:1 de contraste (ilegible), navy da ~9:1 — mismo
+     criterio de "texto/ícono oscuro sobre fondo claro" que ya usa el
+     resto de la app para este verde (ver docs/branding.md). ~21% más
+     grande que el tamaño anterior (3.5rem → 4.25rem) para que destaque
+     más como acción principal flotante. */
   .fab {
     display: flex;
     align-items: center;
@@ -709,24 +715,24 @@ button[type="submit"] {
        los gestos/barra de navegación del sistema en iOS/Android; 0px
        de fallback en navegadores sin soporte. */
     bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 4.25rem;
+    height: 4.25rem;
     border-radius: var(--radius-full);
-    background: var(--color-primary);
-    color: var(--color-surface);
+    background: var(--color-accent);
+    color: var(--color-primary);
     box-shadow: var(--shadow-md);
     text-decoration: none;
     z-index: 50;
   }
 
   .fab:hover {
-    background: color-mix(in srgb, var(--color-primary) 90%, black);
+    background: color-mix(in srgb, var(--color-accent) 85%, black);
   }
 
   .fab .icon {
-    width: 1.5rem;
-    height: 1.5rem;
-    color: var(--color-surface);
+    width: 1.75rem;
+    height: 1.75rem;
+    color: var(--color-primary);
   }
 }
 
@@ -826,25 +832,6 @@ button[type="submit"] {
   color: var(--color-text-muted);
 }
 
-/* ---------- Grid 50/50 de gráficos (Inicio) ---------- */
-
-.dashboard-charts-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
-  margin-bottom: var(--space-8);
-}
-
-.dashboard-charts-grid .section {
-  margin-bottom: 0;
-}
-
-@media (max-width: 45rem) {
-  .dashboard-charts-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 /* ---------- Gráfico de dona (gasto por categoría, Inicio) ---------- */
 
 .donut-chart {
@@ -881,11 +868,10 @@ button[type="submit"] {
   text-align: center;
 }
 
-/* Igual que .budget-ring-status: el hueco real de la dona (mismo
-   radio/grosor que el anillo) mide 96px de diámetro, no los 160px de
-   la caja del SVG completo — sin este tope el monto se sale del hueco
-   y queda encima de los segmentos de color (mal contraste contra el
-   navy de "Transporte"), no solo desbordado. */
+/* El hueco real de la dona (diámetro = 2 * (radio - grosor/2)) mide
+   96px, no los 160px de la caja del SVG completo — sin este tope el
+   monto se sale del hueco y queda encima de los segmentos de color
+   (mal contraste contra el navy de "Transporte"), no solo desbordado. */
 .donut-chart-total-amount {
   max-width: 5.5rem;
   margin: 0;
@@ -980,128 +966,6 @@ button[type="submit"] {
     width: 100%;
     min-width: 0;
   }
-}
-
-/* ---------- Anillo de progreso (gasto vs presupuesto, Inicio) ---------- */
-
-.budget-ring-card {
-  display: flex;
-  align-items: center;
-  gap: var(--space-6);
-  flex-wrap: wrap;
-  padding: var(--space-4);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
-}
-
-.budget-ring-visual {
-  position: relative;
-  flex-shrink: 0;
-  width: 10rem;
-  height: 10rem;
-}
-
-.budget-ring-center {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-1);
-}
-
-.budget-ring-percent {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-2xl);
-  font-weight: 700;
-}
-
-/* max-width acá NO es sobre la caja de 160px del anillo, sino sobre el
-   hueco real de la dona (diámetro = 2 * (radio - grosor/2) = 96px en
-   nuestro SVG): el texto de estado usa el mismo color que el trazo del
-   anillo, así que si se extendiera hasta pisar el trazo se volvería
-   ilegible (mismo color sobre mismo color), no solo un problema de
-   overflow. 80px deja margen de sobra dentro de esos 96px. */
-.budget-ring-status {
-  max-width: 5rem;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-1);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  text-align: center;
-}
-
-.budget-ring-status-icon {
-  width: 0.875rem;
-  height: 0.875rem;
-  color: currentColor;
-  flex-shrink: 0;
-}
-
-.budget-ring-legend {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  flex: 1;
-  min-width: 10rem;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.budget-ring-legend-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  font-size: var(--text-sm);
-}
-
-.budget-ring-legend-left {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.budget-ring-legend-swatch {
-  width: 0.75rem;
-  height: 0.75rem;
-  border-radius: var(--radius-full);
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-.budget-ring-legend-swatch-spent {
-  background: var(--color-primary);
-}
-
-.budget-ring-legend-swatch-remaining {
-  background: var(--color-accent);
-}
-
-.budget-ring-legend-value {
-  flex-shrink: 0;
-  color: var(--color-text-muted);
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.budget-ring-legend-unit {
-  margin-left: var(--space-1);
-  font-weight: 400;
-  color: var(--color-text-muted);
-}
-
-.budget-ring-legend-value-danger,
-.budget-ring-legend-value-danger .budget-ring-legend-unit {
-  color: var(--color-status-danger);
 }
 
 /* ---------- Gráfico de barras (gasto por categoría) ---------- */

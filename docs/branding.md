@@ -60,10 +60,10 @@ mientras no había archivo de marca definitivo.
 - **Sidebar:** navegación fija (Inicio/Mis viajes/Alertas), solo logo y
   navegación — la cuenta (foto/nombre/email/cerrar sesión) vive en el
   menú de cuenta del header de cada página. Fondo navy (`--color-primary`)
-  con el logotipo en su versión "fondo oscuro"; en mobile colapsa al
-  isotipo solo. Item activo: franja vertical verde (`--color-accent`)
-  pegada al borde izquierdo, sin fondo — el navy del item ya no
-  contrasta contra el navy del sidebar.
+  con el logotipo en su versión "fondo oscuro" (mismo logo completo en
+  desktop y mobile, ahora un link a Inicio). Item activo: franja
+  vertical verde (`--color-accent`) pegada al borde izquierdo, sin
+  fondo — el navy del item ya no contrasta contra el navy del sidebar.
 - **Inicio:** KPIs arriba, dona de gasto por categoría, cards de viajes
   activos con foto de destino grande + badge de semáforo.
 - **Alertas:** mismo semáforo que Inicio, listado de viajes que cruzaron
