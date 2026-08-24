@@ -43,19 +43,27 @@ mismo componente, para no hacerle pensar al usuario que una categoría
 
 ## Logo
 
-Monograma "T" (navy, `--color-primary`) con un ícono de avión
-(Lucide `plane`, en verde `--color-accent`) superpuesto en la esquina
-superior derecha, rotado 45° simulando despegue. Implementado en CSS
-puro (`.logo-mark` en `src/components/sidebar.js` + `base.css`), sin
-depender de un archivo de imagen — es un primer paso razonable en
-ausencia del archivo de Figma de referencia de Alegra; si aparece ese
-archivo, se reemplaza aquí.
+Isotipo: cuadrado redondeado con un monograma "T" estilizado + un punto
+verde (`--color-accent`) de acento. Logotipo: el isotipo + wordmark
+"Trip" (blanco o navy, según fondo) + "Flow" (siempre verde). Archivos
+reales en SVG, cada uno en su versión para fondo claro/oscuro (contraste
+correcto ya resuelto en el propio archivo, no con CSS):
+
+- `public/img/Isotipo-fondo-claro.svg` / `-fondo-oscuro.svg`
+- `public/img/Logotipo-fondo-claro.svg` / `-fondo-oscuro.svg`
+
+Reemplaza al monograma "T" en CSS puro que se usó como primer paso
+mientras no había archivo de marca definitivo.
 
 ## Aplicación
 
 - **Sidebar:** navegación fija (Inicio/Mis viajes/Alertas), solo logo y
   navegación — la cuenta (foto/nombre/email/cerrar sesión) vive en el
-  menú de cuenta del header de cada página. Item activo con fondo navy.
+  menú de cuenta del header de cada página. Fondo navy (`--color-primary`)
+  con el logotipo en su versión "fondo oscuro"; en mobile colapsa al
+  isotipo solo. Item activo: franja vertical verde (`--color-accent`)
+  pegada al borde izquierdo, sin fondo — el navy del item ya no
+  contrasta contra el navy del sidebar.
 - **Inicio:** KPIs arriba, dona de gasto por categoría, cards de viajes
   activos con foto de destino grande + badge de semáforo.
 - **Alertas:** mismo semáforo que Inicio, listado de viajes que cruzaron

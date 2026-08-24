@@ -165,51 +165,28 @@ button[type="submit"] {
   display: flex;
   flex-direction: column;
   padding: var(--space-6) var(--space-4);
-  background: var(--color-surface);
+  background: var(--color-primary);
   border-right: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .sidebar-logo {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
   margin-bottom: var(--space-8);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: var(--text-lg);
-  color: var(--color-primary);
 }
 
-.logo-mark {
-  position: relative;
-  width: 2rem;
+/* Logotipo completo en desktop, isotipo solo en mobile (ver media query
+   de abajo) — ambos son la versión "fondo oscuro" de los assets reales
+   (public/img/), pensada para este fondo navy. */
+.sidebar-logo-full {
   height: 2rem;
-  border-radius: var(--radius-sm);
-  background: var(--color-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: auto;
 }
 
-.logo-mark::before {
-  content: "T";
-  color: var(--color-surface);
-  font-weight: 700;
-  font-size: var(--text-base);
-  font-family: var(--font-display);
-}
-
-.logo-mark-plane {
-  position: absolute;
-  top: -0.3rem;
-  right: -0.3rem;
-  width: 0.875rem;
-  height: 0.875rem;
-  padding: 1px;
-  color: var(--color-primary);
-  background: var(--color-accent);
-  border-radius: var(--radius-full);
-  transform: rotate(45deg);
+.sidebar-logo-compact {
+  display: none;
+  height: 2rem;
+  width: auto;
 }
 
 .sidebar-nav {
@@ -219,6 +196,10 @@ button[type="submit"] {
   flex: 1;
 }
 
+/* Texto/ícono en blanco atenuado por defecto (item inactivo); el
+   border-left transparente reserva el mismo espacio que ocupa la franja
+   verde del item activo, para que activar/desactivar un item no mueva
+   el ícono ni el texto de lugar. */
 .sidebar-nav-item {
   display: flex;
   align-items: center;
@@ -226,9 +207,10 @@ button[type="submit"] {
   width: 100%;
   padding: var(--space-2) var(--space-3);
   border: none;
+  border-left: 4px solid transparent;
   border-radius: var(--radius-sm);
   background: none;
-  color: var(--color-text);
+  color: rgba(255, 255, 255, 0.75);
   font: inherit;
   font-size: var(--text-sm);
   text-align: left;
@@ -237,12 +219,20 @@ button[type="submit"] {
 }
 
 .sidebar-nav-item:hover {
-  background: var(--color-bg);
+  background: rgba(255, 255, 255, 0.08);
 }
 
+/* Item activo: ya no se distingue por fondo (navy sobre navy no
+   contrasta) sino por una franja verde pegada al borde izquierdo, texto
+   blanco puro (vs. el blanco atenuado de los inactivos) y más peso. Las
+   esquinas izquierdas quedan sin redondear para que la franja se vea
+   perfectamente recta contra el borde del item. */
 .sidebar-nav-item.is-active {
-  background: var(--color-primary);
+  border-left-color: var(--color-accent);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
   color: var(--color-surface);
+  font-weight: 600;
 }
 
 .app-shell-content {
@@ -270,8 +260,12 @@ button[type="submit"] {
     margin-bottom: 0;
   }
 
-  .sidebar-logo .logo-wordmark {
+  .sidebar-logo-full {
     display: none;
+  }
+
+  .sidebar-logo-compact {
+    display: block;
   }
 
   .sidebar-nav {
