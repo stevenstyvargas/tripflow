@@ -822,6 +822,19 @@ button[type="submit"] {
   gap: var(--space-4);
 }
 
+/* Inicio pasó de 3 KPIs a 2 (ver docs/product-decisions.md) — el
+   auto-fit de arriba ya colapsa bien a 1 columna en mobile (igual que
+   antes, sin cambios ahí), pero en desktop estiraba las 2 cards a la
+   mitad del ancho del contenedor, con mucho espacio vacío adentro.
+   Acá se topa el ancho máximo de cada card solo en este breakpoint,
+   sin tocar la regla compartida (Mis viajes con 4 KPIs y el detalle de
+   viaje con 3 en columna siguen usando el auto-fit de siempre). */
+@media (min-width: 45rem) {
+  .page-home .kpi-row {
+    grid-template-columns: repeat(2, minmax(12rem, 20rem));
+  }
+}
+
 .kpi-card {
   display: flex;
   align-items: center;

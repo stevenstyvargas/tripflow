@@ -663,6 +663,37 @@ Inicio más liviano sin perder ninguna información que el usuario no
 pueda seguir viendo en otro lugar de la misma pantalla o del detalle de
 cada viaje.
 
+## Reemplazar los KPIs de dinero de Inicio por "Viajes en riesgo"
+
+**Problema:** con "Gasto vs presupuesto" ya eliminado (decisión
+anterior), Inicio seguía mostrando 2 KPIs en dinero — "Gastado en el
+periodo" y "Presupuesto restante" — que son montos agregados de todos
+los viajes activos, sin decirle al usuario qué hacer con esa
+información. Un monto grande no distingue "vas bien en 5 viajes chicos"
+de "un solo viaje está disparado" — para eso hay que entrar a Mis
+viajes o a Alertas y revisar caso por caso. Ninguno de los 2 KPIs era
+accionable por sí solo.
+
+**Decisión:** se reemplazan ambos por un único KPI nuevo, "Viajes en
+riesgo": el número de viajes activos en estado "warning" o "danger"
+(cerca del límite o por encima), calculado con `getTripAlerts()` — la
+misma función/estado que ya usa la pantalla de Alertas y su badge de
+notificación en el menú de navegación, no un cálculo aparte. Inicio
+queda con 2 KPIs en vez de 3: "Viajes activos" (sin cambios) y "Viajes
+en riesgo" (nuevo). El grid de KPIs, que antes se resolvía solo con
+`auto-fit` para cualquier cantidad de cards, se topa a un ancho máximo
+por card en desktop (mobile sigue igual que antes, ya se veía bien) —
+con solo 2 cards, dejarlas estirarse a la mitad del ancho del
+contenedor se veía con demasiado espacio vacío adentro de cada una.
+
+**Por qué:** "cuántos viajes necesitan mi atención ahora mismo" es una
+pregunta que el usuario puede actuar directamente (ir a revisarlos),
+mientras que un monto agregado en pesos solo informa, no orienta. Reusar
+`getTripAlerts()` en vez de duplicar el filtro evita que este KPI y el
+badge de la campana puedan mostrar números distintos si alguno de los
+dos cambia de criterio más adelante — quedan atados a la misma fuente
+por diseño, no por convención.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 

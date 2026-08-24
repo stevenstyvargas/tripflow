@@ -1,13 +1,19 @@
-// Página: Inicio. KPIs del periodo activo (una sola divisa, COP — ver
-// docs/product-decisions.md), "Gasto por categoría" (components/
-// category-chart.js: torres en desktop, dona en mobile — mismo
-// componente que usa trip-detail.js, unificado por breakpoint, no por
-// pantalla; acá con el agregado de todos los viajes activos, a todo el
-// ancho — el bloque "Gasto vs presupuesto" que compartía la fila con
-// este bloque se eliminó por redundante con el KPI "Presupuesto
-// restante" de arriba, ver docs/product-decisions.md) y viajes activos
-// como cards con foto de destino + semáforo de estado (components/
-// trip-card.js, compartido con Mis viajes). Las acciones de editar/
+// Página: Inicio. 2 KPIs arriba — "Viajes activos" y "Viajes en
+// riesgo" (viajes en alerta, warning o danger: mismo conteo que ya usa
+// el badge de la campana de "Alertas", getTripAlerts() en
+// data/store.js, no un cálculo propio — antes acá había 2 KPIs de
+// dinero, "Gastado en el periodo"/"Presupuesto restante", quitados por
+// menos accionables que saber CUÁNTOS viajes necesitan atención; ver
+// docs/product-decisions.md). Debajo, "Gasto por categoría"
+// (components/category-chart.js: torres en desktop, dona en mobile —
+// mismo componente que usa trip-detail.js, unificado por breakpoint,
+// no por pantalla; acá con el agregado de todos los viajes activos, a
+// todo el ancho — el bloque "Gasto vs presupuesto" que compartía la
+// fila con este bloque se eliminó por redundante con el KPI
+// "Presupuesto restante" que existía antes, ver
+// docs/product-decisions.md) y viajes activos como cards con foto de
+// destino + semáforo de estado (components/trip-card.js, compartido
+// con Mis viajes). Las acciones de editar/
 // finalizar viaje viven en el Detalle de viaje, no en estas cards. En
 // mobile, el buscador inline de acá se oculta (ver .search-field en
 // base.css) — la lupa y el input equivalente viven en el header
@@ -19,8 +25,7 @@
 // misma ruta #/nuevo-viaje) — desktop sigue mostrando el botón de
 // siempre, sin FAB (oculto salvo en mobile).
 
-import { getActiveTrips, getTripTotal, getExpensesByTrip } from "../data/store.js";
-import { formatCurrency } from "../utils/currency.js";
+import { getActiveTrips, getExpensesByTrip, getTripAlerts } from "../data/store.js";
 import { renderKpiCard } from "../components/kpi-card.js";
 import { categoryChart } from "../components/category-chart.js";
 import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
@@ -41,22 +46,6 @@ function getGreetingName(user) {
   if (user?.displayName) return user.displayName.trim().split(/\s+/)[0];
   if (user?.email) return user.email.split("@")[0];
   return "";
-}
-
-function computeKpis(trips) {
-  let totalSpent = 0;
-  let totalBudget = 0;
-
-  for (const trip of trips) {
-    totalSpent += getTripTotal(trip.id);
-    totalBudget += trip.budgetLimit;
-  }
-
-  return {
-    totalSpent,
-    remaining: totalBudget - totalSpent,
-    activeCount: trips.length,
-  };
 }
 
 // Suma el gasto por categoría de TODOS los viajes activos — válido
@@ -95,7 +84,7 @@ function renderTripsSection(trips, query) {
 
 export function render(container) {
   const trips = getActiveTrips();
-  const kpis = computeKpis(trips);
+  const atRiskCount = getTripAlerts().length;
   const categoryBreakdown = computeCategoryBreakdown(trips);
   const user = getCurrentUser();
   const greetingName = getGreetingName(user);
@@ -112,9 +101,8 @@ export function render(container) {
       </header>
 
       <ul class="kpi-row">
-        ${renderKpiCard({ iconName: "wallet", label: "Gastado en el periodo", value: formatCurrency(kpis.totalSpent) })}
-        ${renderKpiCard({ iconName: "piggy-bank", label: "Presupuesto restante", value: formatCurrency(kpis.remaining) })}
-        ${renderKpiCard({ iconName: "plane", label: "Viajes activos", value: kpis.activeCount })}
+        ${renderKpiCard({ iconName: "plane", label: "Viajes activos", value: trips.length })}
+        ${renderKpiCard({ iconName: "alert-triangle", label: "Viajes en riesgo", value: atRiskCount })}
       </ul>
 
       <section class="section">
