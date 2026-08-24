@@ -169,10 +169,15 @@ button[type="submit"] {
   border-right: 1px solid rgba(0, 0, 0, 0.08);
 }
 
+/* Link a Inicio (mismo elemento en desktop y mobile) — cursor:pointer
+   explícito aunque los links ya lo traen por defecto, tal como pedía
+   el enunciado. */
 .sidebar-logo {
   display: flex;
   align-items: center;
   margin-bottom: var(--space-8);
+  cursor: pointer;
+  text-decoration: none;
 }
 
 /* Logotipo completo (isotipo + "TripFlow"), versión "fondo oscuro" del
@@ -439,14 +444,6 @@ button[type="submit"] {
     display: none;
   }
 
-  /* El buscador inline de cada página (Inicio/Mis viajes) se reemplaza
-     por la lupa + .mobile-search-row del header compartido — no hay
-     otro uso de .search-field en la app, así que no hace falta scopear
-     por página. */
-  .search-field {
-    display: none;
-  }
-
   .mobile-search-row {
     display: flex;
     align-items: center;
@@ -497,6 +494,19 @@ button[type="submit"] {
   line-height: 1.25;
 }
 
+/* Mobile: un font-size más chico (sigue siendo el título más grande de
+   la pantalla, solo un paso por debajo de --text-2xl) más
+   white-space:nowrap evita que "Hola, Steven 👋"/"Mis viajes" se
+   partan en 2 líneas en un ancho angosto. No afecta al <h1> de Detalle
+   de viaje: ese vive dentro de .trip-detail-title, que ya trae su
+   propio font-size más específico (le gana a esta regla). */
+@media (max-width: 45rem) {
+  .page-header h1 {
+    font-size: var(--text-xl);
+    white-space: nowrap;
+  }
+}
+
 .page-header-actions {
   display: flex;
   align-items: center;
@@ -527,6 +537,19 @@ button[type="submit"] {
   border: 1px solid var(--color-text-muted);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
+}
+
+/* El buscador inline de cada página (Inicio/Mis viajes) se reemplaza
+   en mobile por la lupa + .mobile-search-row del header compartido —
+   no hay otro uso de .search-field en la app, así que no hace falta
+   scopear por página. DEBE ir después de la regla base de arriba
+   (misma especificidad — en un empate gana la que aparece último en
+   el archivo, mismo motivo que ya causó el bug de .mobile-search-row
+   dos tareas atrás). */
+@media (max-width: 45rem) {
+  .search-field {
+    display: none;
+  }
 }
 
 /* ---------- Menú de cuenta (header de cada página) ---------- */
@@ -660,6 +683,51 @@ button[type="submit"] {
 
 .button-primary .icon {
   color: var(--color-surface);
+}
+
+/* FAB "Nuevo viaje" (Inicio, solo mobile) — reemplaza al botón del
+   header en ese breakpoint, ver .page-home .page-header-actions
+   .button-primary más abajo. display:none incondicional para que sea
+   imposible de ver en desktop pase lo que pase; solo se activa dentro
+   del media query. */
+.fab {
+  display: none;
+}
+
+@media (max-width: 45rem) {
+  .page-home .page-header-actions .button-primary {
+    display: none;
+  }
+
+  .fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: var(--space-4);
+    /* env(safe-area-inset-bottom) suma el margen extra que necesitan
+       los gestos/barra de navegación del sistema en iOS/Android; 0px
+       de fallback en navegadores sin soporte. */
+    bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    text-decoration: none;
+    z-index: 50;
+  }
+
+  .fab:hover {
+    background: color-mix(in srgb, var(--color-primary) 90%, black);
+  }
+
+  .fab .icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--color-surface);
+  }
 }
 
 .section {
@@ -878,6 +946,40 @@ button[type="submit"] {
   flex-shrink: 0;
   color: var(--color-text-muted);
   white-space: nowrap;
+}
+
+/* Mobile: dona arriba (a todo el ancho disponible dentro de la
+   tarjeta, en vez del diámetro fijo de 10rem que usa junto a la
+   leyenda en desktop) + leyenda debajo, en vez de lado a lado. El
+   <svg> ya usa viewBox (no depende de sus atributos width/height fijos
+   para verse nítido) así que estirarlo con CSS lo escala proporcional,
+   sin recortes ni deformación — el total sigue centrado porque
+   .donut-chart-total sigue siendo inset:0 sobre el mismo contenedor,
+   ahora más grande. */
+@media (max-width: 45rem) {
+  .donut-chart {
+    flex-direction: column;
+  }
+
+  .donut-chart-visual {
+    align-self: center;
+    width: 100%;
+    max-width: 16rem;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .donut-chart-visual svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .donut-legend {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+  }
 }
 
 /* ---------- Anillo de progreso (gasto vs presupuesto, Inicio) ---------- */

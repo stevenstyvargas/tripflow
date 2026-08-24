@@ -11,6 +11,11 @@
 // base.css) — la lupa y el input equivalente viven en el header
 // compartido (components/sidebar.js, #trip-search-mobile); acá solo se
 // bindea el mismo filtro sobre ESE input además del de siempre.
+// "Nuevo viaje" también se oculta en mobile (mismo botón, ver
+// .page-home .page-header-actions .button-primary en base.css) y se
+// reemplaza por un FAB fijo en la esquina inferior derecha (.fab,
+// misma ruta #/nuevo-viaje) — desktop sigue mostrando el botón de
+// siempre, sin FAB (oculto salvo en mobile).
 
 import { getActiveTrips, getTripTotal, getExpensesByTrip } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
@@ -128,6 +133,10 @@ export function render(container) {
         <h2>Tus viajes activos</h2>
         <div id="trips-section-body">${renderTripsSection(trips, "")}</div>
       </section>
+
+      <a href="#/nuevo-viaje" class="fab" aria-label="Nuevo viaje">
+        ${icon("plus")}
+      </a>
     </main>
   `;
 

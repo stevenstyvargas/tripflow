@@ -19,9 +19,11 @@
 // que la abre está en esta barra compartida — cada página solo bindea
 // su propio filtro sobre el <input> que esta fila ya renderiza (ver
 // dashboard.js/my-trips.js), reusando el input desktop (inline, sin
-// tocar) más este nuevo #trip-search-mobile. Historial se fusionó con
-// Mis viajes (ver docs/product-decisions.md) — los viajes cerrados
-// viven en su pestaña "Cerrados".
+// tocar) más este nuevo #trip-search-mobile. El logo (`.sidebar-logo`)
+// es un link a "/" en desktop y mobile por igual — mismo elemento,
+// ningún CSS de breakpoint de por medio. Historial se fusionó con Mis
+// viajes (ver docs/product-decisions.md) — los viajes cerrados viven
+// en su pestaña "Cerrados".
 
 import { icon } from "../utils/icons.js";
 import { getCurrentUser, signOutUser } from "../data/auth.js";
@@ -88,9 +90,9 @@ export function renderSidebar(currentPath) {
 
   return `
     <aside class="sidebar">
-      <div class="sidebar-logo">
+      <a href="#/" class="sidebar-logo" aria-label="Ir a Inicio">
         <img src="/img/Logotipo-fondo-oscuro.svg" alt="Tripflow" class="sidebar-logo-full" />
-      </div>
+      </a>
 
       <nav class="sidebar-nav">
         ${renderNavItems(currentPath)}
