@@ -33,6 +33,7 @@ import menu from "lucide-static/icons/menu.svg?raw";
 import x from "lucide-static/icons/x.svg?raw";
 import users from "lucide-static/icons/users.svg?raw";
 import barChart3 from "lucide-static/icons/bar-chart-3.svg?raw";
+import layoutDashboard from "lucide-static/icons/layout-dashboard.svg?raw";
 
 const ICONS = {
   home,
@@ -66,6 +67,7 @@ const ICONS = {
   x,
   users,
   "bar-chart-3": barChart3,
+  "layout-dashboard": layoutDashboard,
 };
 
 /**

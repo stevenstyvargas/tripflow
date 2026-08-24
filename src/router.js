@@ -1,10 +1,12 @@
 // Router minimalista basado en hash, sin dependencias externas.
 // Cada página exporta una función render(container) que dibuja su vista.
 //
-// Gate de autenticación: mientras no hay sesión, se fuerza la página
-// de login sin importar qué ruta pidió el usuario. Una vez autenticado,
-// las rutas protegidas se renderizan dentro del app-shell (sidebar +
-// contenido).
+// Gate de autenticación: mientras no hay sesión, solo 2 rutas existen —
+// "/login" (pantalla de Google, sin cambios) y cualquier otra cosa cae
+// en "/" (landing pública). Con sesión activa, "/" y "/login" pasan a
+// significar Inicio (landing/login ya no aplican) y el resto de rutas
+// protegidas se renderiza dentro del app-shell (sidebar + contenido)
+// como antes.
 
 import { onAuthChange, getGoogleRedirectResult } from "./data/auth.js";
 import { initStore, clearStore } from "./data/store.js";
@@ -59,15 +61,33 @@ export async function initRouter(container) {
   }
 
   async function render() {
+    const rawPath = location.hash.replace("#", "") || "/";
+    const [path, queryString] = rawPath.split("?");
+
     if (!currentUser) {
-      const login = await import("./pages/login.js");
-      login.render(container, { error: redirectError });
-      redirectError = null;
+      // redirectError fuerza el login aunque el hash no sea "/login": es
+      // el resultado de un signInWithRedirect que acaba de fallar al
+      // volver de Google (ver getGoogleRedirectResult() abajo) — con la
+      // landing como default, ese error no debe perderse silenciosamente
+      // solo porque el hash con el que Google redirige de vuelta no es
+      // necesariamente "/login".
+      if (path === "/login" || redirectError) {
+        const login = await import("./pages/login.js");
+        login.render(container, { error: redirectError });
+        redirectError = null;
+        return;
+      }
+      const landing = await import("./pages/landing.js");
+      landing.render(container);
       return;
     }
 
-    const rawPath = location.hash.replace("#", "") || "/";
-    const [path, queryString] = rawPath.split("?");
+    // Sesión activa: "/login" (y la propia landing, que solo vive en
+    // "/" sin sesión) ya no tienen sentido — de vuelta a Inicio.
+    if (path === "/login") {
+      location.hash = "#/";
+      return;
+    }
 
     if (REDIRECTS[path]) {
       location.hash = `#${REDIRECTS[path]}`;
