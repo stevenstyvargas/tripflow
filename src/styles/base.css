@@ -1240,13 +1240,11 @@ button[type="submit"] {
   margin-bottom: 0;
 }
 
-.expense-form {
-  max-width: 28rem;
-  margin: 0 0 var(--space-8);
-  padding: var(--space-4);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+/* Modal de "Agregar gasto"/"Editar gasto": reusa .modal (mismo overlay,
+   radius y sombra que "¿Eliminar este viaje?"), solo el texto vuelve a
+   alinearse a la izquierda — un formulario no se lee bien centrado. */
+.expense-modal-card {
+  text-align: left;
 }
 
 .expense-form-actions {
@@ -1360,6 +1358,17 @@ button[type="submit"] {
   padding: var(--space-4);
   background: rgba(0, 0, 0, 0.5);
   z-index: 100;
+}
+
+/* showConfirmModal()/showSuccessModal() nunca dejan el overlay en el DOM
+   mientras está cerrado (lo crean/remueven con JS), así que nunca
+   pisaban esto — pero el modal embebido de "Agregar/Editar gasto" sí
+   usa el atributo [hidden] para abrir/cerrar, y sin esta regla
+   `display: flex` de arriba gana igual (mismo origen de autor, mismo
+   empate de especificidad que [hidden], y el navegador aplica la regla
+   más específica) dejándolo visible aunque tenga [hidden]. */
+.modal-overlay[hidden] {
+  display: none;
 }
 
 .modal {

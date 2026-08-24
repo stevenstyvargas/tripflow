@@ -6,8 +6,10 @@
 // /Agregar gasto/menú de cuenta) a la derecha. Debajo, 2 columnas: KPIs
 // "Presupuesto"/"Gastado"/"Restante" apiladas en un ancho fijo (mismo
 // components/kpi-card.js que Inicio) y, a la derecha, la torre de
-// gasto por categoría de ESTE viaje. "Gastos registrados" y el
-// formulario para registrar un gasto van debajo, a todo el ancho.
+// gasto por categoría de ESTE viaje. "Gastos registrados" va debajo, a
+// todo el ancho — "Agregar gasto"/editar un gasto abren el mismo
+// formulario en un modal (mismo overlay/tarjeta que "¿Eliminar este
+// viaje?"), ya no como bloque inline en el flujo de la página.
 // Editar/finalizar viaje (antes en el header y en las cards de Mis
 // viajes) viven en una fila de botones al final de esta sección, tras
 // el último gasto de la lista. En viajes ya "Finalizado", "Finalizar
@@ -174,7 +176,7 @@ function renderExpenseForm() {
   const today = new Date().toISOString().slice(0, 10);
 
   return `
-    <form id="expense-form" class="expense-form" novalidate hidden>
+    <form id="expense-form" class="expense-form" novalidate>
       <p class="field">
         <label for="expense-amount">Monto (COP)</label>
         <input id="expense-amount" name="amount" type="text" inputmode="numeric" placeholder="0" required />
@@ -201,9 +203,27 @@ function renderExpenseForm() {
 
       <div class="expense-form-actions">
         <button type="submit">Guardar gasto</button>
-        <button type="button" class="button-outline" id="expense-form-cancel" hidden>Cancelar</button>
+        <button type="button" class="button-outline" id="expense-form-cancel">Cancelar</button>
       </div>
     </form>
+  `;
+}
+
+// Modal de "Agregar gasto"/"Editar gasto": mismo overlay+tarjeta que
+// showConfirmModal() ("¿Eliminar este viaje?" — .modal-overlay/.modal),
+// pero embebido en el propio markup de la página (no creado con JS al
+// vuelo) porque necesita bindings de formulario (submit, cancelar,
+// precarga en modo edición) que los modales de un solo botón no tienen.
+// Empieza oculto (hidden); #toggle-expense-form y el lápiz de cada gasto
+// lo abren, "Cancelar" y un click en el overlay lo cierran sin guardar.
+function renderExpenseModal() {
+  return `
+    <div class="modal-overlay" id="expense-modal" hidden>
+      <div class="modal expense-modal-card" role="dialog" aria-modal="true" aria-labelledby="expense-modal-title">
+        <h2 id="expense-modal-title" class="modal-title">Agregar gasto</h2>
+        ${renderExpenseForm()}
+      </div>
+    </div>
   `;
 }
 
@@ -285,7 +305,7 @@ export function render(container, { tripId } = {}) {
         </div>
       </div>
 
-      ${renderExpenseForm()}
+      ${renderExpenseModal()}
 
       <section class="section">
         <h2>Gastos registrados</h2>
@@ -319,6 +339,8 @@ export function render(container, { tripId } = {}) {
   bindAccountMenu(container);
 
   const toggleButton = container.querySelector("#toggle-expense-form");
+  const modalOverlay = container.querySelector("#expense-modal");
+  const modalTitle = container.querySelector("#expense-modal-title");
   const form = container.querySelector("#expense-form");
   const errorBox = container.querySelector("#expense-form-error");
   const submitButton = form.querySelector("button[type=submit]");
@@ -333,48 +355,54 @@ export function render(container, { tripId } = {}) {
   // no dos comportamientos distintos para casos similares).
   let editingExpenseId = null;
 
-  function exitEditMode() {
+  function closeExpenseModal() {
+    modalOverlay.hidden = true;
     editingExpenseId = null;
     form.reset();
     submitButton.textContent = "Guardar gasto";
-    cancelButton.hidden = true;
+    modalTitle.textContent = "Agregar gasto";
+    errorBox.hidden = true;
   }
 
-  function enterEditMode(expense) {
+  function openAddModal() {
+    editingExpenseId = null;
+    form.reset();
+    submitButton.textContent = "Guardar gasto";
+    modalTitle.textContent = "Agregar gasto";
+    errorBox.hidden = true;
+    modalOverlay.hidden = false;
+    amountInput.focus();
+  }
+
+  function openEditModal(expense) {
     editingExpenseId = expense.id;
-    form.hidden = false;
     amountInput.value = formatStoredAmount(expense.amount);
     form.querySelector("#expense-category").value = expense.category;
     form.querySelector("#expense-date").value = expense.date;
     form.querySelector("#expense-note").value = expense.note ?? "";
     submitButton.textContent = "Guardar cambios";
-    cancelButton.hidden = false;
+    modalTitle.textContent = "Editar gasto";
     errorBox.hidden = true;
+    modalOverlay.hidden = false;
     amountInput.focus();
   }
 
   if (toggleButton) {
-    toggleButton.addEventListener("click", () => {
-      if (!form.hidden) {
-        form.hidden = true;
-        exitEditMode();
-        return;
-      }
-      exitEditMode();
-      form.hidden = false;
-      amountInput.focus();
-    });
+    toggleButton.addEventListener("click", openAddModal);
   }
 
-  cancelButton.addEventListener("click", () => {
-    exitEditMode();
-    form.hidden = true;
+  cancelButton.addEventListener("click", closeExpenseModal);
+
+  // Cerrar solo si el click fue en el overlay mismo (fondo oscuro), no
+  // en la tarjeta del modal — mismo criterio que showConfirmModal().
+  modalOverlay.addEventListener("click", (event) => {
+    if (event.target === modalOverlay) closeExpenseModal();
   });
 
   container.querySelectorAll(".expense-item-edit").forEach((button) => {
     button.addEventListener("click", () => {
       const expense = expenses.find((e) => e.id === button.dataset.expenseId);
-      if (expense) enterEditMode(expense);
+      if (expense) openEditModal(expense);
     });
   });
 
