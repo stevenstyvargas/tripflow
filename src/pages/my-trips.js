@@ -13,7 +13,11 @@
 // (En curso/Finalizado) — en "Activos"/"Cerrados" ya está implícito
 // por el filtro y sumaría ruido visual. También solo en "Todos" el
 // orden agrupa primero los activos y después los finalizados (dentro
-// de cada grupo se mantiene el orden que ya traían).
+// de cada grupo se mantiene el orden que ya traían). En mobile, el
+// buscador inline de acá se oculta (ver .search-field en base.css) —
+// la lupa y el input equivalente viven en el header compartido
+// (components/sidebar.js, #trip-search-mobile); acá solo se bindea el
+// mismo filtro sobre ESE input además del de siempre.
 
 import { getAllTrips, getTripTotal, TRIP_STATUS } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
@@ -139,15 +143,28 @@ export function render(container, { tab } = {}) {
 
   const kpisBody = container.querySelector("#my-trips-kpis");
   const sectionBody = container.querySelector("#trips-section-body");
-  const searchInput = container.querySelector("#trip-search");
   const tabButtons = container.querySelectorAll(".tab-item");
 
+  // El query "actual" se guarda aparte (no se relee del input en cada
+  // update): puede venir de #trip-search (desktop) o de
+  // #trip-search-mobile (header compartido, ver sidebar.js), y update()
+  // también se llama desde el click de pestaña, sin ningún evento de
+  // input de por medio.
+  let currentQuery = "";
+
   function update() {
-    const query = searchInput.value.trim().toLowerCase();
-    sectionBody.innerHTML = renderTripsSection(trips, activeFilter, query);
+    sectionBody.innerHTML = renderTripsSection(trips, activeFilter, currentQuery);
   }
 
-  searchInput.addEventListener("input", update);
+  function handleSearchInput(event) {
+    currentQuery = event.target.value.trim().toLowerCase();
+    update();
+  }
+
+  container.querySelector("#trip-search").addEventListener("input", handleSearchInput);
+
+  const mobileSearchInput = document.querySelector("#trip-search-mobile");
+  if (mobileSearchInput) mobileSearchInput.addEventListener("input", handleSearchInput);
 
   tabButtons.forEach((button) => {
     button.addEventListener("click", () => {

@@ -7,12 +7,10 @@
 // con Mis viajes). El desglose por categoría de UN viaje (torre de
 // barras) vive en trip-detail.js, no acá. Las acciones de editar/
 // finalizar viaje viven en el Detalle de viaje, no en estas cards. En
-// mobile, el buscador (siempre el mismo <input>, el filtrado no
-// cambia) se colapsa a un ícono de lupa junto a "Nuevo viaje"; al
-// tocarlo se expande a ancho completo debajo del header — ver
-// .search-toggle/.page-home .search-field en base.css. Solo Inicio:
-// Mis viajes usa el mismo components/search-field.js pero sin este
-// comportamiento, no se tocó.
+// mobile, el buscador inline de acá se oculta (ver .search-field en
+// base.css) — la lupa y el input equivalente viven en el header
+// compartido (components/sidebar.js, #trip-search-mobile); acá solo se
+// bindea el mismo filtro sobre ESE input además del de siempre.
 
 import { getActiveTrips, getTripTotal, getExpensesByTrip } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
@@ -101,9 +99,6 @@ export function render(container) {
         <h1>Hola, ${escapeHtml(greetingName)} 👋</h1>
         <div class="page-header-actions">
           ${searchField({ id: "trip-search" })}
-          <button type="button" class="icon-button search-toggle" id="search-toggle" aria-label="Buscar" aria-expanded="false">
-            ${icon("search")}
-          </button>
           <a href="#/nuevo-viaje" class="button-primary">${icon("plus")}<span>Nuevo viaje</span></a>
           ${accountMenu(user)}
         </div>
@@ -139,21 +134,17 @@ export function render(container) {
   bindAccountMenu(container);
 
   const sectionBody = container.querySelector("#trips-section-body");
-  const searchInput = container.querySelector("#trip-search");
-  const searchFieldEl = container.querySelector(".search-field");
-  const searchToggle = container.querySelector("#search-toggle");
 
-  // Solo relevante en mobile (el ícono es invisible en desktop, ver
-  // .search-toggle en base.css): expande/colapsa el mismo <input> de
-  // siempre, no crea uno nuevo — el filtrado de abajo sigue intacto.
-  searchToggle.addEventListener("click", () => {
-    const isExpanded = searchFieldEl.classList.toggle("is-expanded");
-    searchToggle.setAttribute("aria-expanded", String(isExpanded));
-    if (isExpanded) searchInput.focus();
-  });
-
-  searchInput.addEventListener("input", (event) => {
+  function handleSearchInput(event) {
     const query = event.target.value.trim().toLowerCase();
     sectionBody.innerHTML = renderTripsSection(trips, query);
-  });
+  }
+
+  container.querySelector("#trip-search").addEventListener("input", handleSearchInput);
+
+  // #trip-search-mobile vive fuera de `container` (lo renderiza
+  // components/sidebar.js, en el header compartido, no esta página) —
+  // solo existe en mobile y solo en Inicio/Mis viajes.
+  const mobileSearchInput = document.querySelector("#trip-search-mobile");
+  if (mobileSearchInput) mobileSearchInput.addEventListener("input", handleSearchInput);
 }

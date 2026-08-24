@@ -169,37 +169,39 @@ button[type="submit"] {
   border-right: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-/* Gatillo del drawer mobile — no existe visualmente en desktop (ver
-   media query de abajo, único lugar donde pasa a display:flex). */
-.hamburger-button {
-  display: none;
-  flex-shrink: 0;
-  color: var(--color-surface);
-}
-
-.hamburger-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-surface);
-}
-
 .sidebar-logo {
   display: flex;
   align-items: center;
   margin-bottom: var(--space-8);
 }
 
-/* Logotipo completo en desktop, isotipo solo en mobile (ver media query
-   de abajo) — ambos son la versión "fondo oscuro" de los assets reales
-   (public/img/), pensada para este fondo navy. */
+/* Logotipo completo (isotipo + "TripFlow"), versión "fondo oscuro" del
+   asset real (public/img/) — mismo en desktop y mobile, alto fijo con
+   ancho automático para que nunca se recorte ni deforme. */
 .sidebar-logo-full {
   height: 2rem;
   width: auto;
 }
 
-.sidebar-logo-compact {
+/* Lupa (solo Inicio/Mis viajes) + hamburguesa, agrupados a la derecha
+   del header mobile — invisible por completo en desktop (ver media
+   query de abajo, único lugar donde pasa a display:flex). */
+.sidebar-mobile-actions {
   display: none;
-  height: 2rem;
-  width: auto;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.sidebar-icon-button {
+  display: none;
+  color: var(--color-surface);
+}
+
+.sidebar-icon-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-surface);
 }
 
 .sidebar-nav {
@@ -376,6 +378,21 @@ button[type="submit"] {
   color: var(--color-surface);
 }
 
+/* Fila de búsqueda expandible del header mobile (Inicio/Mis viajes):
+   display:none incondicional por defecto, mismo criterio que
+   .drawer-overlay — DEBE venir antes del media query de abajo (misma
+   especificidad que la regla display:flex de ahí adentro, y en un
+   empate gana la que aparece último en el archivo). [hidden] siempre
+   gana sobre display:flex mientras está colapsada (misma razón que
+   .modal-overlay[hidden]/.drawer-overlay[hidden]). */
+.mobile-search-row {
+  display: none;
+}
+
+.mobile-search-row[hidden] {
+  display: none;
+}
+
 @media (max-width: 45rem) {
   .app-shell {
     flex-direction: column;
@@ -393,20 +410,16 @@ button[type="submit"] {
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   }
 
-  .hamburger-button {
-    display: inline-flex;
-  }
-
   .sidebar-logo {
     margin-bottom: 0;
   }
 
-  .sidebar-logo-full {
-    display: none;
+  .sidebar-mobile-actions {
+    display: flex;
   }
 
-  .sidebar-logo-compact {
-    display: block;
+  .sidebar-icon-button {
+    display: inline-flex;
   }
 
   /* La fila de íconos de nav suelta en la barra superior se reemplaza
@@ -425,6 +438,42 @@ button[type="submit"] {
   .account-menu {
     display: none;
   }
+
+  /* El buscador inline de cada página (Inicio/Mis viajes) se reemplaza
+     por la lupa + .mobile-search-row del header compartido — no hay
+     otro uso de .search-field en la app, así que no hace falta scopear
+     por página. */
+  .search-field {
+    display: none;
+  }
+
+  .mobile-search-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-primary);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .mobile-search-row .search-field {
+    display: flex;
+    flex: 1;
+  }
+
+  .mobile-search-row .search-field input {
+    width: 100%;
+  }
+}
+
+.mobile-search-close {
+  color: var(--color-surface);
+  flex-shrink: 0;
+}
+
+.mobile-search-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-surface);
 }
 
 /* ---------- Encabezado de página ---------- */
@@ -478,39 +527,6 @@ button[type="submit"] {
   border: 1px solid var(--color-text-muted);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
-}
-
-/* Botón de lupa que reemplaza al .search-field inline en mobile — solo
-   en Inicio (.page-home), Mis viajes conserva su buscador tal cual.
-   display:none incondicional para que en desktop sea imposible de ver/
-   tocar, sin depender solo del media query. */
-.search-toggle {
-  display: none;
-}
-
-@media (max-width: 45rem) {
-  .page-home .search-field {
-    display: none;
-  }
-
-  .page-home .search-toggle {
-    display: inline-flex;
-  }
-
-  /* Mismo <input> de siempre (no uno nuevo): al expandirse ocupa el
-     100% del ancho de .page-header-actions y, como ese contenedor ya
-     tiene flex-wrap, cae a su propia fila completa debajo del resto de
-     la barra — empuja el contenido de la página hacia abajo en vez de
-     superponerse. */
-  .page-home .search-field.is-expanded {
-    display: flex;
-    order: 10;
-    flex: 1 1 100%;
-  }
-
-  .page-home .search-field.is-expanded input {
-    width: 100%;
-  }
 }
 
 /* ---------- Menú de cuenta (header de cada página) ---------- */
