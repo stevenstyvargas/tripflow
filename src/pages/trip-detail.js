@@ -291,7 +291,7 @@ export function render(container, { tripId } = {}) {
         <h2>Gastos registrados</h2>
         ${
           expenses.length === 0
-            ? `<p class="empty-state">Todavía no has registrado gastos en este viaje.</p>`
+            ? `<div class="expense-list-empty"><p class="empty-state">Todavía no has registrado gastos en este viaje.</p></div>`
             : `<ul class="expense-list">${expenses.map(renderExpenseItem).join("")}</ul>`
         }
         <div class="trip-detail-footer-actions">
