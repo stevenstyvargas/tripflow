@@ -5,8 +5,11 @@
 // con texto plano, sin backend ni PDF, ver docs/product-decisions.md —
 // /Agregar gasto/menú de cuenta) a la derecha. Debajo, 2 columnas: KPIs
 // "Presupuesto"/"Gastado"/"Restante" apiladas en un ancho fijo (mismo
-// components/kpi-card.js que Inicio) y, a la derecha, la torre de
-// gasto por categoría de ESTE viaje. "Gastos registrados" va debajo, a
+// components/kpi-card.js que Inicio) y, a la derecha, "Gasto por
+// categoría" de ESTE viaje (components/category-chart.js: torres en
+// desktop, dona en mobile — mismo componente que usa dashboard.js,
+// unificado por breakpoint, no por pantalla). "Gastos registrados" va
+// debajo, a
 // todo el ancho — "Agregar gasto"/editar un gasto abren el mismo
 // formulario en un modal (mismo overlay/tarjeta que "¿Eliminar este
 // viaje?"), ya no como bloque inline en el flujo de la página.
@@ -38,7 +41,7 @@ import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
 import { renderKpiCard } from "../components/kpi-card.js";
 import { showConfirmModal, showSuccessModal } from "../components/confirm-modal.js";
-import { barChart } from "../components/bar-chart.js";
+import { categoryChart } from "../components/category-chart.js";
 import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
 import { getCurrentUser } from "../data/auth.js";
 import { EXPENSE_CATEGORIES } from "../utils/categories.js";
@@ -302,7 +305,7 @@ export function render(container, { tripId } = {}) {
         <div class="trip-detail-content">
           <section class="section">
             <h2>Gasto por categoría</h2>
-            ${barChart(computeCategoryBreakdown(expenses))}
+            ${categoryChart(computeCategoryBreakdown(expenses))}
           </section>
         </div>
       </div>

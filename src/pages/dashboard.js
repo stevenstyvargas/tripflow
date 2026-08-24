@@ -1,13 +1,13 @@
 // Página: Inicio. KPIs del periodo activo (una sola divisa, COP — ver
-// docs/product-decisions.md), "Gasto por categoría" (dona,
-// components/donut-chart.js, a todo el ancho — el bloque "Gasto vs
-// presupuesto" que compartía la fila con esta dona se eliminó por
-// redundante con el KPI "Presupuesto restante" de arriba, ver
-// docs/product-decisions.md) — agregado de todos los viajes activos —
-// y viajes activos como cards con foto de destino + semáforo de
-// estado (components/trip-card.js, compartido con Mis viajes). El
-// desglose por categoría de UN viaje (torre de barras) vive en
-// trip-detail.js, no acá. Las acciones de editar/
+// docs/product-decisions.md), "Gasto por categoría" (components/
+// category-chart.js: torres en desktop, dona en mobile — mismo
+// componente que usa trip-detail.js, unificado por breakpoint, no por
+// pantalla; acá con el agregado de todos los viajes activos, a todo el
+// ancho — el bloque "Gasto vs presupuesto" que compartía la fila con
+// este bloque se eliminó por redundante con el KPI "Presupuesto
+// restante" de arriba, ver docs/product-decisions.md) y viajes activos
+// como cards con foto de destino + semáforo de estado (components/
+// trip-card.js, compartido con Mis viajes). Las acciones de editar/
 // finalizar viaje viven en el Detalle de viaje, no en estas cards. En
 // mobile, el buscador inline de acá se oculta (ver .search-field en
 // base.css) — la lupa y el input equivalente viven en el header
@@ -22,7 +22,7 @@
 import { getActiveTrips, getTripTotal, getExpensesByTrip } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
 import { renderKpiCard } from "../components/kpi-card.js";
-import { donutChart } from "../components/donut-chart.js";
+import { categoryChart } from "../components/category-chart.js";
 import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
 import { searchField } from "../components/search-field.js";
 import { renderTripCard } from "../components/trip-card.js";
@@ -73,7 +73,9 @@ function computeCategoryBreakdown(trips) {
   }
 
   return EXPENSE_CATEGORIES.map((c) => ({
+    id: c.id,
     label: c.label,
+    icon: c.icon,
     value: totals[c.id],
     color: `var(${c.colorVar})`,
   }));
@@ -118,7 +120,7 @@ export function render(container) {
       <section class="section">
         <h2>Gasto por categoría</h2>
         <p class="section-subtitle">Todos tus viajes activos</p>
-        ${donutChart(categoryBreakdown)}
+        ${categoryChart(categoryBreakdown)}
       </section>
 
       <section class="section">

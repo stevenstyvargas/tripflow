@@ -968,6 +968,25 @@ button[type="submit"] {
   }
 }
 
+/* ---------- Gasto por categoría: torres en desktop, dona en mobile ----------
+   components/category-chart.js renderiza siempre los 2 formatos (.bar-chart
+   y .donut-chart, cada uno ya con su propia tarjeta/estilo); acá solo se
+   decide cuál se ve según el ancho — mismo criterio que .sidebar-logo-full/
+   -compact y .search-field/.mobile-search-row. */
+.category-chart-donut {
+  display: none;
+}
+
+@media (max-width: 45rem) {
+  .category-chart-bars {
+    display: none;
+  }
+
+  .category-chart-donut {
+    display: block;
+  }
+}
+
 /* ---------- Gráfico de barras (gasto por categoría) ---------- */
 
 .bar-chart {
