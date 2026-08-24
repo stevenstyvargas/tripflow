@@ -595,6 +595,43 @@ riesgo de perder datos sin vuelta atrás) es peor que no tenerla —
 vista activa" sin el riesgo de pérdida de datos irreversible que trae
 un borrado de verdad a último momento antes de una entrega.
 
+## Reconsiderar "eliminar viaje" permanente: se implementa con alcance reducido
+
+**Problema:** la decisión anterior de postergar por completo la
+eliminación permanente seguía siendo válida en cuanto al riesgo técnico
+(borrado en cascada de la subcolección de gastos en Firestore), pero no
+distinguía entre el riesgo real de perder un viaje **activo** por error
+y el de limpiar viajes ya **finalizados** que un usuario simplemente no
+quiere seguir viendo — un caso de uso legítimo que "finalizar" (que no
+borra nada) no resuelve.
+
+**Decisión:** se agrega "Eliminar viaje" con alcance deliberadamente
+acotado: visible SOLO en el detalle de un viaje ya "Finalizado" —
+nunca en uno "En curso" —, en la misma posición donde antes vivía
+"Finalizar viaje" (que en ese estado ya no aplica, un viaje finalizado
+no se puede volver a finalizar). Reutiliza el mismo componente de modal
+de confirmación que ya usa "vas a superar el presupuesto"
+(`showConfirmModal()`), con el nombre real del viaje y el número real
+de gastos que se van a perder en el texto — nunca un mensaje genérico
+que minimice lo irreversible de la acción — y el foco por defecto en
+"Cancelar", no en el botón rojo, para que un Enter accidental no borre
+nada. El borrado en cascada real (gastos de la subcolección `expenses/`
+antes que el documento del viaje) vive en una función nueva del store,
+`deleteTrip()`, sin librería adicional ni Cloud Function — el número de
+gastos de un viaje individual es pequeño, así que iterar y borrar cada
+uno desde el cliente (en paralelo, con `Promise.all`) es suficiente sin
+necesitar una función serverless para esto.
+
+**Por qué:** acotar la acción a viajes ya finalizados reduce
+drásticamente el riesgo que motivó la postergación original — no hay
+forma de perder por accidente un viaje con seguimiento de presupuesto
+activo, porque la opción ni siquiera se muestra ahí. El riesgo que
+queda (borrar por error un viaje finalizado con gastos históricos) se
+mitiga con una confirmación explícita, específica del viaje real, y sin
+que el botón destructivo sea el default del teclado — mismo criterio de
+"prevenir el error, no solo advertirlo" que ya se aplicó en el modal de
+"vas a superar el presupuesto".
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 

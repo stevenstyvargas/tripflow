@@ -10,10 +10,14 @@
 // formulario para registrar un gasto van debajo, a todo el ancho.
 // Editar/finalizar viaje (antes en el header y en las cards de Mis
 // viajes) viven en una fila de botones al final de esta sección, tras
-// el último gasto de la lista. El semáforo de Inicio y las alertas de
-// Alertas se recalculan solos la próxima vez que se rendericen: leen
-// siempre el estado en memoria de store.js, así que un gasto nuevo ya
-// persistido ahí se refleja sin código adicional.
+// el último gasto de la lista. En viajes ya "Finalizado", "Finalizar
+// viaje" se reemplaza por "Eliminar viaje" (borrado PERMANENTE, con
+// confirmación y borrado en cascada de sus gastos — ver
+// docs/product-decisions.md): nunca conviven ambos botones. El
+// semáforo de Inicio y las alertas de Alertas se recalculan solos la
+// próxima vez que se rendericen: leen siempre el estado en memoria de
+// store.js, así que un gasto nuevo ya persistido ahí se refleja sin
+// código adicional.
 
 import {
   getTrip,
@@ -23,6 +27,7 @@ import {
   updateExpense,
   deleteExpense,
   closeTrip,
+  deleteTrip,
   TRIP_STATUS,
 } from "../data/store.js";
 import { formatCurrency, formatStoredAmount } from "../utils/currency.js";
@@ -300,7 +305,11 @@ export function render(container, { tripId } = {}) {
               ${icon("trash-2")}<span>Finalizar viaje</span>
             </button>
           `
-              : ""
+              : `
+            <button type="button" id="delete-trip" class="button-danger-outline">
+              ${icon("trash-2")}<span>Eliminar viaje</span>
+            </button>
+          `
           }
         </div>
       </section>
@@ -375,6 +384,28 @@ export function render(container, { tripId } = {}) {
       closeTripButton.disabled = true;
       await closeTrip(trip.id);
       render(container, { tripId: trip.id });
+    });
+  }
+
+  const deleteTripButton = container.querySelector("#delete-trip");
+  if (deleteTripButton) {
+    deleteTripButton.addEventListener("click", () => {
+      showConfirmModal({
+        title: "¿Eliminar este viaje?",
+        body: `
+          Esta acción no se puede deshacer. Se eliminarán permanentemente
+          el viaje <strong>${escapeHtml(trip.name)}</strong> y sus
+          ${expenses.length} gasto${expenses.length === 1 ? "" : "s"}
+          registrado${expenses.length === 1 ? "" : "s"}.
+        `,
+        confirmLabel: "Eliminar permanentemente",
+        cancelLabel: "Cancelar",
+        onConfirm: async () => {
+          deleteTripButton.disabled = true;
+          await deleteTrip(trip.id);
+          window.location.hash = "#/viajes";
+        },
+      });
     });
   }
 

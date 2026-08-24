@@ -174,6 +174,27 @@ export async function closeTrip(tripId) {
 }
 
 /**
+ * Elimina un viaje de forma PERMANENTE, junto con todos sus gastos —
+ * Firestore no borra subcolecciones solo al borrar el documento padre,
+ * así que cada gasto se borra explícitamente antes/junto con el viaje
+ * para no dejar gastos huérfanos en `expenses/`. Irreversible: solo se
+ * llama tras confirmación explícita del usuario, y la UI que la invoca
+ * (trip-detail.js) restringe esta acción a viajes ya "Finalizado" — ver
+ * docs/product-decisions.md.
+ * @param {string} tripId
+ */
+export async function deleteTrip(tripId) {
+  const expenses = getExpensesByTrip(tripId);
+  await Promise.all(
+    expenses.map((expense) => deleteDoc(doc(db, "users", currentUid, "trips", tripId, "expenses", expense.id)))
+  );
+  await deleteDoc(doc(db, "users", currentUid, "trips", tripId));
+
+  state.trips = state.trips.filter((t) => t.id !== tripId);
+  state.expenses = state.expenses.filter((e) => e.tripId !== tripId);
+}
+
+/**
  * Valida los datos de un gasto nuevo antes de guardarlo.
  * Lanza un Error con un mensaje apto para mostrar al usuario si algo falla.
  * @param {{ category: string, amount: number, date: string }} data
