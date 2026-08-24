@@ -20,7 +20,7 @@ Proyecto realizado para el reto técnico de Technical Product Designer en Alegra
 - Responsive: desktop y mobile
 - PWA (instalable desde el navegador, sin tienda de apps)
 
-**Fuera de alcance de v1** (roadmap, ver más abajo): perfil compartido/pareja
+**Fuera de alcance de v1** (roadmap, ver más abajo): viaje compartido/pareja
 con reparto de gastos, soporte multi-divisa (USD, EUR y más — se exploró y
 se decidió simplificar a solo COP para esta entrega, ver
 `docs/product-decisions.md`), escaneo de recibos con IA (bonus, en
@@ -109,7 +109,7 @@ tripflow/
 
 ## Roadmap (próximas actualizaciones)
 
-- Perfil compartido: viaje en pareja con reparto de gastos
+- Viaje compartido: viaje en pareja con reparto de gastos
 - Reintroducir soporte multi-divisa (COP, USD, EUR y más) con una UX más
   simple y clara. Ya se exploró y se construyó una vez (selector de
   divisa en Inicio, tasas de conversión) pero se retiró por la
@@ -124,6 +124,9 @@ tripflow/
   usuario en un solo lugar (distinta del botón "Agregar a Google
   Calendar" que ya existe por viaje individual, que se mantiene igual)
 - Multi-idioma: español e inglés
+- Estadísticas de gasto entre viajes a lo largo del tiempo — comparar
+  tendencias, categorías con mayor gasto recurrente y evolución del
+  presupuesto histórico
 - Eliminar viaje de forma permanente (hoy solo existe "finalizar
   viaje", que cambia el estado sin borrar datos; se evaluó agregar
   eliminación definitiva pero se decidió postergarla por el riesgo de

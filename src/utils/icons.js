@@ -31,6 +31,8 @@ import lock from "lucide-static/icons/lock.svg?raw";
 import messageCircle from "lucide-static/icons/message-circle.svg?raw";
 import menu from "lucide-static/icons/menu.svg?raw";
 import x from "lucide-static/icons/x.svg?raw";
+import users from "lucide-static/icons/users.svg?raw";
+import barChart3 from "lucide-static/icons/bar-chart-3.svg?raw";
 
 const ICONS = {
   home,
@@ -62,6 +64,8 @@ const ICONS = {
   "message-circle": messageCircle,
   menu,
   x,
+  users,
+  "bar-chart-3": barChart3,
 };
 
 /**

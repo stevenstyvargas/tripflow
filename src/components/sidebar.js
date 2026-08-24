@@ -33,10 +33,11 @@
 // el selector de hijo directo excluye a la copia del drawer, que no
 // cuelga de `.sidebar`). Mismas 3 líneas que ya documenta el roadmap
 // de README.md/docs/product-decisions.md, ahora también visibles en
-// la app, no solo en los docs. Debajo de "Alertas", 2 ítems de nav
-// deshabilitados ("Mis facturas"/"Calendario", ver COMING_SOON_ITEMS):
-// mismo layout que los reales pero como <button> (no <a>, no navegan a
-// ningún lado), ícono+texto atenuados + etiqueta "Próximamente" en
+// la app, no solo en los docs. Debajo de "Alertas", 4 ítems de nav
+// deshabilitados ("Mis facturas"/"Calendario"/"Viaje compartido"/
+// "Estadísticas", ver COMING_SOON_ITEMS): mismo layout que los reales
+// pero como <button> (no <a>, no navegan a ningún lado), ícono+texto
+// atenuados + etiqueta "Próximamente" en
 // verde sin atenuar, y un toast (components/toast.js) al tocarlos en
 // vez de navegación — nunca llevan la franja verde de activo porque
 // nunca reciben la clase `.is-active`. Se excluyen a propósito del
@@ -58,10 +59,13 @@ const NAV_ITEMS = [
 ];
 
 // Ver docs/product-decisions.md (vista de calendario, sección "Mis
-// facturas" para el escaneo de recibos) — ambos ya en el roadmap.
+// facturas" para el escaneo de recibos, "Viaje compartido"/
+// "Estadísticas" en el roadmap de README.md) — los 4 ya en el roadmap.
 const COMING_SOON_ITEMS = [
   { label: "Mis facturas", icon: "receipt" },
   { label: "Calendario", icon: "calendar" },
+  { label: "Viaje compartido", icon: "users" },
+  { label: "Estadísticas", icon: "bar-chart-3" },
 ];
 
 // Únicas 2 pantallas con una lista de viajes que buscar por

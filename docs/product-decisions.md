@@ -774,6 +774,36 @@ siendo clickeables (en vez de simplemente no responder al toque) evita
 la sensación de "botón roto": el toast confirma que el click se
 registró, solo que la feature todavía no existe.
 
+## 2 ítems más de nav "Próximamente": Viaje compartido y Estadísticas
+
+**Problema:** la decisión anterior agregó 2 ítems de nav
+"Próximamente" para features que ya tenían pantalla propia esperable
+("Mis facturas", "Calendario"), pero dejó afuera otras 2 del mismo
+roadmap que también la tienen: "Viaje compartido" (perfil
+compartido/pareja, ya en el roadmap de `README.md` desde el alcance de
+v1) y una nueva, "Estadísticas" (gasto entre viajes a lo largo del
+tiempo), que no estaba documentada en ningún lado todavía.
+
+**Decisión:** se agregan "Viaje compartido" (ícono `users`) y
+"Estadísticas" (ícono `bar-chart-3`) al mismo array `COMING_SOON_ITEMS`
+de `components/sidebar.js`, debajo de "Calendario" — mismo componente,
+mismo estilo, mismo binding de toast que los 2 ítems anteriores, sin
+código nuevo más allá de agregar las 2 entradas. Se renombró "Perfil
+compartido" a "Viaje compartido" en el roadmap de `README.md` para que
+el nombre coincida exactamente con el que ahora también aparece en la
+navegación — la feature no cambió, solo el nombre con el que se la
+nombra en los 2 lugares. "Estadísticas" se agrega como línea nueva del
+roadmap en `README.md`, con el texto: "Estadísticas de gasto entre
+viajes a lo largo del tiempo — comparar tendencias, categorías con
+mayor gasto recurrente y evolución del presupuesto histórico".
+
+**Por qué:** mismo razonamiento que la decisión anterior — si el
+patrón ya existe para 2 features del roadmap con pantalla propia
+esperable, las demás features en la misma situación deberían seguir el
+mismo patrón en vez de quedar solo en texto. Renombrar "Perfil
+compartido" a "Viaje compartido" evita que el mismo concepto tenga 2
+nombres distintos según dónde se lea (docs vs. app).
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 
