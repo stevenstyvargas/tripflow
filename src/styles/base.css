@@ -6,10 +6,19 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
+/* Red de seguridad: si algún componente se desborda horizontalmente
+   (ver el fix de .trip-detail-body más abajo, causa real encontrada en
+   dispositivo), sin esto el navegador mobile ensancha el viewport de
+   layout para acomodar ese desborde — y con él ensancha también
+   cualquier elemento position:fixed con inset:0 (el overlay de los
+   modales, .modal-overlay), empujándolo fuera de la pantalla visible
+   aunque el modal en sí tenga su ancho acotado. */
 body {
   margin: 0;
+  overflow-x: hidden;
   font-family: var(--font-body);
   background: var(--color-bg);
   color: var(--color-text);
@@ -1447,6 +1456,53 @@ button[type="submit"] {
   white-space: nowrap;
 }
 
+/* Mobile: la fila horizontal de desktop (foto | ícono | título+mensaje
+   | botón, todo en una sola línea) no deja espacio para el mensaje
+   completo junto al botón de ancho fijo — el texto terminaba
+   partiéndose palabra por palabra en una columna angostísima. Mismo
+   patrón que .expense-item en mobile (grid con grid-template-areas +
+   display:contents en el wrapper intermedio, sin tocar el markup):
+   foto+ícono+nombre arriba, mensaje debajo a todo el ancho (fluye como
+   párrafo normal), botón al final alineado a la derecha. */
+@media (max-width: 45rem) {
+  .alert-item {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    column-gap: var(--space-3);
+    row-gap: var(--space-2);
+    grid-template-areas:
+      "photo icon title"
+      "text  text  text"
+      "action action action";
+    align-items: center;
+  }
+
+  .alert-item-photo {
+    grid-area: photo;
+  }
+
+  .alert-item-icon {
+    grid-area: icon;
+  }
+
+  .alert-item-body {
+    display: contents;
+  }
+
+  .alert-item-title {
+    grid-area: title;
+  }
+
+  .alert-item-text {
+    grid-area: text;
+  }
+
+  .alert-item-action {
+    grid-area: action;
+    justify-self: end;
+  }
+}
+
 /* ---------- Detalle de viaje ---------- */
 
 /* Barra de 40px: foto miniatura + nombre (trunca con "...", mismo
@@ -1583,6 +1639,28 @@ button[type="submit"] {
 
 .trip-detail-content .section {
   margin-bottom: 0;
+}
+
+/* CAUSA RAÍZ del desborde horizontal de "Gasto por categoría" en
+   mobile (encontrado en dispositivo real): .trip-detail-kpis tiene un
+   ancho fijo de 22rem (352px) con flex-shrink:0 — nunca se comprime.
+   En un viewport angosto (ej. 360-390px, menos el padding de .page),
+   352px por sí solos ya superan el ancho disponible, así que
+   .trip-detail-body (flex, sin wrap) se desborda de lado, arrastrando
+   con ella a TODA la página (nada en esta sección tiene su propio
+   scroll, el overflow sube hasta <body>). Ese mismo desborde de página
+   es lo que además empujaba el modal de "Agregar gasto" fuera de
+   pantalla (ver overflow-x:hidden en html/body más arriba) — apilar
+   las 2 columnas en mobile ataca la causa de los 2 bugs a la vez. */
+@media (max-width: 45rem) {
+  .trip-detail-body {
+    flex-direction: column;
+  }
+
+  .trip-detail-kpis {
+    flex-basis: auto;
+    width: 100%;
+  }
 }
 
 /* Modal de "Agregar gasto"/"Editar gasto": reusa .modal (mismo overlay,
@@ -1808,9 +1886,17 @@ button[type="submit"] {
   display: none;
 }
 
+/* max-height + overflow-y: el ancho ya queda acotado por
+   width:100%/max-width dentro de .modal-overlay (padding var(--space-4)
+   a los 4 lados) — el eje pendiente era el vertical: sin este límite,
+   un modal con más contenido que el alto disponible (ej. "Agregar
+   gasto" con todos sus campos, en un teléfono chico) se corta contra
+   los bordes del viewport sin forma de hacer scroll hasta los botones. */
 .modal {
   width: 100%;
   max-width: 26rem;
+  max-height: calc(100dvh - (var(--space-4) * 2));
+  overflow-y: auto;
   padding: var(--space-6);
   border-radius: var(--radius-md);
   background: var(--color-surface);
