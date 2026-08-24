@@ -35,7 +35,7 @@ import { bindAmountInput, readAmountInput } from "../utils/amount-input.js";
 import { getBudgetStatus } from "../utils/status.js";
 import { statusBadge } from "../components/status-badge.js";
 import { renderKpiCard } from "../components/kpi-card.js";
-import { showConfirmModal } from "../components/confirm-modal.js";
+import { showConfirmModal, showSuccessModal } from "../components/confirm-modal.js";
 import { barChart } from "../components/bar-chart.js";
 import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
 import { getCurrentUser } from "../data/auth.js";
@@ -383,7 +383,10 @@ export function render(container, { tripId } = {}) {
     closeTripButton.addEventListener("click", async () => {
       closeTripButton.disabled = true;
       await closeTrip(trip.id);
-      render(container, { tripId: trip.id });
+      showSuccessModal({
+        title: "El viaje ha sido finalizado",
+        onClose: () => render(container, { tripId: trip.id }),
+      });
     });
   }
 
@@ -403,7 +406,12 @@ export function render(container, { tripId } = {}) {
         onConfirm: async () => {
           deleteTripButton.disabled = true;
           await deleteTrip(trip.id);
-          window.location.hash = "#/viajes";
+          showSuccessModal({
+            title: "El viaje ha sido eliminado",
+            onClose: () => {
+              window.location.hash = "#/viajes";
+            },
+          });
         },
       });
     });

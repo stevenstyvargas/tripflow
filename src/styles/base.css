@@ -1367,10 +1367,25 @@ button[type="submit"] {
   color: var(--color-status-danger);
 }
 
+/* Modal de éxito (showSuccessModal): verde en vez de rojo — no es un
+   estado del semáforo de presupuesto, es el acento de marca genérico
+   (--color-accent), mismo criterio que ya separa ambos significados en
+   otras partes de la app aunque compartan el mismo hex. */
+.modal-icon-success {
+  color: var(--color-accent);
+}
+
 .modal-title {
   margin: 0 0 var(--space-2);
   font-family: var(--font-display);
   font-size: var(--text-lg);
+}
+
+/* Modal de éxito: el título es el único texto (sin .modal-body debajo),
+   así que necesita el mismo espacio antes de los botones que .modal-body
+   le daría normalmente. */
+.modal-title-only {
+  margin-bottom: var(--space-6);
 }
 
 .modal-body {
