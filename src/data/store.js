@@ -4,6 +4,7 @@
 
 import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { EXPENSE_CATEGORIES } from "../utils/categories.js";
+import { getBudgetStatus, STATUS } from "../utils/status.js";
 import { db } from "./firebase.js";
 
 export const TRIP_STATUS = { ACTIVE: "active", CLOSED: "closed" };
@@ -225,6 +226,20 @@ export async function addExpense(expense) {
 
 export function getTripTotal(tripId) {
   return getExpensesByTrip(tripId).reduce((sum, e) => sum + e.amount, 0);
+}
+
+/**
+ * Viajes activos que cruzaron el umbral naranja (80%) o rojo (100%) del
+ * presupuesto, con su status ya calculado — fuente única para la
+ * pantalla de Alertas (que además ordena danger-primero) y el badge de
+ * notificación sobre el ícono de campana (components/sidebar.js), para
+ * que nunca muestren números distintos.
+ * @returns {{ trip: Trip, status: "warning" | "danger" }[]}
+ */
+export function getTripAlerts() {
+  return getActiveTrips()
+    .map((trip) => ({ trip, status: getBudgetStatus(getTripTotal(trip.id), trip.budgetLimit) }))
+    .filter(({ status }) => status !== STATUS.OK);
 }
 
 /**

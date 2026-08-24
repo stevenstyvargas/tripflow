@@ -21,12 +21,16 @@
 // dashboard.js/my-trips.js), reusando el input desktop (inline, sin
 // tocar) más este nuevo #trip-search-mobile. El logo (`.sidebar-logo`)
 // es un link a "/" en desktop y mobile por igual — mismo elemento,
-// ningún CSS de breakpoint de por medio. Historial se fusionó con Mis
-// viajes (ver docs/product-decisions.md) — los viajes cerrados viven
-// en su pestaña "Cerrados".
+// ningún CSS de breakpoint de por medio. El ícono de "Alertas" lleva
+// un badge con el número de viajes activos en alerta (getTripAlerts()
+// de data/store.js — misma lista/cálculo que usa la propia pantalla de
+// Alertas, no una copia), oculto si el conteo es 0. Historial se
+// fusionó con Mis viajes (ver docs/product-decisions.md) — los viajes
+// cerrados viven en su pestaña "Cerrados".
 
 import { icon } from "../utils/icons.js";
 import { getCurrentUser, signOutUser } from "../data/auth.js";
+import { getTripAlerts } from "../data/store.js";
 import { escapeHtml } from "../utils/dom.js";
 import { searchField } from "./search-field.js";
 
@@ -41,15 +45,31 @@ const NAV_ITEMS = [
 // viaje) no muestra la lupa en el header mobile.
 const SEARCHABLE_PATHS = new Set(["/", "/viajes"]);
 
+// "9+" en vez de desbordar el círculo con 2+ dígitos.
+function renderNavBadge(count) {
+  if (count <= 0) return "";
+  return `<span class="nav-badge">${count > 9 ? "9+" : count}</span>`;
+}
+
+// El badge solo aplica al ícono de "Alertas" — los otros 2 items
+// quedan con el mismo markup de siempre (ícono suelto, sin wrapper),
+// para no arriesgar su estilo actual por un cambio que no les aplica.
 function renderNavItems(currentPath) {
-  return NAV_ITEMS.map(
-    (item) => `
-    <a href="#${item.path}" class="sidebar-nav-item${item.path === currentPath ? " is-active" : ""}">
-      ${icon(item.icon)}
-      <span>${item.label}</span>
-    </a>
-  `
-  ).join("");
+  const alertsCount = getTripAlerts().length;
+
+  return NAV_ITEMS.map((item) => {
+    const isAlerts = item.path === "/alertas";
+    const iconMarkup = isAlerts
+      ? `<span class="sidebar-nav-icon">${icon(item.icon)}${renderNavBadge(alertsCount)}</span>`
+      : icon(item.icon);
+
+    return `
+      <a href="#${item.path}" class="sidebar-nav-item${item.path === currentPath ? " is-active" : ""}">
+        ${iconMarkup}
+        <span>${item.label}</span>
+      </a>
+    `;
+  }).join("");
 }
 
 function getInitial(name) {

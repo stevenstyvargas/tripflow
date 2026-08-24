@@ -1,10 +1,14 @@
 // Página: Alertas. Viajes activos que cruzaron el umbral naranja (80%)
 // o rojo (100%) del presupuesto — mismo semáforo que Inicio/Historial.
-// Cards con foto de destino (mismo patrón visual que Historial): borde
-// completo del color de severidad, ícono+texto de alerta, y botón
-// "Ver viaje" hacia el detalle de ese viaje.
+// La lista viene de getTripAlerts() (data/store.js), compartida con el
+// badge de notificación del ícono de campana en el menú de navegación
+// (components/sidebar.js) — mismo cálculo en los dos lugares, esta
+// pantalla solo le agrega el orden danger-primero. Cards con foto de
+// destino (mismo patrón visual que Historial): borde completo del
+// color de severidad, ícono+texto de alerta, y botón "Ver viaje" hacia
+// el detalle de ese viaje.
 
-import { getActiveTrips, getTripTotal } from "../data/store.js";
+import { getTripAlerts, getTripTotal } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
 import { getBudgetStatus, getStatusMeta, STATUS } from "../utils/status.js";
 import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
@@ -46,9 +50,7 @@ function renderAlert(trip) {
 }
 
 export function render(container) {
-  const alerts = getActiveTrips()
-    .map((trip) => ({ trip, status: getBudgetStatus(getTripTotal(trip.id), trip.budgetLimit) }))
-    .filter(({ status }) => status !== STATUS.OK)
+  const alerts = getTripAlerts()
     .sort((a, b) => (a.status === b.status ? 0 : a.status === STATUS.DANGER ? -1 : 1))
     .map(({ trip }) => trip);
 
