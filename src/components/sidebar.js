@@ -26,7 +26,14 @@
 // de data/store.js — misma lista/cálculo que usa la propia pantalla de
 // Alertas, no una copia), oculto si el conteo es 0. Historial se
 // fusionó con Mis viajes (ver docs/product-decisions.md) — los viajes
-// cerrados viven en su pestaña "Cerrados".
+// cerrados viven en su pestaña "Cerrados". La tarjeta de "Próximas
+// actualizaciones" (informativa, no clickeable) va en el espacio vacío
+// bajo la nav, en desktop y en el drawer — nunca en la barra superior
+// colapsada de mobile (ver `.sidebar > .sidebar-upcoming` en base.css,
+// el selector de hijo directo excluye a la copia del drawer, que no
+// cuelga de `.sidebar`). Mismas 3 líneas que ya documenta el roadmap
+// de README.md/docs/product-decisions.md, ahora también visibles en
+// la app, no solo en los docs.
 
 import { icon } from "../utils/icons.js";
 import { getCurrentUser, signOutUser } from "../data/auth.js";
@@ -70,6 +77,22 @@ function renderNavItems(currentPath) {
       </a>
     `;
   }).join("");
+}
+
+// Mismos 3 ítems que ya lista el roadmap en README.md y en la última
+// entrada de docs/product-decisions.md — si ese roadmap cambia, esta
+// lista debe actualizarse junto con él.
+const UPCOMING_FEATURES = ["Soporte multi-divisa", "Español / Inglés", "Escaneo de recibos con IA"];
+
+function renderUpcomingCard() {
+  return `
+    <div class="sidebar-upcoming">
+      <p class="sidebar-upcoming-title">Próximas actualizaciones</p>
+      <ul class="sidebar-upcoming-list">
+        ${UPCOMING_FEATURES.map((feature) => `<li>${feature}</li>`).join("")}
+      </ul>
+    </div>
+  `;
 }
 
 function getInitial(name) {
@@ -118,6 +141,8 @@ export function renderSidebar(currentPath) {
         ${renderNavItems(currentPath)}
       </nav>
 
+      ${renderUpcomingCard()}
+
       <div class="sidebar-mobile-actions">
         ${
           hasSearch
@@ -155,6 +180,7 @@ export function renderSidebar(currentPath) {
         <div class="sidebar-nav drawer-nav">
           ${renderNavItems(currentPath)}
         </div>
+        ${renderUpcomingCard()}
         ${renderDrawerSession(getCurrentUser())}
       </nav>
     </div>

@@ -694,6 +694,30 @@ badge de la campana puedan mostrar números distintos si alguno de los
 dos cambia de criterio más adelante — quedan atados a la misma fuente
 por diseño, no por convención.
 
+## Hacer visible el roadmap dentro de la propia app
+
+**Problema:** el roadmap de Tripflow (soporte multi-divisa, multi-idioma,
+escaneo de recibos con IA) solo vivía en `README.md`/este documento —
+información real del producto, pero invisible para cualquiera que solo
+usara la app sin ir al repositorio.
+
+**Decisión:** se agrega una tarjeta "Próximas actualizaciones" en el
+espacio vacío que quedaba bajo los ítems de navegación del sidebar
+(desktop) y del drawer (mobile), con las mismas 3 líneas que ya lista
+el roadmap: Soporte multi-divisa, Español/Inglés, Escaneo de recibos
+con IA. Puramente informativa — sin link, sin hover, sin acción — con
+fondo navy más oscuro que el resto del sidebar (para distinguirse sin
+salirse de la paleta) y texto en tamaño chico, para que no compita
+visualmente con la navegación real.
+
+**Por qué:** el roadmap ya estaba decidido y documentado — mostrarlo en
+la propia interfaz, aunque sea de forma discreta, comunica hacia dónde
+va el producto sin depender de que alguien lea el repositorio. Se
+excluyó a propósito de la barra superior colapsada de mobile (donde el
+sidebar se reduce a logo + hamburguesa): ese espacio ya es
+deliberadamente mínimo, y forzar la tarjeta ahí hubiera competido con
+la navegación real en vez de complementarla.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 
