@@ -57,6 +57,34 @@ function heroRoute() {
   `;
 }
 
+// El número en sí ES la información acá (paso 1, 2, 3 en orden real,
+// no una lista cualquiera con marcadores decorativos) — por eso el
+// badge de cada tarjeta muestra el número, no un ícono genérico.
+const STEPS = [
+  {
+    title: "Creá tu viaje con presupuesto límite",
+    text: "Definí cuánto vas a gastar en pesos colombianos, con fechas opcionales.",
+  },
+  {
+    title: "Registrá cada gasto",
+    text: "Cargá cada gasto por categoría en segundos, apenas pase.",
+  },
+  {
+    title: "Mirá tu semáforo antes de que sea tarde",
+    text: "Verde, naranja o rojo: sabés en qué punto estás sin sacar la calculadora.",
+  },
+];
+
+function stepCard({ title, text }, index) {
+  return `
+    <li class="step-card">
+      <span class="step-card-number">${index + 1}</span>
+      <h3>${title}</h3>
+      <p>${text}</p>
+    </li>
+  `;
+}
+
 const FEATURES = [
   {
     iconName: "layout-dashboard",
@@ -146,12 +174,28 @@ const GITHUB_URL = "https://github.com/stevenstyvargas/tripflow";
 export function render(container) {
   container.innerHTML = `
     <div class="page-landing">
-      <div class="landing-shell">
-        <nav class="landing-nav">
+      <div class="landing-topbar">
+        <a href="#/" class="landing-topbar-logo" aria-label="Ir arriba">
           <img src="/img/Logotipo-fondo-claro.svg" alt="Tripflow" class="landing-nav-logo" />
-          <a class="landing-cta-secondary landing-nav-cta" href="#/login">Iniciar sesión con Google</a>
+        </a>
+        <nav class="landing-pill" aria-label="Navegación de la página">
+          <a class="landing-pill-link" href="#como-funciona">Cómo funciona</a>
+          <a class="landing-pill-link" href="#funcionalidades">Funcionalidades</a>
+          <a class="landing-pill-link" href="#proximamente">Próximamente</a>
+          <a class="landing-pill-login" href="#/login">Iniciar sesión</a>
+          <button type="button" class="landing-pill-toggle" id="landing-menu-toggle" aria-label="Abrir menú" aria-haspopup="true" aria-expanded="false" aria-controls="landing-mobile-menu">
+            ${icon("menu")}
+          </button>
         </nav>
+        <div class="landing-mobile-menu" id="landing-mobile-menu" hidden>
+          <a class="landing-mobile-menu-link" href="#como-funciona">Cómo funciona</a>
+          <a class="landing-mobile-menu-link" href="#funcionalidades">Funcionalidades</a>
+          <a class="landing-mobile-menu-link" href="#proximamente">Próximamente</a>
+          <a class="landing-mobile-menu-cta" href="#/login">Iniciar sesión</a>
+        </div>
+      </div>
 
+      <div class="landing-shell">
         <header class="landing-hero">
           <div>
             <span class="landing-eyebrow">Control de presupuesto de viaje</span>
@@ -172,7 +216,17 @@ export function render(container) {
           ${heroRoute()}
         </header>
 
-        <section class="landing-section">
+        <section class="landing-section" id="como-funciona">
+          <div class="landing-section-header">
+            <h2>Cómo funciona</h2>
+            <p>3 pasos, sin curva de aprendizaje.</p>
+          </div>
+          <ol class="steps-grid">
+            ${STEPS.map(stepCard).join("")}
+          </ol>
+        </section>
+
+        <section class="landing-section" id="funcionalidades">
           <div class="landing-section-header">
             <h2>Todo lo que necesitás para no perder el control</h2>
             <p>6 funcionalidades reales, ya construidas — no un roadmap disfrazado de producto.</p>
@@ -182,7 +236,7 @@ export function render(container) {
           </ul>
         </section>
 
-        <section class="landing-section">
+        <section class="landing-section" id="proximamente">
           <div class="landing-section-header">
             <h2>Lo que viene</h2>
             <p>Roadmap real, documentado en el repo — no promesas sueltas.</p>
@@ -208,4 +262,51 @@ export function render(container) {
       </footer>
     </div>
   `;
+
+  bindLandingNav(container);
+}
+
+// Mismo patrón de abrir/cerrar que components/account-menu.js (click
+// afuera + Escape cierran, listeners de document solo mientras está
+// abierto) — el menú mobile del pill flotante es conceptualmente el
+// mismo tipo de dropdown, aunque viva en una página distinta.
+function bindLandingNav(container) {
+  const toggle = container.querySelector("#landing-menu-toggle");
+  const menu = container.querySelector("#landing-mobile-menu");
+  if (!toggle || !menu) return;
+
+  function close() {
+    menu.hidden = true;
+    toggle.setAttribute("aria-expanded", "false");
+    document.removeEventListener("click", onDocumentClick);
+    document.removeEventListener("keydown", onKeydown);
+  }
+
+  function open() {
+    menu.hidden = false;
+    toggle.setAttribute("aria-expanded", "true");
+    document.addEventListener("click", onDocumentClick);
+    document.addEventListener("keydown", onKeydown);
+  }
+
+  function onDocumentClick(event) {
+    if (!menu.contains(event.target) && !toggle.contains(event.target)) close();
+  }
+
+  function onKeydown(event) {
+    if (event.key === "Escape") close();
+  }
+
+  toggle.addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (menu.hidden) open();
+    else close();
+  });
+
+  // Un click en cualquier link del menú (ancla o "Iniciar sesión") ya
+  // dispara la navegación/scroll solo — acá solo hace falta cerrar el
+  // menú para que no tape la sección a la que se saltó.
+  menu.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", close);
+  });
 }
