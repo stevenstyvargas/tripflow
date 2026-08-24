@@ -11,7 +11,9 @@
 // también viven las acciones de editar/finalizar viaje, no en las
 // cards. Solo en "Todos" las cards muestran además el badge de ESTADO
 // (En curso/Finalizado) — en "Activos"/"Cerrados" ya está implícito
-// por el filtro y sumaría ruido visual.
+// por el filtro y sumaría ruido visual. También solo en "Todos" el
+// orden agrupa primero los activos y después los finalizados (dentro
+// de cada grupo se mantiene el orden que ya traían).
 
 import { getAllTrips, getTripTotal, TRIP_STATUS } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
@@ -28,10 +30,13 @@ const FILTERS = [
   { id: "closed", label: "Cerrados" },
 ];
 
+// "Todos": activos primero, cerrados después — Array.prototype.sort es
+// estable (garantizado desde ES2019), así que el orden dentro de cada
+// grupo no cambia, solo se reagrupan por estado.
 function filterByStatus(trips, filter) {
   if (filter === "active") return trips.filter((t) => t.status !== TRIP_STATUS.CLOSED);
   if (filter === "closed") return trips.filter((t) => t.status === TRIP_STATUS.CLOSED);
-  return trips;
+  return trips.slice().sort((a, b) => Number(a.status === TRIP_STATUS.CLOSED) - Number(b.status === TRIP_STATUS.CLOSED));
 }
 
 function emptyMessage(filter) {

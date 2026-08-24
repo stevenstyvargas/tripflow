@@ -919,6 +919,13 @@ button[type="submit"] {
   background-position: center;
 }
 
+/* Viaje finalizado: SOLO la foto (o el ícono+fondo placeholder) va en
+   escala de grises — el resto de la card (texto, badges, barra de
+   progreso) mantiene su color normal a propósito. */
+.trip-card-photo-closed {
+  filter: grayscale(1);
+}
+
 .trip-card-photo-placeholder {
   width: 2.5rem;
   height: 2.5rem;

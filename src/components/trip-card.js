@@ -1,8 +1,12 @@
 // Card de viaje (Inicio, Mis viajes): foto con badge de duración,
 // nombre, presupuesto + barra de progreso, badge de semáforo y,
 // opcionalmente, el badge de ESTADO (En curso/Finalizado — distinto del
-// semáforo, que solo habla de presupuesto). Las acciones (editar,
-// finalizar) viven en el Detalle de viaje, no acá.
+// semáforo, que solo habla de presupuesto). En viajes finalizados, SOLO
+// la foto (o el ícono+fondo placeholder) va en escala de grises — el
+// resto de la card (texto, badges, barra de progreso) mantiene su
+// color normal, porque el estado del presupuesto siempre se comunica
+// con color, no solo ícono+texto. Las acciones (editar, finalizar)
+// viven en el Detalle de viaje, no acá.
 
 import { icon } from "../utils/icons.js";
 import { formatCurrency } from "../utils/currency.js";
@@ -65,11 +69,12 @@ export function renderTripCard(trip, { showStateBadge = false } = {}) {
   const status = getBudgetStatus(spent, trip.budgetLimit);
   const safePhotoUrl = /^https?:\/\//.test(trip.photoUrl || "") ? escapeHtml(trip.photoUrl) : "";
   const duration = computeDurationBadge(trip);
+  const isClosed = trip.status === TRIP_STATUS.CLOSED;
 
   return `
     <li class="trip-card">
       <a href="#/viaje/${trip.id}" class="trip-card-link">
-        <div class="trip-card-photo"${safePhotoUrl ? ` style="background-image:url('${safePhotoUrl}')"` : ""}>
+        <div class="trip-card-photo${isClosed ? " trip-card-photo-closed" : ""}"${safePhotoUrl ? ` style="background-image:url('${safePhotoUrl}')"` : ""}>
           ${!safePhotoUrl ? icon("plane", "trip-card-photo-placeholder") : ""}
           ${duration ? `<span class="duration-badge">${duration}</span>` : ""}
         </div>
