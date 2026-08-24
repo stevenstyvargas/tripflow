@@ -53,7 +53,7 @@ select {
 .page {
   max-width: 32rem;
   margin: 0 auto;
-  padding: var(--space-6) var(--space-4);
+  padding: var(--space-6);
 }
 
 .page-home,
@@ -108,13 +108,6 @@ select {
 .icon-button:hover {
   background: color-mix(in srgb, var(--color-primary) 8%, white);
   color: var(--color-primary);
-}
-
-/* Variante para acciones destructivas de solo ícono (finalizar viaje):
-   hover rojo en vez del primary por defecto de .icon-button. */
-.icon-button-danger:hover {
-  background: color-mix(in srgb, var(--color-status-danger) 10%, white);
-  color: var(--color-status-danger);
 }
 
 button[type="submit"] {
@@ -1328,10 +1321,11 @@ button[type="submit"] {
 
 /* Fila de "Editar viaje" / finalizar viaje al final de "Gastos
    registrados" (ver docs/product-decisions.md: antes vivían en el
-   header y en las cards de Mis viajes). */
+   header y en las cards de Mis viajes). Centrada horizontalmente. */
 .trip-detail-footer-actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-3);
   margin-top: var(--space-4);
 }

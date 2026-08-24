@@ -296,8 +296,8 @@ export function render(container, { tripId } = {}) {
           ${
             !isClosed
               ? `
-            <button type="button" id="close-trip" class="icon-button icon-button-danger" aria-label="Finalizar viaje" title="Finalizar viaje">
-              ${icon("trash-2")}
+            <button type="button" id="close-trip" class="button-danger-outline">
+              ${icon("trash-2")}<span>Finalizar viaje</span>
             </button>
           `
               : ""
