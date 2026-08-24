@@ -1529,6 +1529,71 @@ button[type="submit"] {
   flex-shrink: 0;
 }
 
+/* Mobile: la fila horizontal de desktop (ícono | categoría+nota |
+   monto+fecha | acciones, todo en una sola línea) no tiene espacio
+   para el nombre de categoría y el monto a la vez sin superponerse —
+   se apilan en 5 líneas (categoría, nota, monto, fecha, acciones) vía
+   CSS Grid, sin tocar el markup: display:contents en los dos
+   contenedores intermedios (.expense-item-body/.expense-item-meta)
+   deja que sus hijos (categoría/nota, monto/fecha) participen como
+   celdas propias del grid del <li>, en vez de quedar atrapados como
+   un solo bloque cada uno. */
+@media (max-width: 45rem) {
+  .expense-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "icon category"
+      ".    note"
+      ".    amount"
+      ".    date"
+      ".    actions";
+    align-items: center;
+    row-gap: var(--space-2);
+  }
+
+  .expense-item-icon {
+    grid-area: icon;
+  }
+
+  .expense-item-body,
+  .expense-item-meta {
+    display: contents;
+  }
+
+  .expense-item-category {
+    grid-area: category;
+  }
+
+  .expense-item-note {
+    grid-area: note;
+    margin-top: 0;
+  }
+
+  /* .expense-item-meta ya no es una caja propia (display:contents),
+     pero el text-align sigue heredándose por el árbol del DOM hacia
+     .expense-item-amount/.expense-item-date — así el monto queda a la
+     izquierda, como pide el layout mobile, sin repetir la regla en
+     cada hijo. */
+  .expense-item-meta {
+    text-align: left;
+  }
+
+  .expense-item-amount {
+    grid-area: amount;
+  }
+
+  .expense-item-date {
+    grid-area: date;
+    margin-top: 0;
+  }
+
+  .expense-item-actions {
+    grid-area: actions;
+    justify-content: flex-end;
+  }
+}
+
 /* Fila de "Editar viaje" / finalizar viaje al final de "Gastos
    registrados" (ver docs/product-decisions.md: antes vivían en el
    header y en las cards de Mis viajes). Centrada horizontalmente. */
