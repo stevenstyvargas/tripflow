@@ -117,17 +117,43 @@ function renderComingSoonItems() {
   ).join("");
 }
 
-// Mismos 3 ítems que ya lista el roadmap en README.md y en la última
+// Mismas 3 features que ya lista el roadmap en README.md y en la última
 // entrada de docs/product-decisions.md — si ese roadmap cambia, esta
-// lista debe actualizarse junto con él.
-const UPCOMING_FEATURES = ["Soporte multi-divisa", "Español / Inglés", "Escaneo de recibos con IA"];
+// lista debe actualizarse junto con él. Título corto + 1 línea de
+// descripción por ítem (antes solo el nombre) para que la tarjeta diga
+// algo más que "esto viene", sin salirse del espacio informativo/no
+// clickeable que ya tenía.
+const UPCOMING_FEATURES = [
+  {
+    title: "Multidivisa",
+    text: "Va a permitir agregar presupuesto en diferentes divisas según el viaje que deseas planear.",
+  },
+  {
+    title: "Multilenguaje",
+    text: "Cambia el idioma de la app entre español e inglés según tu preferencia.",
+  },
+  {
+    title: "Escaneo con IA",
+    text: "Sube la foto de tu recibo y la IA registra el gasto por ti, sin necesidad de digitarlo a mano.",
+  },
+];
 
 function renderUpcomingCard() {
   return `
     <div class="sidebar-upcoming">
       <p class="sidebar-upcoming-title">Próximas actualizaciones</p>
       <ul class="sidebar-upcoming-list">
-        ${UPCOMING_FEATURES.map((feature) => `<li>${feature}</li>`).join("")}
+        ${UPCOMING_FEATURES.map(
+          (feature) => `
+          <li class="sidebar-upcoming-item">
+            <span class="sidebar-upcoming-bullet"></span>
+            <div>
+              <p class="sidebar-upcoming-item-title">${feature.title}</p>
+              <p class="sidebar-upcoming-item-text">${feature.text}</p>
+            </div>
+          </li>
+        `
+        ).join("")}
       </ul>
     </div>
   `;

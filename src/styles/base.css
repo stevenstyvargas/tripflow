@@ -412,12 +412,43 @@ button[type="submit"] {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-3);
 }
 
-.sidebar-upcoming-list li {
-  color: rgba(255, 255, 255, 0.75);
+/* Bullet + título/descripción, en vez del solo-texto de antes — el
+   bullet no se alinea al centro del bloque completo (title+text) sino
+   a la primera línea del título, por eso el margin-top puntual en vez
+   de align-items:center en el <li>. */
+.sidebar-upcoming-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.sidebar-upcoming-bullet {
+  flex-shrink: 0;
+  width: 0.375rem;
+  height: 0.375rem;
+  margin-top: 0.3125rem;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+}
+
+.sidebar-upcoming-item-title {
+  margin: 0;
+  color: var(--color-surface);
+  font-weight: 700;
   font-size: var(--text-xs);
+}
+
+/* Más chica que el título (0.6875rem vs. --text-xs) y en blanco
+   atenuado — mismo criterio de opacidad reducida que ya usa el resto
+   del sidebar para texto secundario sobre navy. */
+.sidebar-upcoming-item-text {
+  margin: 0.125rem 0 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.6875rem;
+  line-height: 1.4;
 }
 
 /* La copia que cuelga directo de .sidebar (no la del drawer, que vive
