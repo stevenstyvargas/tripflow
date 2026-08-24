@@ -5,9 +5,10 @@
 // los viajes activos — y viajes activos como cards con foto de
 // destino + semáforo de estado (components/trip-card.js, compartido
 // con Mis viajes). El desglose por categoría de UN viaje (torre de
-// barras) vive en trip-detail.js, no acá.
+// barras) vive en trip-detail.js, no acá. Las acciones de editar/
+// finalizar viaje viven en el Detalle de viaje, no en estas cards.
 
-import { getActiveTrips, getTripTotal, getExpensesByTrip, closeTrip } from "../data/store.js";
+import { getActiveTrips, getTripTotal, getExpensesByTrip } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
 import { renderKpiCard } from "../components/kpi-card.js";
 import { donutChart } from "../components/donut-chart.js";
@@ -78,17 +79,7 @@ function renderTripsSection(trips, query) {
   if (filtered.length === 0) {
     return `<p class="empty-state">No se encontraron viajes con ese nombre.</p>`;
   }
-  return `<ul class="trip-list">${filtered.map((trip) => renderTripCard(trip, { showCloseButton: true })).join("")}</ul>`;
-}
-
-function bindTripsSection(sectionBody, trips, container) {
-  sectionBody.querySelectorAll(".trip-card-close").forEach((button) => {
-    button.addEventListener("click", async () => {
-      button.disabled = true;
-      await closeTrip(button.dataset.tripId);
-      render(container);
-    });
-  });
+  return `<ul class="trip-list">${filtered.map((trip) => renderTripCard(trip)).join("")}</ul>`;
 }
 
 export function render(container) {
@@ -139,11 +130,9 @@ export function render(container) {
   bindAccountMenu(container);
 
   const sectionBody = container.querySelector("#trips-section-body");
-  bindTripsSection(sectionBody, trips, container);
 
   container.querySelector("#trip-search").addEventListener("input", (event) => {
     const query = event.target.value.trim().toLowerCase();
     sectionBody.innerHTML = renderTripsSection(trips, query);
-    bindTripsSection(sectionBody, trips, container);
   });
 }

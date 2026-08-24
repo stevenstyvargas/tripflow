@@ -1,8 +1,8 @@
 // Card de viaje (Inicio, Mis viajes): foto con badge de duración,
-// nombre, presupuesto + barra de progreso, badge de semáforo,
-// opcionalmente el badge de ESTADO (En curso/Finalizado — distinto del
-// semáforo, que solo habla de presupuesto) y, opcionalmente, el botón
-// "Finalizar viaje".
+// nombre, presupuesto + barra de progreso, badge de semáforo y,
+// opcionalmente, el badge de ESTADO (En curso/Finalizado — distinto del
+// semáforo, que solo habla de presupuesto). Las acciones (editar,
+// finalizar) viven en el Detalle de viaje, no acá.
 
 import { icon } from "../utils/icons.js";
 import { formatCurrency } from "../utils/currency.js";
@@ -58,9 +58,9 @@ function tripStateBadge(trip) {
 
 /**
  * @param {import("../data/store.js").Trip} trip
- * @param {{ showCloseButton?: boolean, showStateBadge?: boolean }} [options]
+ * @param {{ showStateBadge?: boolean }} [options]
  */
-export function renderTripCard(trip, { showCloseButton = false, showStateBadge = false } = {}) {
+export function renderTripCard(trip, { showStateBadge = false } = {}) {
   const spent = getTripTotal(trip.id);
   const status = getBudgetStatus(spent, trip.budgetLimit);
   const safePhotoUrl = /^https?:\/\//.test(trip.photoUrl || "") ? escapeHtml(trip.photoUrl) : "";
@@ -85,15 +85,6 @@ export function renderTripCard(trip, { showCloseButton = false, showStateBadge =
           </div>
         </div>
       </a>
-      ${
-        showCloseButton
-          ? `
-        <button type="button" class="trip-card-close button-danger-outline" data-trip-id="${trip.id}">
-          ${icon("trash-2")}<span>Finalizar viaje</span>
-        </button>
-      `
-          : ""
-      }
     </li>
   `;
 }

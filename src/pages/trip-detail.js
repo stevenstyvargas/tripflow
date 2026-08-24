@@ -1,20 +1,30 @@
 // Página: detalle de viaje. Barra de 40px (igual que las demás
 // pantallas) con foto miniatura + nombre (truncado con "...", mismo
-// criterio que las cards) + ícono de editar + badge de semáforo
-// compacto a la izquierda, y las acciones (Google Calendar/Compartir
-// por WhatsApp — link wa.me con texto plano, sin backend ni PDF, ver
-// docs/product-decisions.md — /Agregar gasto/menú de cuenta) a la
-// derecha. Debajo, 2 columnas: KPIs
+// criterio que las cards) + badge de semáforo compacto a la izquierda,
+// y las acciones (Google Calendar/Compartir por WhatsApp — link wa.me
+// con texto plano, sin backend ni PDF, ver docs/product-decisions.md —
+// /Agregar gasto/menú de cuenta) a la derecha. Debajo, 2 columnas: KPIs
 // "Presupuesto"/"Gastado"/"Restante" apiladas en un ancho fijo (mismo
 // components/kpi-card.js que Inicio) y, a la derecha, la torre de
 // gasto por categoría de ESTE viaje. "Gastos registrados" y el
-// formulario para registrar un gasto van debajo, a todo el ancho. El
-// semáforo de Inicio y las alertas de Alertas se recalculan solos la
-// próxima vez que se rendericen: leen siempre el estado en memoria de
-// store.js, así que un gasto nuevo ya persistido ahí se refleja sin
-// código adicional.
+// formulario para registrar un gasto van debajo, a todo el ancho.
+// Editar/finalizar viaje (antes en el header y en las cards de Mis
+// viajes) viven en una fila de botones al final de esta sección, tras
+// el último gasto de la lista. El semáforo de Inicio y las alertas de
+// Alertas se recalculan solos la próxima vez que se rendericen: leen
+// siempre el estado en memoria de store.js, así que un gasto nuevo ya
+// persistido ahí se refleja sin código adicional.
 
-import { getTrip, getTripTotal, getExpensesByTrip, addExpense, updateExpense, deleteExpense, TRIP_STATUS } from "../data/store.js";
+import {
+  getTrip,
+  getTripTotal,
+  getExpensesByTrip,
+  addExpense,
+  updateExpense,
+  deleteExpense,
+  closeTrip,
+  TRIP_STATUS,
+} from "../data/store.js";
 import { formatCurrency, formatStoredAmount } from "../utils/currency.js";
 import { bindAmountInput, readAmountInput } from "../utils/amount-input.js";
 import { getBudgetStatus } from "../utils/status.js";
@@ -226,7 +236,6 @@ export function render(container, { tripId } = {}) {
             ${!safePhotoUrl ? icon("plane", "trip-card-photo-placeholder") : ""}
           </div>
           <h1 title="${escapeHtml(trip.name)}">${escapeHtml(trip.name)}</h1>
-          <a href="#/viaje/${trip.id}/editar" class="icon-button" aria-label="Editar viaje">${icon("edit-2")}</a>
           ${statusBadge(status, "status-badge-sm")}
         </div>
         <div class="page-header-actions">
@@ -280,6 +289,20 @@ export function render(container, { tripId } = {}) {
             ? `<p class="empty-state">Todavía no has registrado gastos en este viaje.</p>`
             : `<ul class="expense-list">${expenses.map(renderExpenseItem).join("")}</ul>`
         }
+        <div class="trip-detail-footer-actions">
+          <a href="#/viaje/${trip.id}/editar" class="button-outline">
+            ${icon("edit-2")}<span>Editar viaje</span>
+          </a>
+          ${
+            !isClosed
+              ? `
+            <button type="button" id="close-trip" class="icon-button icon-button-danger" aria-label="Finalizar viaje" title="Finalizar viaje">
+              ${icon("trash-2")}
+            </button>
+          `
+              : ""
+          }
+        </div>
       </section>
     </main>
   `;
@@ -345,6 +368,15 @@ export function render(container, { tripId } = {}) {
       if (expense) enterEditMode(expense);
     });
   });
+
+  const closeTripButton = container.querySelector("#close-trip");
+  if (closeTripButton) {
+    closeTripButton.addEventListener("click", async () => {
+      closeTripButton.disabled = true;
+      await closeTrip(trip.id);
+      render(container, { tripId: trip.id });
+    });
+  }
 
   container.querySelectorAll(".expense-item-delete").forEach((button) => {
     button.addEventListener("click", () => {

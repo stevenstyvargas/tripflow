@@ -7,12 +7,13 @@
 // con las mismas 4 KPIs que Historial ya traía, recalculadas según la
 // pestaña activa en vez de fijas a "cerrados". Cada card navega al
 // detalle de viaje, que ya decide solo (según trip.status) si se ve
-// editable o de solo lectura — no se duplica esa lógica acá. Solo en
-// "Todos" las cards muestran además el badge de ESTADO (En
-// curso/Finalizado) — en "Activos"/"Cerrados" ya está implícito por el
-// filtro y sumaría ruido visual.
+// editable o de solo lectura — no se duplica esa lógica acá; ahí
+// también viven las acciones de editar/finalizar viaje, no en las
+// cards. Solo en "Todos" las cards muestran además el badge de ESTADO
+// (En curso/Finalizado) — en "Activos"/"Cerrados" ya está implícito
+// por el filtro y sumaría ruido visual.
 
-import { getAllTrips, getTripTotal, closeTrip, TRIP_STATUS } from "../data/store.js";
+import { getAllTrips, getTripTotal, TRIP_STATUS } from "../data/store.js";
 import { formatCurrency } from "../utils/currency.js";
 import { getBudgetStatus, STATUS } from "../utils/status.js";
 import { getCurrentUser } from "../data/auth.js";
@@ -91,9 +92,7 @@ function renderTripsSection(trips, filter, query) {
   // implícito por el filtro y solo sumaría ruido visual.
   const showStateBadge = filter === "all";
 
-  return `<ul class="trip-list">${filtered
-    .map((trip) => renderTripCard(trip, { showCloseButton: trip.status !== TRIP_STATUS.CLOSED, showStateBadge }))
-    .join("")}</ul>`;
+  return `<ul class="trip-list">${filtered.map((trip) => renderTripCard(trip, { showStateBadge })).join("")}</ul>`;
 }
 
 /**
@@ -138,23 +137,10 @@ export function render(container, { tab } = {}) {
   const searchInput = container.querySelector("#trip-search");
   const tabButtons = container.querySelectorAll(".tab-item");
 
-  function bindCloseButtons() {
-    sectionBody.querySelectorAll(".trip-card-close").forEach((button) => {
-      button.addEventListener("click", async () => {
-        button.disabled = true;
-        await closeTrip(button.dataset.tripId);
-        render(container, { tab: activeFilter });
-      });
-    });
-  }
-
   function update() {
     const query = searchInput.value.trim().toLowerCase();
     sectionBody.innerHTML = renderTripsSection(trips, activeFilter, query);
-    bindCloseButtons();
   }
-
-  bindCloseButtons();
 
   searchInput.addEventListener("input", update);
 
