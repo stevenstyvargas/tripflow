@@ -164,9 +164,22 @@ button[type="submit"] {
   height: 100dvh;
   display: flex;
   flex-direction: column;
-  padding: var(--space-8);
+  padding: var(--space-6);
   background: var(--color-primary);
   border-right: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Gatillo del drawer mobile — no existe visualmente en desktop (ver
+   media query de abajo, único lugar donde pasa a display:flex). */
+.hamburger-button {
+  display: none;
+  flex-shrink: 0;
+  color: var(--color-surface);
+}
+
+.hamburger-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-surface);
 }
 
 .sidebar-logo {
@@ -240,6 +253,129 @@ button[type="submit"] {
   min-width: 0;
 }
 
+/* ---------- Drawer mobile (nav + sesión) ----------
+   Reemplaza, solo en mobile, a la fila de íconos de nav + el chip de
+   cuenta que antes vivían sueltos en la barra superior. display:none
+   incondicional por defecto (no solo con [hidden]) para que quede
+   imposible de abrir en desktop pase lo que pase con la clase
+   .is-open; la única regla que lo vuelve display:flex vive dentro del
+   media query de abajo. */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+/* Misma razón que .modal-overlay[hidden] (ver más abajo): sin esto,
+   [hidden] empata en especificidad con la regla de arriba y el
+   navegador puede terminar mostrando el overlay igual. */
+.drawer-overlay[hidden] {
+  display: none;
+}
+
+.drawer-overlay.is-open {
+  opacity: 1;
+}
+
+.drawer-panel {
+  display: flex;
+  flex-direction: column;
+  width: 16rem;
+  max-width: 85vw;
+  padding: var(--space-6) var(--space-4);
+  background: var(--color-primary);
+  overflow-y: auto;
+  transform: translateX(-100%);
+  transition: transform 200ms ease;
+}
+
+.drawer-overlay.is-open .drawer-panel {
+  transform: translateX(0);
+}
+
+.drawer-close {
+  align-self: flex-end;
+  margin-bottom: var(--space-4);
+  color: var(--color-surface);
+}
+
+.drawer-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-surface);
+}
+
+/* .drawer-nav reusa literalmente .sidebar-nav (mismo layout en
+   columna) — el único agregado es flex:1 para empujar .drawer-session
+   hasta el fondo del panel sin importar cuántos items haya. */
+.drawer-nav {
+  flex: 1;
+}
+
+.drawer-session {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.drawer-session-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.drawer-session-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--color-surface);
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.drawer-session-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.drawer-session-name {
+  margin: 0;
+  color: var(--color-surface);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.drawer-session-email {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--text-xs);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.drawer-session-signout {
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.drawer-session-signout:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-surface);
+}
+
 @media (max-width: 45rem) {
   .app-shell {
     flex-direction: column;
@@ -251,9 +387,14 @@ button[type="submit"] {
     height: auto;
     flex-direction: row;
     align-items: center;
+    gap: var(--space-3);
     padding: var(--space-3) var(--space-4);
     border-right: none;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .hamburger-button {
+    display: inline-flex;
   }
 
   .sidebar-logo {
@@ -268,17 +409,20 @@ button[type="submit"] {
     display: block;
   }
 
-  .sidebar-nav {
-    flex-direction: row;
-    justify-content: center;
-    gap: var(--space-2);
-  }
-
-  .sidebar-nav-item span {
+  /* La fila de íconos de nav suelta en la barra superior se reemplaza
+     por el drawer — .sidebar-nav de acá (la de la barra, no la del
+     drawer) ya no se muestra en absoluto. */
+  .sidebar-nav:not(.drawer-nav) {
     display: none;
   }
 
-  .account-menu-info {
+  .drawer-overlay {
+    display: flex;
+  }
+
+  /* El chip de cuenta (foto+nombre+email) de cada página se reemplaza
+     por .drawer-session — ya no convive con el header en mobile. */
+  .account-menu {
     display: none;
   }
 }
@@ -334,6 +478,39 @@ button[type="submit"] {
   border: 1px solid var(--color-text-muted);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
+}
+
+/* Botón de lupa que reemplaza al .search-field inline en mobile — solo
+   en Inicio (.page-home), Mis viajes conserva su buscador tal cual.
+   display:none incondicional para que en desktop sea imposible de ver/
+   tocar, sin depender solo del media query. */
+.search-toggle {
+  display: none;
+}
+
+@media (max-width: 45rem) {
+  .page-home .search-field {
+    display: none;
+  }
+
+  .page-home .search-toggle {
+    display: inline-flex;
+  }
+
+  /* Mismo <input> de siempre (no uno nuevo): al expandirse ocupa el
+     100% del ancho de .page-header-actions y, como ese contenedor ya
+     tiene flex-wrap, cae a su propia fila completa debajo del resto de
+     la barra — empuja el contenido de la página hacia abajo en vez de
+     superponerse. */
+  .page-home .search-field.is-expanded {
+    display: flex;
+    order: 10;
+    flex: 1 1 100%;
+  }
+
+  .page-home .search-field.is-expanded input {
+    width: 100%;
+  }
 }
 
 /* ---------- Menú de cuenta (header de cada página) ---------- */
@@ -1154,7 +1331,7 @@ button[type="submit"] {
   display: flex;
   flex: 1 1 auto;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   min-width: 0;
 }
 
@@ -1177,8 +1354,8 @@ button[type="submit"] {
 
 .trip-detail-photo-mini {
   flex-shrink: 0;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 2.50rem;
+  height: 2.50rem;
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;

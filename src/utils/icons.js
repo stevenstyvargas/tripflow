@@ -29,6 +29,8 @@ import map from "lucide-static/icons/map.svg?raw";
 import target from "lucide-static/icons/target.svg?raw";
 import lock from "lucide-static/icons/lock.svg?raw";
 import messageCircle from "lucide-static/icons/message-circle.svg?raw";
+import menu from "lucide-static/icons/menu.svg?raw";
+import x from "lucide-static/icons/x.svg?raw";
 
 const ICONS = {
   home,
@@ -58,6 +60,8 @@ const ICONS = {
   target,
   lock,
   "message-circle": messageCircle,
+  menu,
+  x,
 };
 
 /**
