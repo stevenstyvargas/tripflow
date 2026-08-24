@@ -175,14 +175,16 @@ export function render(container) {
   container.innerHTML = `
     <div class="page-landing">
       <div class="landing-topbar">
-        <a href="#/" class="landing-topbar-logo" aria-label="Ir arriba">
-          <img src="/img/Logotipo-fondo-claro.svg" alt="Tripflow" class="landing-nav-logo" />
-        </a>
         <nav class="landing-pill" aria-label="Navegación de la página">
-          <a class="landing-pill-link" href="#como-funciona">Cómo funciona</a>
-          <a class="landing-pill-link" href="#funcionalidades">Funcionalidades</a>
-          <a class="landing-pill-link" href="#proximamente">Próximamente</a>
-          <a class="landing-pill-login" href="#/login">Iniciar sesión</a>
+          <a href="#/" class="landing-pill-logo" aria-label="Ir arriba">
+            <img src="/img/Logotipo-fondo-claro.svg" alt="Tripflow" class="landing-nav-logo" />
+          </a>
+          <div class="landing-pill-links">
+            <a class="landing-pill-link" href="#como-funciona">Cómo funciona</a>
+            <a class="landing-pill-link" href="#funcionalidades">Funcionalidades</a>
+            <a class="landing-pill-link" href="#proximamente">Próximamente</a>
+          </div>
+          <a class="landing-pill-login" href="#/login">Probar demo</a>
           <button type="button" class="landing-pill-toggle" id="landing-menu-toggle" aria-label="Abrir menú" aria-haspopup="true" aria-expanded="false" aria-controls="landing-mobile-menu">
             ${icon("menu")}
           </button>
@@ -191,7 +193,7 @@ export function render(container) {
           <a class="landing-mobile-menu-link" href="#como-funciona">Cómo funciona</a>
           <a class="landing-mobile-menu-link" href="#funcionalidades">Funcionalidades</a>
           <a class="landing-mobile-menu-link" href="#proximamente">Próximamente</a>
-          <a class="landing-mobile-menu-cta" href="#/login">Iniciar sesión</a>
+          <a class="landing-mobile-menu-cta" href="#/login">Probar demo</a>
         </div>
       </div>
 

@@ -27,13 +27,12 @@
   padding: 0 1.5rem;
 }
 
-/* ---------- Nav: pill flotante + logo aparte ----------
+/* ---------- Nav: pill flotante, logo+links+CTA en una sola barra ----------
    .landing-topbar es un contenedor fixed de ancho completo pero
    pointer-events:none — nadie puede "clickear" el aire a los costados
-   del logo/pill; cada uno reactiva pointer-events por separado. Así el
-   pill queda centrado de verdad en el viewport (justify-content:center
-   sobre un contenedor de 100% de ancho), no centrado respecto al
-   espacio que le deja el logo. */
+   del pill; el pill mismo reactiva pointer-events:auto. Así queda
+   centrado de verdad en el viewport (justify-content:center sobre un
+   contenedor de 100% de ancho), no relativo a ningún otro elemento. */
 .landing-topbar {
   position: fixed;
   top: 1.25rem;
@@ -41,16 +40,8 @@
   z-index: 100;
   display: flex;
   justify-content: center;
+  padding: 0 1.5rem;
   pointer-events: none;
-}
-
-.landing-topbar-logo {
-  position: absolute;
-  left: 1.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  pointer-events: auto;
 }
 
 .landing-nav-logo {
@@ -58,15 +49,33 @@
   width: auto;
 }
 
+/* max-width menor al de .landing-shell (75rem/1200px) a propósito —
+   una barra flotante que ocupara el ancho completo de la página en
+   pantallas grandes dejaría de leerse como "pill". */
 .landing-pill {
   pointer-events: auto;
+  width: 100%;
+  max-width: 62rem;
   display: flex;
   align-items: center;
-  gap: 0.125rem;
-  padding: 0.375rem;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 0.625rem 0.625rem 0.625rem 1.25rem;
   border-radius: var(--radius-full);
   background: var(--color-surface);
   box-shadow: var(--shadow-md);
+}
+
+.landing-pill-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.landing-pill-links {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
 }
 
 .landing-pill-link {
@@ -546,10 +555,10 @@
 
 /* ---------- Mobile: mismo breakpoint que el resto de la app ---------- */
 @media (max-width: 45rem) {
-  /* Las 3 anclas + "Iniciar sesión" no entran junto al logo sin
-     partirse — el pill colapsa a un solo botón de hamburguesa que
-     despliega las mismas 4 opciones en .landing-mobile-menu. */
-  .landing-pill-link,
+  /* Las 3 anclas + "Probar demo" no entran junto al logo sin
+     partirse — el pill colapsa a logo + un solo botón de hamburguesa
+     que despliega las mismas 4 opciones en .landing-mobile-menu. */
+  .landing-pill-links,
   .landing-pill-login {
     display: none;
   }
