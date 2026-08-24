@@ -663,6 +663,34 @@ Inicio más liviano sin perder ninguna información que el usuario no
 pueda seguir viendo en otro lugar de la misma pantalla o del detalle de
 cada viaje.
 
+## Unificar "Gasto por categoría" por breakpoint, no por pantalla
+
+**Problema:** Inicio mostraba siempre la dona de "Gasto por categoría"
+(agregado de todos los viajes activos) y Detalle de viaje mostraba
+siempre la torre de barras (de un solo viaje), sin importar el ancho de
+pantalla — dos formatos fijos, cada uno atado a SU pantalla en vez de a
+qué tan bien se lee cada uno según el espacio disponible. En mobile, la
+torre de Detalle de viaje competía por espacio horizontal con 6
+categorías; en desktop, la dona de Inicio dejaba mucho espacio vacío al
+lado que una torre hubiera aprovechado mejor.
+
+**Decisión:** ambas pantallas pasan a mostrar torres en desktop y dona
+en mobile — el mismo componente (`components/category-chart.js`) en
+las dos, cada uno con sus propios datos (Inicio: agregado de todos los
+viajes activos; Detalle de viaje: gastos de ESE viaje). El componente
+renderiza los 2 formatos siempre y el CSS decide cuál se ve según el
+ancho, mismo criterio que ya usan otros pares de la app
+(`.sidebar-logo-full`/`-compact`, `.search-field`/`.mobile-search-row`).
+Ningún cálculo de %/monto por categoría cambió — solo el criterio de
+qué gráfico mostrar y cuándo.
+
+**Por qué:** una torre de barras necesita ancho horizontal para
+respirar entre categorías — lo tiene de sobra en desktop, no en mobile.
+Una dona con leyenda necesita menos ancho pero más alto — lo contrario.
+Elegir el formato por el espacio real disponible (el breakpoint) en vez
+de por qué pantalla es, es la lectura correcta de por qué cada formato
+existe en primer lugar.
+
 ## Reemplazar los KPIs de dinero de Inicio por "Viajes en riesgo"
 
 **Problema:** con "Gasto vs presupuesto" ya eliminado (decisión
