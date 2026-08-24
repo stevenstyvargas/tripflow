@@ -14,6 +14,7 @@ Proyecto realizado para el reto técnico de Technical Product Designer en Alegra
 - Creación de viajes con presupuesto límite
 - Registro de gastos
 - Alertas de presupuesto
+- Compartir viaje por WhatsApp (resumen de presupuesto y estado)
 - 1 divisa: COP (peso colombiano)
 - Perfil individual (1 persona)
 - Responsive: desktop y mobile
@@ -34,7 +35,7 @@ evaluación según tiempo disponible).
   (`users/{uid}/trips/{tripId}/expenses/{expenseId}`), con reglas de
   seguridad en `firestore.rules` para que cada usuario solo pueda leer
   y escribir sus propios datos
-- Despliegue: Vercel, con dominio propio
+- Despliegue: Vercel
 
 ## Cómo correr el proyecto localmente
 
@@ -118,3 +119,9 @@ tripflow/
   desde el principio, no solo agregar divisas al que ya existía. Ver
   `docs/product-decisions.md`
 - Escaneo de recibos con IA en el flujo de registro de gastos
+- Multi-idioma: español e inglés
+- Eliminar viaje de forma permanente (hoy solo existe "finalizar
+  viaje", que cambia el estado sin borrar datos; se evaluó agregar
+  eliminación definitiva pero se decidió postergarla por el riesgo de
+  manejar borrado en cascada de gastos asociados a dos días de la
+  entrega, ver `docs/product-decisions.md`)

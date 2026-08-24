@@ -565,6 +565,36 @@ de uso distinto y más específico que sí justificaría volver a evaluar
 un export a PDF — no es que la idea esté descartada para siempre, es
 que no es la prioridad para esta entrega.
 
+## Postergar "eliminar viaje" de forma permanente
+
+**Problema:** hoy la única acción destructiva sobre un viaje es
+"finalizar viaje" (`closeTrip()`), que cambia su estado a "Finalizado"
+sin borrar ningún dato — el viaje sigue siendo consultable, con todos
+sus gastos, desde la pestaña "Cerrados" de Mis viajes. Se evaluó
+agregar una eliminación definitiva de verdad, pero un viaje en
+Firestore no es un documento aislado: tiene una subcolección de gastos
+(`users/{uid}/trips/{tripId}/expenses/{expenseId}`), así que borrar el
+viaje "bien" implica borrado en cascada de esa subcolección completa —
+Firestore no lo hace solo, hay que iterar y borrar cada gasto a mano (o
+con una Cloud Function), y decidir qué pasa si esa operación falla a
+mitad de camino (viaje borrado con gastos huérfanos, o viceversa). Es
+una pieza de trabajo real, no un botón más, y quedaban dos días para la
+entrega.
+
+**Decisión:** se posterga por completo — no se agrega eliminación
+permanente en esta versión. "Finalizar viaje" (el ícono de papelera del
+detalle de viaje) sigue siendo el único mecanismo para sacar un viaje de
+la vista activa, y sigue sin borrar nada, tal como se documentó al
+darle su tratamiento visual de acción destructiva. Queda anotado en el
+roadmap de `README.md`.
+
+**Por qué:** una eliminación permanente mal implementada (sin manejar
+bien la cascada de gastos, o sin una confirmación a la altura del
+riesgo de perder datos sin vuelta atrás) es peor que no tenerla —
+"finalizar" ya cubre el caso de uso real de "sacar este viaje de mi
+vista activa" sin el riesgo de pérdida de datos irreversible que trae
+un borrado de verdad a último momento antes de una entrega.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 
