@@ -718,6 +718,34 @@ sidebar se reduce a logo + hamburguesa): ese espacio ya es
 deliberadamente mínimo, y forzar la tarjeta ahí hubiera competido con
 la navegación real en vez de complementarla.
 
+## Ítems de nav "Próximamente" para 2 features del roadmap
+
+**Problema:** la tarjeta de roadmap (decisión anterior) comunica QUÉ
+viene, pero no DÓNDE va a vivir cada feature dentro de la navegación —
+"Escaneo de recibos con IA" y "vista de calendario" son features con
+una pantalla propia esperable (no un ajuste de una pantalla existente),
+así que tenía sentido que el usuario ya viera el hueco que van a
+ocupar en el menú, no solo leerlo en una lista de texto.
+
+**Decisión:** se agregan 2 ítems al menú de navegación, debajo de
+"Alertas": "Mis facturas" (sección nueva donde vivirán los recibos
+escaneados con IA — quedó explícito en el roadmap de `README.md`, antes
+solo decía "en el flujo de registro de gastos" sin aclarar dónde
+quedaban guardados) y "Calendario" (vista agregada de todos los viajes
+del usuario en un calendario dentro de la app — distinta del botón
+"Agregar a Google Calendar" que ya existe por viaje individual en el
+detalle de viaje, que no cambia). Ambos ítems son clickeables (dan
+feedback con un toast "Disponible próximamente") pero no navegan a
+ningún lado ni pueden quedar en estado "activo".
+
+**Por qué:** mostrar la navegación futura en el lugar real donde va a
+vivir (el menú) es más concreto que solo nombrarla en una tarjeta de
+texto — el usuario entiende de inmediato que va a ser una sección
+propia, no una opción escondida dentro de otra pantalla. Que sigan
+siendo clickeables (en vez de simplemente no responder al toque) evita
+la sensación de "botón roto": el toast confirma que el click se
+registró, solo que la feature todavía no existe.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 

@@ -118,7 +118,11 @@ tripflow/
   símbolo "$". La próxima versión necesita un patrón de diseño distinto
   desde el principio, no solo agregar divisas al que ya existía. Ver
   `docs/product-decisions.md`
-- Escaneo de recibos con IA en el flujo de registro de gastos
+- Escaneo de recibos con IA en el flujo de registro de gastos — los
+  recibos escaneados vivirán en una nueva sección "Mis facturas"
+- Vista de calendario dentro de la app, con todos los viajes del
+  usuario en un solo lugar (distinta del botón "Agregar a Google
+  Calendar" que ya existe por viaje individual, que se mantiene igual)
 - Multi-idioma: español e inglés
 - Eliminar viaje de forma permanente (hoy solo existe "finalizar
   viaje", que cambia el estado sin borrar datos; se evaluó agregar

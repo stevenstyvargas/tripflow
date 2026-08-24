@@ -284,6 +284,35 @@ button[type="submit"] {
   pointer-events: none;
 }
 
+/* Ítems de nav "Próximamente" (Mis facturas, Calendario): mismo
+   .sidebar-nav-item de siempre (hover incluido, siguen siendo
+   clickeables — el click dispara un toast), pero nunca reciben
+   .is-active. La etiqueta va DEBAJO del texto (no al lado): con la
+   etiqueta en la misma línea, "Mis facturas" no entraba sin partirse
+   en 2 renglones en el ancho del sidebar. El wrapper interno atenúa
+   solo ícono+texto; la etiqueta verde queda afuera, sin atenuar. */
+.sidebar-nav-item-disabled {
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: 0.125rem;
+}
+
+.sidebar-nav-item-dimmed {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  opacity: 0.55;
+}
+
+.nav-coming-soon-tag {
+  /* Alineado con el texto, no con el ícono: mismo ancho que ícono+gap. */
+  margin-left: calc(var(--icon-size) + var(--space-3));
+  color: var(--color-accent);
+  font-size: 0.625rem;
+  font-weight: 700;
+}
+
 /* Tarjeta informativa de roadmap (no clickeable, sin hover/focus) en
    el espacio vacío bajo la nav — fondo derivado del navy del sidebar
    (18% mezclado con negro, no un hex suelto) para diferenciarse del
@@ -1715,6 +1744,33 @@ button[type="submit"] {
   justify-content: center;
   gap: var(--space-3);
   margin-top: var(--space-4);
+}
+
+/* ---------- Toast (components/toast.js) ---------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: var(--space-6);
+  z-index: 300;
+  max-width: calc(100% - var(--space-8));
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-surface);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0.5rem);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 
 /* ---------- Modal de confirmación ---------- */

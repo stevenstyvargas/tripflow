@@ -33,11 +33,21 @@
 // el selector de hijo directo excluye a la copia del drawer, que no
 // cuelga de `.sidebar`). Mismas 3 líneas que ya documenta el roadmap
 // de README.md/docs/product-decisions.md, ahora también visibles en
-// la app, no solo en los docs.
+// la app, no solo en los docs. Debajo de "Alertas", 2 ítems de nav
+// deshabilitados ("Mis facturas"/"Calendario", ver COMING_SOON_ITEMS):
+// mismo layout que los reales pero como <button> (no <a>, no navegan a
+// ningún lado), ícono+texto atenuados + etiqueta "Próximamente" en
+// verde sin atenuar, y un toast (components/toast.js) al tocarlos en
+// vez de navegación — nunca llevan la franja verde de activo porque
+// nunca reciben la clase `.is-active`. Se excluyen a propósito del
+// cierre automático del drawer al hacer click (ver bindSidebar): a
+// diferencia de un ítem real, tocarlos no debe cerrar nada más que
+// mostrar el toast.
 
 import { icon } from "../utils/icons.js";
 import { getCurrentUser, signOutUser } from "../data/auth.js";
 import { getTripAlerts } from "../data/store.js";
+import { showToast } from "./toast.js";
 import { escapeHtml } from "../utils/dom.js";
 import { searchField } from "./search-field.js";
 
@@ -45,6 +55,13 @@ const NAV_ITEMS = [
   { path: "/", label: "Inicio", icon: "home" },
   { path: "/viajes", label: "Mis viajes", icon: "map" },
   { path: "/alertas", label: "Alertas", icon: "bell" },
+];
+
+// Ver docs/product-decisions.md (vista de calendario, sección "Mis
+// facturas" para el escaneo de recibos) — ambos ya en el roadmap.
+const COMING_SOON_ITEMS = [
+  { label: "Mis facturas", icon: "receipt" },
+  { label: "Calendario", icon: "calendar" },
 ];
 
 // Únicas 2 pantallas con una lista de viajes que buscar por
@@ -77,6 +94,23 @@ function renderNavItems(currentPath) {
       </a>
     `;
   }).join("");
+}
+
+// El wrapper interno (.sidebar-nav-item-dimmed) atenúa SOLO ícono+texto
+// — la etiqueta "Próximamente" queda fuera de ese wrapper, en verde
+// pleno, sin heredar la opacidad reducida.
+function renderComingSoonItems() {
+  return COMING_SOON_ITEMS.map(
+    (item) => `
+    <button type="button" class="sidebar-nav-item sidebar-nav-item-disabled">
+      <span class="sidebar-nav-item-dimmed">
+        ${icon(item.icon)}
+        <span>${item.label}</span>
+      </span>
+      <span class="nav-coming-soon-tag">Próximamente</span>
+    </button>
+  `
+  ).join("");
 }
 
 // Mismos 3 ítems que ya lista el roadmap en README.md y en la última
@@ -139,6 +173,7 @@ export function renderSidebar(currentPath) {
 
       <nav class="sidebar-nav">
         ${renderNavItems(currentPath)}
+        ${renderComingSoonItems()}
       </nav>
 
       ${renderUpcomingCard()}
@@ -179,6 +214,7 @@ export function renderSidebar(currentPath) {
         </button>
         <div class="sidebar-nav drawer-nav">
           ${renderNavItems(currentPath)}
+          ${renderComingSoonItems()}
         </div>
         ${renderUpcomingCard()}
         ${renderDrawerSession(getCurrentUser())}
@@ -225,8 +261,16 @@ export function bindSidebar(container) {
     if (event.target === overlay) closeDrawer();
   });
 
-  container.querySelectorAll(".drawer-nav .sidebar-nav-item").forEach((link) => {
+  // Los ítems "Próximamente" quedan afuera: tocarlos no debe cerrar el
+  // drawer, solo mostrar el toast (ver binding más abajo).
+  container.querySelectorAll(".drawer-nav .sidebar-nav-item:not(.sidebar-nav-item-disabled)").forEach((link) => {
     link.addEventListener("click", closeDrawer);
+  });
+
+  container.querySelectorAll(".sidebar-nav-item-disabled").forEach((button) => {
+    button.addEventListener("click", () => {
+      showToast("Disponible próximamente");
+    });
   });
 
   const signoutButton = container.querySelector("#drawer-signout");
