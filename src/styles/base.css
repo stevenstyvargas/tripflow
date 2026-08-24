@@ -1742,12 +1742,18 @@ button[type="submit"] {
   text-align: left;
 }
 
-.expense-form-actions {
+/* .trip-form-actions (Nuevo/Editar viaje) comparte el mismo layout que
+   .expense-form-actions (Agregar/Editar gasto): "Guardar"/"Crear" a la
+   izquierda ocupando el espacio disponible + "Cancelar" (.button-outline,
+   mismo estilo secundario en los 2 lugares) a la derecha. */
+.expense-form-actions,
+.trip-form-actions {
   display: flex;
   gap: var(--space-2);
 }
 
-.expense-form-actions button[type="submit"] {
+.expense-form-actions button[type="submit"],
+.trip-form-actions button[type="submit"] {
   flex: 1;
 }
 
@@ -1763,12 +1769,14 @@ button[type="submit"] {
 /* Estado vacío de "Gastos registrados": mismos radius/fondo/sombra que
    el resto de tarjetas de la pantalla (.kpi-card, .bar-chart) — antes
    era solo texto suelto sin tarjeta, inconsistente con el resto.
-   Padding vertical extra (--space-8) para que no se vea apretado. */
+   Mismo padding y mismo criterio de centrado (flex, 2 ejes) que el
+   estado vacío de "Gasto por categoría" (ver .donut-chart-empty en
+   .donut-chart, más abajo). */
 .expense-list-empty {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-8) var(--space-4);
+  padding: var(--space-4);
   border-radius: var(--radius-md);
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);

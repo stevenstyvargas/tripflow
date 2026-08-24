@@ -15,6 +15,7 @@ export function render(container) {
 
   mountTripForm(container.querySelector("#trip-form-slot"), {
     submitLabel: "Crear viaje",
+    cancelHref: "#/",
     onSubmit: async (data) => {
       await createTrip(data);
       location.hash = "#/";

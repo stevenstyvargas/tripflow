@@ -1,9 +1,9 @@
 // Formulario de viaje (nombre, presupuesto, fechas, foto), compartido
 // entre "Nuevo viaje" y "Editar viaje" — mismos campos, misma
 // validación (delegada al store), solo cambian los valores iniciales,
-// el texto del botón y qué hace onSubmit con los datos. v1 es de una
-// sola divisa (COP), así que no hay campo de divisa que elegir — ver
-// docs/product-decisions.md.
+// el texto del botón, adónde lleva "Cancelar" (cancelHref) y qué hace
+// onSubmit con los datos. v1 es de una sola divisa (COP), así que no
+// hay campo de divisa que elegir — ver docs/product-decisions.md.
 
 import { formatStoredAmount } from "../utils/currency.js";
 import { bindAmountInput, readAmountInput } from "../utils/amount-input.js";
@@ -13,7 +13,7 @@ import { searchDestinationPhotos } from "../data/pexels.js";
 const PHOTO_SEARCH_DEBOUNCE_MS = 600;
 const MANUAL_URL_HINT = "También podés buscar la foto en Unsplash y pegar acá el link de la imagen.";
 
-function tripFormMarkup({ trip, submitLabel }) {
+function tripFormMarkup({ trip, submitLabel, cancelHref }) {
   return `
     <form id="trip-form" novalidate>
       <p class="field">
@@ -46,7 +46,10 @@ function tripFormMarkup({ trip, submitLabel }) {
 
       <p class="field-error" id="trip-form-error" role="alert" hidden></p>
 
-      <button type="submit">${submitLabel}</button>
+      <div class="trip-form-actions">
+        <button type="submit">${submitLabel}</button>
+        ${cancelHref ? `<a href="${escapeHtml(cancelHref)}" class="button-outline">Cancelar</a>` : ""}
+      </div>
     </form>
   `;
 }
@@ -141,11 +144,12 @@ function bindPhotoSuggestions({ nameInput, photoInput, photoHelper }) {
  * @param {{
  *   trip?: { name?, budgetLimit?, startDate?, endDate?, photoUrl? },
  *   submitLabel: string,
+ *   cancelHref?: string,
  *   onSubmit: (data: { name, budgetLimit, startDate, endDate, photoUrl }) => Promise<void>,
  * }} options
  */
-export function mountTripForm(container, { trip = {}, submitLabel, onSubmit }) {
-  container.innerHTML = tripFormMarkup({ trip, submitLabel });
+export function mountTripForm(container, { trip = {}, submitLabel, cancelHref, onSubmit }) {
+  container.innerHTML = tripFormMarkup({ trip, submitLabel, cancelHref });
 
   const form = container.querySelector("#trip-form");
   const errorBox = container.querySelector("#trip-form-error");

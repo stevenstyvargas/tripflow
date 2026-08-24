@@ -29,6 +29,7 @@ export function render(container, { tripId } = {}) {
   mountTripForm(container.querySelector("#trip-form-slot"), {
     trip,
     submitLabel: "Guardar cambios",
+    cancelHref: `#/viaje/${trip.id}`,
     onSubmit: async (data) => {
       await updateTrip(trip.id, data);
       location.hash = `#/viaje/${trip.id}`;
