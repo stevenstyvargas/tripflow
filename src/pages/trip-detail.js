@@ -267,13 +267,13 @@ export function render(container, { tripId } = {}) {
           ${
             trip.startDate && trip.endDate
               ? `
-            <a href="${buildGoogleCalendarUrl(trip)}" target="_blank" rel="noopener noreferrer" class="button-outline">
+            <a href="${buildGoogleCalendarUrl(trip)}" target="_blank" rel="noopener noreferrer" class="button-outline" aria-label="Agregar a Google Calendar" title="Agregar a Google Calendar">
               ${icon("calendar")}<span>Agregar a Google Calendar</span>
             </a>
           `
               : ""
           }
-          <a href="${buildWhatsAppShareUrl(trip, spent, status, expenses)}" target="_blank" rel="noopener noreferrer" class="button-outline">
+          <a href="${buildWhatsAppShareUrl(trip, spent, status, expenses)}" target="_blank" rel="noopener noreferrer" class="button-outline" aria-label="Compartir por WhatsApp" title="Compartir por WhatsApp">
             ${icon("message-circle")}<span>Compartir por WhatsApp</span>
           </a>
           ${

@@ -1405,6 +1405,47 @@ button[type="submit"] {
   flex-shrink: 0;
 }
 
+/* Mobile: los 3 botones (Google Calendar/WhatsApp/Agregar gasto) no
+   caben en la misma línea que foto+nombre+badge sin superponerse — la
+   barra pasa a 2 líneas: .trip-detail-title a todo el ancho arriba
+   (fuerza el salto de línea al pedir flex-basis:100% dentro de
+   .page-header ya con wrap), .page-header-actions como su propia fila
+   abajo. */
+@media (max-width: 45rem) {
+  .page-trip-detail .page-header {
+    flex-wrap: wrap;
+  }
+
+  .page-trip-detail .trip-detail-title {
+    flex-basis: 100%;
+  }
+
+  .page-trip-detail .page-header-actions {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+
+  /* "Agregar gasto" es la acción más usada: se pone primero (order) y
+     ocupa el espacio que sobra (flex:1), más ancho que los otros 2. */
+  .page-trip-detail #toggle-expense-form {
+    order: -1;
+    flex: 1;
+  }
+
+  /* Google Calendar / WhatsApp a solo ícono — mismo borde de
+     .button-outline de siempre, solo se oculta el texto y el padding
+     pasa a cuadrado (en vez de rectangular) para un botón de solo
+     ícono. aria-label/title (agregados en el markup) cubren el texto
+     que dejó de verse. */
+  .page-trip-detail .page-header-actions .button-outline {
+    padding: var(--space-2);
+  }
+
+  .page-trip-detail .page-header-actions .button-outline span {
+    display: none;
+  }
+}
+
 /* Layout de 2 columnas debajo de la barra: KPIs en un ancho fijo
    (nunca se comprime ni se expande) + la torre de categorías a la
    derecha, en el espacio que sobra. */
