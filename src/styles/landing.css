@@ -329,38 +329,46 @@
 }
 
 /* ---------- Roadmap ---------- */
+/* Mismo tratamiento de tarjeta que .feature-snippet/.browser-frame
+   arriba (radius-md, shadow-sm, borde sutil) — antes era una lista de
+   filas apenas separadas por box-shadow, visualmente más liviana que
+   el resto de la página. La etiqueta "Próximamente" reusa las clases
+   reales .status-badge/.status-badge-ok (base.css, cargado global en
+   toda la app) en vez de texto verde suelto — mismo pill que ya
+   significa "en control" en Inicio/Alertas/cada viaje, sin ícono
+   (circle-check sugeriría "completado", lo opuesto de un roadmap). */
 .roadmap-list {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
 }
 
 .roadmap-item {
-  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-5);
   border-radius: var(--radius-md);
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .roadmap-item p {
   margin: 0;
+  color: var(--color-text-muted);
   line-height: 1.5;
 }
 
-/* Mismo peso/tono que .nav-coming-soon-tag del sidebar (base.css),
-   pero con --color-status-ok-text en vez de --color-accent crudo: en
-   el sidebar ese verde va sobre navy (alto contraste); acá la tarjeta
-   es blanca, y el verde de acento sin oscurecer no pasa contraste de
-   texto — mismo criterio que ya usa .status-badge-ok en toda la app. */
-.roadmap-tag {
-  display: inline-block;
-  color: var(--color-status-ok-text);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  white-space: nowrap;
+/* El último ítem (el más largo, "Estadísticas...") ocupa las 2
+   columnas en vez de quedar solo en la última fila con un hueco vacío
+   al lado — mismo criterio que .feature-card-full arriba. */
+.roadmap-item-full {
+  grid-column: 1 / -1;
 }
 
 /* ---------- Footer ---------- */
@@ -415,6 +423,10 @@
   }
 
   .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .roadmap-list {
     grid-template-columns: 1fr;
   }
 

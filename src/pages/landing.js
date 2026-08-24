@@ -188,7 +188,14 @@ export function render(container) {
             <p>Roadmap real, documentado en el repo — no promesas sueltas.</p>
           </div>
           <ul class="roadmap-list">
-            ${ROADMAP.map((item) => `<li class="roadmap-item"><p>${item} <span class="roadmap-tag">Próximamente</span></p></li>`).join("")}
+            ${ROADMAP.map(
+              (item, i) => `
+              <li class="roadmap-item${i === ROADMAP.length - 1 ? " roadmap-item-full" : ""}">
+                <span class="status-badge status-badge-ok">Próximamente</span>
+                <p>${item}</p>
+              </li>
+            `
+            ).join("")}
           </ul>
         </section>
       </div>
