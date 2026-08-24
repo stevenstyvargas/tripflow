@@ -141,6 +141,7 @@ export function render(container, { tab } = {}) {
 
   bindAccountMenu(container);
 
+  const pageEl = container.querySelector(".page-my-trips");
   const kpisBody = container.querySelector("#my-trips-kpis");
   const sectionBody = container.querySelector("#trips-section-body");
   const tabButtons = container.querySelectorAll(".tab-item");
@@ -163,8 +164,19 @@ export function render(container, { tab } = {}) {
 
   container.querySelector("#trip-search").addEventListener("input", handleSearchInput);
 
+  // Con texto activo en el buscador MOBILE (no el de escritorio, que
+  // arriba solo llama a handleSearchInput) se ocultan los KPIs y las
+  // pestañas Todos/Activos/Cerrados — mismo empuje hacia abajo de los
+  // resultados que ya se resolvió en dashboard.js (ver [.page-my-trips.
+  // is-mobile-search-active ...] en base.css). El filtro por pestaña
+  // sigue aplicando igual mientras están ocultas, solo cambia qué se ve.
   const mobileSearchInput = document.querySelector("#trip-search-mobile");
-  if (mobileSearchInput) mobileSearchInput.addEventListener("input", handleSearchInput);
+  if (mobileSearchInput) {
+    mobileSearchInput.addEventListener("input", (event) => {
+      handleSearchInput(event);
+      pageEl.classList.toggle("is-mobile-search-active", event.target.value.trim().length > 0);
+    });
+  }
 
   tabButtons.forEach((button) => {
     button.addEventListener("click", () => {

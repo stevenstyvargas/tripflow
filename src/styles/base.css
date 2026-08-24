@@ -928,6 +928,24 @@ button[type="submit"] {
   }
 }
 
+/* Mobile, buscador expandido del header (#trip-search-mobile, ver
+   sidebar.js) CON texto: oculta lo que separa ese buscador de sus
+   resultados (saludo/KPIs/dona en Inicio; KPIs/pestañas en Mis
+   viajes), para que el listado filtrado quede inmediatamente debajo
+   sin scroll. La clase la agrega/quita cada página (dashboard.js/
+   my-trips.js) solo en el listener del input MOBILE — el de escritorio
+   (#trip-search) no la toca, así que en desktop nunca aplica (además,
+   acá también queda acotado al breakpoint mobile como refuerzo). */
+@media (max-width: 45rem) {
+  .page-home.is-mobile-search-active #home-greeting,
+  .page-home.is-mobile-search-active #home-kpi-row,
+  .page-home.is-mobile-search-active #home-category-section,
+  .page-my-trips.is-mobile-search-active #my-trips-kpis,
+  .page-my-trips.is-mobile-search-active .tab-list {
+    display: none;
+  }
+}
+
 .kpi-card {
   display: flex;
   align-items: center;

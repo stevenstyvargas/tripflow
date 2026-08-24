@@ -92,7 +92,7 @@ export function render(container) {
   container.innerHTML = `
     <main class="page page-home">
       <header class="page-header">
-        <h1>Hola, ${escapeHtml(greetingName)} 👋</h1>
+        <h1 id="home-greeting">Hola, ${escapeHtml(greetingName)} 👋</h1>
         <div class="page-header-actions">
           ${searchField({ id: "trip-search" })}
           <a href="#/nuevo-viaje" class="button-primary">${icon("plus")}<span>Nuevo viaje</span></a>
@@ -100,12 +100,12 @@ export function render(container) {
         </div>
       </header>
 
-      <ul class="kpi-row">
+      <ul class="kpi-row" id="home-kpi-row">
         ${renderKpiCard({ iconName: "plane", label: "Viajes activos", value: trips.length })}
         ${renderKpiCard({ iconName: "alert-triangle", label: "Viajes en riesgo", value: atRiskCount })}
       </ul>
 
-      <section class="section">
+      <section class="section" id="home-category-section">
         <h2>Gasto por categoría</h2>
         <p class="section-subtitle">Todos tus viajes activos</p>
         ${categoryChart(categoryBreakdown)}
@@ -124,6 +124,7 @@ export function render(container) {
 
   bindAccountMenu(container);
 
+  const pageEl = container.querySelector(".page-home");
   const sectionBody = container.querySelector("#trips-section-body");
 
   function handleSearchInput(event) {
@@ -135,7 +136,18 @@ export function render(container) {
 
   // #trip-search-mobile vive fuera de `container` (lo renderiza
   // components/sidebar.js, en el header compartido, no esta página) —
-  // solo existe en mobile y solo en Inicio/Mis viajes.
+  // solo existe en mobile y solo en Inicio/Mis viajes. Con texto activo
+  // ahí (no en el buscador de escritorio, que no toca .is-mobile-search-
+  // active), se oculta el saludo/KPIs/dona (ver [.page-home.is-mobile-
+  // search-active ...] en base.css) para que los resultados queden
+  // debajo del buscador sin scroll; al vaciar el input (o cerrarlo con
+  // la X, que ya limpia el valor y dispara "input", ver sidebar.js)
+  // vuelven a aparecer solos.
   const mobileSearchInput = document.querySelector("#trip-search-mobile");
-  if (mobileSearchInput) mobileSearchInput.addEventListener("input", handleSearchInput);
+  if (mobileSearchInput) {
+    mobileSearchInput.addEventListener("input", (event) => {
+      handleSearchInput(event);
+      pageEl.classList.toggle("is-mobile-search-active", event.target.value.trim().length > 0);
+    });
+  }
 }
