@@ -200,7 +200,7 @@ export function render(container) {
       <header class="landing-hero">
         <div>
           <span class="landing-eyebrow">Control de presupuesto de viaje</span>
-          <h1>Tu presupuesto de viaje, bajo control.</h1>
+          <h1>Tu presupuesto de viaje, <em>bajo control</em></h1>
           <p class="landing-subhead">
             Planeá cuánto querés gastar, registrá tus gastos y recibí
             alertas antes de pasarte del presupuesto. Así disfrutás tus
