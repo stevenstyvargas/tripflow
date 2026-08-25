@@ -54,18 +54,18 @@ const GITHUB_MARK = `
 // completa, sino el gesto puntual de cada paso.
 const STEPS = [
   {
-    title: "Creá tu viaje con presupuesto límite",
-    text: "Definí cuánto vas a gastar en pesos colombianos, con fechas opcionales.",
+    title: "Crea tu viaje y define tu presupuesto",
+    text: "Define cuánto quieres gastar y agrega las fechas de tu viaje cuando quieras.",
     image: step1Img,
   },
   {
-    title: "Registrá cada gasto",
-    text: "Cargá cada gasto por categoría en segundos, apenas pase.",
+    title: "Registra cada gasto y clasifícalo por categoría",
+    text: "Añade cada gasto y clasifícalo para saber cómo usas tu presupuesto por categoría.",
     image: step2Img,
   },
   {
-    title: "Mirá tu semáforo antes de que sea tarde",
-    text: "Verde, naranja o rojo: sabés en qué punto estás sin sacar la calculadora.",
+    title: "Controla tu presupuesto y revisa cómo vas",
+    text: "Consulta el semáforo para saber si estás en control o cerca del límite.",
     image: step3Img,
   },
 ];
