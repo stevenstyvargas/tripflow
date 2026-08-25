@@ -113,6 +113,12 @@ function stepCard({ title, text, image }, index) {
 // (evita layout shift al cargar, mismo tamaño de caja que ya fija
 // aspect-ratio:16/10 en CSS — Lighthouse pedía además los atributos
 // HTML, no solo el aspect-ratio de CSS).
+// object-position por imagen: con object-fit:cover, la caja 16:10
+// recorta lo que sobre de cada captura según su proporción nativa
+// (ver ancho/alto de cada una abajo). "center" (default del navegador,
+// se omite) alcanza cuando el recorte es chico; las que se alejan
+// más de 16:10 necesitan un ancla explícita para no comerse contenido
+// clave — ver el detalle de cada una en su comentario.
 const FEATURES = [
   {
     iconName: "layout-dashboard",
@@ -129,6 +135,11 @@ const FEATURES = [
     image: nuevoViajeImg,
     width: 1024,
     height: 1308,
+    // Retrato angosto (0.78:1) contra caja 16:10: cover solo puede
+    // mostrar ~49% del alto. "top" prioriza título + nombre del viaje
+    // + presupuesto (el campo que le da nombre a esta tarjeta) sobre
+    // fechas/fotos, que quedan fuera del recorte.
+    position: "top",
   },
   {
     iconName: "wallet",
@@ -145,6 +156,12 @@ const FEATURES = [
     image: alertasImg,
     width: 1150,
     height: 600,
+    // Más ancha que la caja: cover recorta de los costados. "right"
+    // se come sobre todo el sidebar de navegación (repetido en las
+    // otras 5 capturas, no es información nueva acá) y conserva
+    // completo el borde de color + botón "Ver viaje" de cada alerta,
+    // que es el contenido que ilustra el semáforo.
+    position: "right",
   },
   {
     iconName: "message-circle",
@@ -153,6 +170,7 @@ const FEATURES = [
     image: whatsappImg,
     width: 920,
     height: 382,
+    position: "65% center",
   },
   {
     iconName: "calendar",
@@ -164,13 +182,14 @@ const FEATURES = [
   },
 ];
 
-function featureCard({ iconName, title, text, image, width, height }) {
+function featureCard({ iconName, title, text, image, width, height, position }) {
+  const style = position ? ` style="object-position: ${position}"` : "";
   return `
     <li class="feature-card">
       <div class="browser-frame">
         <div class="browser-frame-bar"><span></span><span></span><span></span></div>
         <div class="browser-frame-media">
-          <img src="${image}" width="${width}" height="${height}" alt="Captura real de &quot;${title}&quot; en Tripflow" loading="lazy" />
+          <img src="${image}" width="${width}" height="${height}" alt="Captura real de &quot;${title}&quot; en Tripflow" loading="lazy"${style} />
         </div>
       </div>
       <div class="feature-card-icon">${icon(iconName)}</div>
