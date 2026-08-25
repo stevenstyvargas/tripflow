@@ -567,6 +567,13 @@ que no es la prioridad para esta entrega.
 
 ## Postergar "eliminar viaje" de forma permanente
 
+> **Superada:** ver la siguiente entrada ("Reconsiderar 'eliminar
+> viaje' permanente: se implementa con alcance reducido") — se
+> reconsideró a los pocos días y se implementó con alcance acotado
+> (solo viajes ya finalizados). Se deja este registro porque documenta
+> el riesgo real (borrado en cascada) que la siguiente decisión
+> resuelve, no porque siga vigente.
+
 **Problema:** hoy la única acción destructiva sobre un viaje es
 "finalizar viaje" (`closeTrip()`), que cambia su estado a "Finalizado"
 sin borrar ningún dato — el viaje sigue siendo consultable, con todos

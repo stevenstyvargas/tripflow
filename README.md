@@ -14,6 +14,9 @@ Proyecto realizado para el reto técnico de Technical Product Designer en Alegra
 - Creación de viajes con presupuesto límite
 - Registro de gastos
 - Alertas de presupuesto
+- Finalizar viaje (cambia el estado, no borra datos) y eliminar de forma
+  permanente un viaje ya finalizado (nunca uno en curso), con
+  confirmación explícita — ver `docs/product-decisions.md`
 - Compartir viaje por WhatsApp (resumen de presupuesto y estado)
 - 1 divisa: COP (peso colombiano)
 - Perfil individual (1 persona)
@@ -63,7 +66,13 @@ VITE_FIREBASE_PROJECT_ID=
 VITE_FIREBASE_STORAGE_BUCKET=
 VITE_FIREBASE_MESSAGING_SENDER_ID=
 VITE_FIREBASE_APP_ID=
+VITE_PEXELS_API_KEY=
 ```
+
+`VITE_PEXELS_API_KEY` es opcional: habilita las 3 fotos sugeridas del
+destino en el formulario de crear/editar viaje (vía la API de Pexels).
+Sin ella (o si la API falla), el formulario sigue funcionando igual,
+solo sin esa sugerencia — nunca bloquea el flujo.
 
 Sin estas variables, Firebase no se inicializa y la app no llega ni a
 mostrar la pantalla de login. Al desplegar en Vercel, las mismas
@@ -106,6 +115,7 @@ tripflow/
 - [`docs/research.md`](./docs/research.md) — referencias revisadas (ej. Tickelia) y qué se aprendió de cada una
 - [`docs/product-decisions.md`](./docs/product-decisions.md) — decisiones de producto/UX tomadas durante el desarrollo, con el problema y el porqué de cada una
 - [`docs/ai-process.md`](./docs/ai-process.md) — registro de qué se le pidió a la IA y qué se ajustó manualmente
+- [`docs/user-feedback.md`](./docs/user-feedback.md) — feedback recogido probando la app con usuarios reales, con fecha
 
 ## Roadmap (próximas actualizaciones)
 
@@ -127,8 +137,3 @@ tripflow/
 - Estadísticas de gasto entre viajes a lo largo del tiempo — comparar
   tendencias, categorías con mayor gasto recurrente y evolución del
   presupuesto histórico
-- Eliminar viaje de forma permanente (hoy solo existe "finalizar
-  viaje", que cambia el estado sin borrar datos; se evaluó agregar
-  eliminación definitiva pero se decidió postergarla por el riesgo de
-  manejar borrado en cascada de gastos asociados a dos días de la
-  entrega, ver `docs/product-decisions.md`)

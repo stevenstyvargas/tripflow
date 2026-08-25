@@ -94,10 +94,6 @@ export function getActiveTrips() {
   return state.trips.filter((t) => t.status !== TRIP_STATUS.CLOSED);
 }
 
-export function getClosedTrips() {
-  return state.trips.filter((t) => t.status === TRIP_STATUS.CLOSED);
-}
-
 /** Todos los viajes del usuario, activos y cerrados — usado en Mis viajes. */
 export function getAllTrips() {
   return state.trips;

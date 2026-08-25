@@ -11,6 +11,7 @@
 import { onAuthChange, getGoogleRedirectResult } from "./data/auth.js";
 import { initStore, clearStore } from "./data/store.js";
 import { renderShell } from "./components/app-shell.js";
+import { renderFirebaseConfigError } from "./components/firebase-error.js";
 
 const routes = {
   "/": () => import("./pages/dashboard.js"),
@@ -109,13 +110,24 @@ export async function initRouter(container) {
 
   window.addEventListener("hashchange", render);
 
-  onAuthChange(async (user) => {
-    currentUser = user;
-    if (user) {
-      await initStore(user.uid);
-    } else {
-      clearStore();
-    }
-    render();
-  });
+  onAuthChange(
+    async (user) => {
+      currentUser = user;
+      if (user) {
+        await initStore(user.uid);
+      } else {
+        clearStore();
+      }
+      render();
+    },
+    // Variables de entorno presentes pero inválidas (ej. apiKey de otro
+    // proyecto): a diferencia de "faltan variables" (data/firebase.js,
+    // cortado antes de llegar acá), esto solo lo reporta Firebase en su
+    // primera llamada real — sin este callback, el listener nunca
+    // invoca al de arriba y #app se queda en blanco para siempre.
+    (err) => {
+      console.error("[auth] onAuthStateChanged falló:", err);
+      renderFirebaseConfigError(container);
+    },
+  );
 }

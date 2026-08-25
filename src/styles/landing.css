@@ -135,7 +135,7 @@
   /* Hereda pointer-events:none de .landing-topbar (el contenedor fixed
      de ancho completo) — sin este override los links se ven pero no
      son clickeables, mismo mecanismo que ya reactiva .landing-pill/
-     .landing-topbar-logo por separado. */
+     .landing-pill-logo por separado. */
   pointer-events: auto;
 }
 

@@ -48,9 +48,16 @@ export function signOutUser() {
   return signOut(auth);
 }
 
-/** @param {(user: import("firebase/auth").User | null) => void} callback */
-export function onAuthChange(callback) {
-  return onAuthStateChanged(auth, callback);
+/**
+ * @param {(user: import("firebase/auth").User | null) => void} callback
+ * @param {(error: Error) => void} [onError] Variables presentes pero
+ *   inválidas (ej. apiKey de otro proyecto) recién fallan acá, en la
+ *   primera llamada real a Firebase — a diferencia de "faltan
+ *   variables", que se detecta antes en firebase.js sin llegar a este
+ *   punto.
+ */
+export function onAuthChange(callback, onError) {
+  return onAuthStateChanged(auth, callback, onError);
 }
 
 export function getCurrentUser() {

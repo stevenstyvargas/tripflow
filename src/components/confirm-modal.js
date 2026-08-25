@@ -8,6 +8,36 @@
 
 import { icon } from "../utils/icons.js";
 
+// Focus trap compartido por los 2 modales de acá: mientras el overlay
+// está abierto, Tab/Shift+Tab deben ciclar solo entre los elementos
+// focuseables del diálogo, nunca "escaparse" hacia la página de atrás
+// (que sigue en el DOM, tapada por el overlay pero técnicamente
+// alcanzable con teclado sin esto).
+function trapFocus(overlay, onKeydown) {
+  function onTab(event) {
+    if (event.key !== "Tab") return;
+    const focusable = overlay.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+  document.addEventListener("keydown", onTab);
+  document.addEventListener("keydown", onKeydown);
+  return () => {
+    document.removeEventListener("keydown", onTab);
+    document.removeEventListener("keydown", onKeydown);
+  };
+}
+
 /**
  * @param {{ title: string, body: string, confirmLabel?: string, cancelLabel?: string, onConfirm: () => void }} options
  */
@@ -26,13 +56,15 @@ export function showConfirmModal({ title, body, confirmLabel = "Confirmar", canc
     </div>
   `;
 
-  function close() {
-    overlay.remove();
-    document.removeEventListener("keydown", onKeydown);
-  }
-
   function onKeydown(event) {
     if (event.key === "Escape") close();
+  }
+
+  const untrap = trapFocus(overlay, onKeydown);
+
+  function close() {
+    overlay.remove();
+    untrap();
   }
 
   overlay.addEventListener("click", (event) => {
@@ -45,7 +77,6 @@ export function showConfirmModal({ title, body, confirmLabel = "Confirmar", canc
     onConfirm();
   });
 
-  document.addEventListener("keydown", onKeydown);
   document.body.appendChild(overlay);
   overlay.querySelector('[data-action="cancel"]').focus();
 }
@@ -72,14 +103,16 @@ export function showSuccessModal({ title, onClose }) {
     </div>
   `;
 
-  function close() {
-    overlay.remove();
-    document.removeEventListener("keydown", onKeydown);
-    if (onClose) onClose();
-  }
-
   function onKeydown(event) {
     if (event.key === "Escape") close();
+  }
+
+  const untrap = trapFocus(overlay, onKeydown);
+
+  function close() {
+    overlay.remove();
+    untrap();
+    if (onClose) onClose();
   }
 
   overlay.addEventListener("click", (event) => {
@@ -88,7 +121,6 @@ export function showSuccessModal({ title, onClose }) {
 
   overlay.querySelector('[data-action="close"]').addEventListener("click", close);
 
-  document.addEventListener("keydown", onKeydown);
   document.body.appendChild(overlay);
   overlay.querySelector('[data-action="close"]').focus();
 }
