@@ -445,6 +445,9 @@
    (WhatsApp/Calendar) eran un botón suelto sin marco, de tamaño nativo
    propio, ver .feature-snippet (ya borrada) en el historial. */
 .feature-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-8);
