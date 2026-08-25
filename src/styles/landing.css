@@ -407,8 +407,19 @@
   box-shadow: var(--shadow-sm);
 }
 
+/* --space-5 no existe en tokens.css (la escala salta de --space-4 a
+   --space-6) — la declaración anterior usaba ese token inexistente,
+   lo que invalida el `padding` COMPLETO a nivel de la cascada (un
+   var() sin fallback que no resuelve invalida toda la propiedad
+   shorthand, no solo ese valor) y lo dejaba en 0 de hecho: título y
+   descripción quedaban pegados a los 3 bordes (izquierda/derecha/
+   abajo) de la tarjeta. --space-6 (24px) en los laterales/abajo — el
+   top se queda en --space-2 (8px) a propósito, así de chico, porque
+   ahí ya está el aro blanco del número (ver .step-card-number) dando
+   su propio despegue visual; con 24px de más arriba el número hubiera
+   quedado con demasiado aire suelto respecto al título de abajo. */
 .step-card-body {
-  padding: var(--space-2) var(--space-5) var(--space-5);
+  padding: var(--space-2) var(--space-6) var(--space-6);
 }
 
 .step-card-body h3 {
