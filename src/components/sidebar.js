@@ -3,7 +3,11 @@
 // misma barra colapsa a: logotipo completo a la izquierda (mismo
 // asset que desktop, sin recorte ni swap a isotipo) y, a la derecha,
 // lupa (solo en Inicio/Mis viajes, únicas pantallas con algo que
-// buscar) + hamburguesa, siempre la última — la navegación y la
+// buscar) + campana de alertas (components/alerts-bell.js, acceso
+// directo a #/alertas sin abrir el drawer — punto rojo simple si hay
+// ≥1 viaje en alerta, misma fuente de estado que el badge con número
+// del ítem "Alertas" de más abajo, sin reemplazarlo) + hamburguesa,
+// siempre la última — la navegación y la
 // sesión (antes expuestas sueltas: nav en fila de íconos, cuenta como
 // chip aparte en cada página) se mueven a un drawer deslizante desde
 // la izquierda, con el mismo fondo navy y el mismo estilo de item
@@ -51,6 +55,7 @@ import { getTripAlerts } from "../data/store.js";
 import { showToast } from "./toast.js";
 import { escapeHtml } from "../utils/dom.js";
 import { searchField } from "./search-field.js";
+import { alertsBell } from "./alerts-bell.js";
 
 const NAV_ITEMS = [
   { path: "/", label: "Inicio", icon: "home" },
@@ -218,6 +223,7 @@ export function renderSidebar(currentPath) {
         `
             : ""
         }
+        ${alertsBell({ variant: "mobile" })}
         <button type="button" class="icon-button sidebar-icon-button" id="drawer-open" aria-label="Abrir menú" aria-haspopup="true" aria-expanded="false">
           ${icon("menu")}
         </button>

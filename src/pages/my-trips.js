@@ -25,6 +25,7 @@ import { getBudgetStatus, STATUS } from "../utils/status.js";
 import { getCurrentUser } from "../data/auth.js";
 import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
 import { searchField } from "../components/search-field.js";
+import { alertsBell } from "../components/alerts-bell.js";
 import { renderKpiCard } from "../components/kpi-card.js";
 import { renderTripCard } from "../components/trip-card.js";
 
@@ -118,6 +119,7 @@ export function render(container, { tab } = {}) {
       <header class="page-header">
         <h1>Mis viajes</h1>
         <div class="page-header-actions">
+          ${alertsBell()}
           ${searchField({ id: "trip-search" })}
           ${accountMenu(getCurrentUser())}
         </div>

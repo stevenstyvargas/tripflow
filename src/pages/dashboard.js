@@ -30,6 +30,7 @@ import { renderKpiCard } from "../components/kpi-card.js";
 import { categoryChart } from "../components/category-chart.js";
 import { accountMenu, bindAccountMenu } from "../components/account-menu.js";
 import { searchField } from "../components/search-field.js";
+import { alertsBell } from "../components/alerts-bell.js";
 import { renderTripCard } from "../components/trip-card.js";
 import { EXPENSE_CATEGORIES } from "../utils/categories.js";
 import { getCurrentUser } from "../data/auth.js";
@@ -94,6 +95,7 @@ export function render(container) {
       <header class="page-header">
         <h1 id="home-greeting">Hola, ${escapeHtml(greetingName)} 👋</h1>
         <div class="page-header-actions">
+          ${alertsBell()}
           ${searchField({ id: "trip-search" })}
           <a href="#/nuevo-viaje" class="button-primary">${icon("plus")}<span>Nuevo viaje</span></a>
           ${accountMenu(user)}

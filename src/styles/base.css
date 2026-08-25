@@ -346,6 +346,29 @@ button[type="submit"] {
   pointer-events: none;
 }
 
+/* Campana de acceso rápido a Alertas (components/alerts-bell.js):
+   mismo .icon-button de siempre (mudo en desktop, blanco sobre navy en
+   mobile vía .sidebar-icon-button) más un punto rojo simple —a
+   diferencia de .nav-badge, sin número, no hay espacio para uno
+   legible en un ícono suelto del header— cuando hay ≥1 viaje en
+   alerta. position:relative acá, no en un wrapper aparte, porque el
+   único hijo con contenido real es el <svg>; el padding del botón deja
+   un margen consistente para que el punto no quede pegado al borde. */
+.alerts-bell {
+  position: relative;
+}
+
+.alerts-bell-dot {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--radius-full);
+  background: var(--color-status-danger);
+  pointer-events: none;
+}
+
 /* Ítems de nav "Próximamente" (Mis facturas, Calendario): mismo
    .sidebar-nav-item de siempre (hover incluido, siguen siendo
    clickeables — el click dispara un toast), pero nunca reciben
@@ -743,6 +766,15 @@ button[type="submit"] {
    dos tareas atrás). */
 @media (max-width: 45rem) {
   .search-field {
+    display: none;
+  }
+
+  /* La campana desktop (Inicio/Mis viajes, components/alerts-bell.js)
+     se oculta igual que el buscador que acompaña en .page-header-actions
+     — en mobile ya existe su propia campana, en .sidebar-mobile-actions
+     (header compartido), que no queda alcanzada por este selector al
+     no vivir dentro de .page-header-actions. */
+  .page-header-actions .alerts-bell {
     display: none;
   }
 }
