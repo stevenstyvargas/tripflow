@@ -184,7 +184,7 @@ export function render(container) {
             <a class="landing-pill-link" href="#funcionalidades">Funcionalidades</a>
             <a class="landing-pill-link" href="#proximamente">Próximamente</a>
           </div>
-          <a class="landing-pill-login" href="#/login">Probar demo</a>
+          <a class="landing-pill-login" href="#/login">${icon("arrow-up-right")}<span>Probar demo</span></a>
           <button type="button" class="landing-pill-toggle" id="landing-menu-toggle" aria-label="Abrir menú" aria-haspopup="true" aria-expanded="false" aria-controls="landing-mobile-menu">
             ${icon("menu")}
           </button>
@@ -193,7 +193,7 @@ export function render(container) {
           <a class="landing-mobile-menu-link" href="#como-funciona">Cómo funciona</a>
           <a class="landing-mobile-menu-link" href="#funcionalidades">Funcionalidades</a>
           <a class="landing-mobile-menu-link" href="#proximamente">Próximamente</a>
-          <a class="landing-mobile-menu-cta" href="#/login">Probar demo</a>
+          <a class="landing-mobile-menu-cta" href="#/login">${icon("arrow-up-right")}<span>Probar demo</span></a>
         </div>
       </div>
 
@@ -207,7 +207,7 @@ export function render(container) {
             vacaciones sin sorpresas al volver.
           </p>
           <div class="landing-cta-row">
-            <a class="landing-cta-primary" href="#/login">Probar Demo</a>
+            <a class="landing-cta-primary" href="#/login">${icon("arrow-up-right")}<span>Probar Demo</span></a>
             <a class="landing-cta-secondary" href="${GITHUB_URL}" target="_blank" rel="noopener noreferrer">
               ${GITHUB_MARK}<span>Ver en GitHub</span>
             </a>

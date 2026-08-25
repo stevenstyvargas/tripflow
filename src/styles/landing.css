@@ -88,21 +88,28 @@
 }
 
 /* Único elemento del pill que es una acción, no navegación — fondo
-   verde de acento sólido a propósito, para que se distinga de un
-   vistazo de las 3 anclas de al lado. Texto blanco por pedido explícito
-   del usuario — el contraste real es ~1.75:1 (por debajo del 4.5:1 de
-   WCAG AA para texto normal), la misma razón por la que antes iba en
-   navy (~9:1, mismo criterio que .fab en base.css); lo dejo así porque
-   me lo pidieron, pero es una regresión de accesibilidad real, no
-   cosmética. */
+   navy + texto blanco (buen contraste, ~15:1) a propósito, para que se
+   distinga de un vistazo de las 3 anclas de al lado; el verde de acento
+   se reserva para la etiqueta del hero, que es donde el usuario quiere
+   que "llame la atención" — acá el rol es otro (acción de navegación,
+   no protagonista visual). Antes pasó por fondo verde + texto blanco
+   (contraste real ~1.75:1, ilegible) — revertido por pedido explícito. */
 .landing-pill-login {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   padding: 0.5rem var(--space-8);
   border-radius: var(--radius-full);
-  background: var(--color-accent);
+  background: var(--color-primary);
   color: var(--color-surface);
   font-weight: 700;
   font-size: var(--text-sm);
   text-decoration: none;
+}
+
+.landing-pill-login .icon {
+  width: 1rem;
+  height: 1rem;
 }
 
 .landing-pill-toggle {
@@ -201,6 +208,11 @@
   font-size: var(--text-base);
   text-decoration: none;
   box-shadow: var(--shadow-md);
+}
+
+.landing-cta-primary .icon {
+  width: 1.125rem;
+  height: 1.125rem;
 }
 
 .landing-cta-secondary {
@@ -590,19 +602,28 @@
     background: color-mix(in srgb, var(--color-primary) 6%, white);
   }
 
-  /* Mismo verde+blanco que .landing-pill-login (arriba, mismo pedido
-     explícito y misma nota de contraste) — es la misma acción, solo
-     que acá vive dentro del dropdown mobile. */
+  /* Mismo navy+blanco que .landing-pill-login (arriba) — es la misma
+     acción, solo que acá vive dentro del dropdown mobile. justify-
+     content:center en vez de text-align:center: ahora el contenido es
+     ícono+texto en fila, no solo texto suelto. */
   .landing-mobile-menu-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
     margin-top: 0.125rem;
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-sm);
-    background: var(--color-accent);
+    background: var(--color-primary);
     color: var(--color-surface);
     font-weight: 700;
     font-size: var(--text-sm);
-    text-align: center;
     text-decoration: none;
+  }
+
+  .landing-mobile-menu-cta .icon {
+    width: 1rem;
+    height: 1rem;
   }
 
   .landing-hero {
