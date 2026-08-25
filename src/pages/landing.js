@@ -200,15 +200,14 @@ export function render(container) {
       <header class="landing-hero">
         <div>
           <span class="landing-eyebrow">Control de presupuesto de viaje</span>
-          <h1>Sabé si vas bien, <em>antes</em> de que sea tarde.</h1>
+          <h1>Tu presupuesto de viaje, bajo control.</h1>
           <p class="landing-subhead">
-            Tripflow convierte el presupuesto de cada viaje en un semáforo
-            simple: verde mientras controlás el gasto, naranja cuando te
-            acercás al límite, rojo cuando lo cruzás. Sin hojas de
-            cálculo, sin sorpresas al volver.
+            Planeá cuánto querés gastar, registrá tus gastos y recibí
+            alertas antes de pasarte del presupuesto. Así disfrutás tus
+            vacaciones sin sorpresas al volver.
           </p>
           <div class="landing-cta-row">
-            <a class="landing-cta-primary" href="#/login">Iniciar sesión con Google</a>
+            <a class="landing-cta-primary" href="#/login">Probar Demo</a>
             <a class="landing-cta-secondary" href="${GITHUB_URL}" target="_blank" rel="noopener noreferrer">
               ${GITHUB_MARK}<span>Ver en GitHub</span>
             </a>

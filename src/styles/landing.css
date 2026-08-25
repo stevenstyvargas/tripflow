@@ -89,14 +89,17 @@
 
 /* Único elemento del pill que es una acción, no navegación — fondo
    verde de acento sólido a propósito, para que se distinga de un
-   vistazo de las 3 anclas de al lado. Texto navy (no blanco): mismo
-   criterio de contraste que ya usa .fab en base.css — navy sobre este
-   verde da ~9:1, blanco sobre verde da ~1.75:1 (ilegible). */
+   vistazo de las 3 anclas de al lado. Texto blanco por pedido explícito
+   del usuario — el contraste real es ~1.75:1 (por debajo del 4.5:1 de
+   WCAG AA para texto normal), la misma razón por la que antes iba en
+   navy (~9:1, mismo criterio que .fab en base.css); lo dejo así porque
+   me lo pidieron, pero es una regresión de accesibilidad real, no
+   cosmética. */
 .landing-pill-login {
   padding: 0.5rem var(--space-8);
   border-radius: var(--radius-full);
   background: var(--color-accent);
-  color: var(--color-primary);
+  color: var(--color-surface);
   font-weight: 700;
   font-size: var(--text-sm);
   text-decoration: none;
@@ -150,8 +153,8 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  color: var(--color-status-ok-text);
-  background: color-mix(in srgb, var(--color-accent) 20%, white);
+  color: var(--color-surface);
+  background: var(--color-accent);
   padding: 0.375rem var(--space-3);
   border-radius: var(--radius-full);
   font-size: var(--text-xs);
@@ -169,11 +172,6 @@
   letter-spacing: -0.03em;
   color: var(--color-primary);
   text-wrap: balance;
-}
-
-.landing-hero h1 em {
-  font-style: normal;
-  color: var(--color-status-danger);
 }
 
 .landing-subhead {
@@ -592,14 +590,15 @@
     background: color-mix(in srgb, var(--color-primary) 6%, white);
   }
 
-  /* Mismo verde+navy que .landing-pill-login (arriba) — es la misma
-     acción, solo que acá vive dentro del dropdown mobile. */
+  /* Mismo verde+blanco que .landing-pill-login (arriba, mismo pedido
+     explícito y misma nota de contraste) — es la misma acción, solo
+     que acá vive dentro del dropdown mobile. */
   .landing-mobile-menu-cta {
     margin-top: 0.125rem;
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-sm);
     background: var(--color-accent);
-    color: var(--color-primary);
+    color: var(--color-surface);
     font-weight: 700;
     font-size: var(--text-sm);
     text-align: center;
