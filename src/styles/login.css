@@ -1,0 +1,153 @@
+/* Pantalla de login — tarjeta flotante de 2 paneles sobre fondo navy
+   de marca. Mismo criterio que landing.css: hoja de estilos propia,
+   importada solo acá, porque nada de esto se reusa en el resto de la
+   app (que nunca sale de la paleta clara de tokens.css). */
+
+.page-login {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  background: var(--color-primary);
+}
+
+/* 24px de radio (mayor que --radius-lg/20px) y 900px de ancho máximo,
+   ambos valores explícitos del pedido — no los tokens de radio de
+   siempre, que quedan pensados para tarjetas de contenido, no para
+   una superficie flotante de este tamaño. */
+.login-card {
+  width: 100%;
+  max-width: 56.25rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.login-form-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-12) var(--space-8);
+  text-align: center;
+}
+
+.login-logo {
+  height: 2.5rem;
+  width: auto;
+}
+
+.login-tagline {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
+}
+
+.login-button {
+  margin-top: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-8);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-surface);
+  font: inherit;
+  font-weight: 600;
+  font-size: var(--text-base);
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background: color-mix(in srgb, var(--color-primary) 88%, black);
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.login-form-panel .field-error {
+  margin: 0;
+}
+
+/* ---------- Panel derecho: atmósfera de marca ----------
+   Gradiente derivado únicamente de --color-primary/--color-accent
+   (color-mix, sin hex nuevos) + 3 puntos de luz difuminados en los 3
+   colores del semáforo — eco sutil del elemento de firma del hero de
+   la landing (la ruta del presupuesto), sin reproducir literalmente
+   esas tarjetas/línea acá: a esta escala (la mitad de un panel de
+   450px) se hubiera visto apretado, así que quedó como atmósfera, no
+   como diagrama. Probé además el isotipo como marca de agua gigante
+   (Isotipo-fondo-oscuro.svg) y se descartó: ese archivo es un cuadrado
+   blanco sólido con la marca navy adentro (pensado como badge
+   autocontenido, no como silueta transparente), así que a opacidad
+   baja se veía como un bloque asimétrico, no como una marca de agua
+   limpia — el pedido explícitamente permitía no forzarlo si no se
+   veía bien. */
+.login-art-panel {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 15% 20%, color-mix(in srgb, var(--color-accent) 35%, transparent) 0%, transparent 55%),
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--color-primary) 65%, white) 0%,
+      var(--color-primary) 55%,
+      color-mix(in srgb, var(--color-primary) 82%, black) 100%
+    );
+}
+
+.login-art-orb {
+  position: absolute;
+  border-radius: var(--radius-full);
+}
+
+.login-art-orb-ok {
+  top: 22%;
+  left: 26%;
+  width: 0.75rem;
+  height: 0.75rem;
+  background: var(--color-status-ok);
+  box-shadow: 0 0 28px 8px var(--color-status-ok);
+}
+
+.login-art-orb-warning {
+  top: 50%;
+  left: 68%;
+  width: 0.625rem;
+  height: 0.625rem;
+  background: var(--color-status-warning);
+  box-shadow: 0 0 24px 7px var(--color-status-warning);
+}
+
+.login-art-orb-danger {
+  top: 72%;
+  left: 34%;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--color-status-danger);
+  box-shadow: 0 0 20px 6px var(--color-status-danger);
+}
+
+/* ---------- Mobile: mismo breakpoint que el resto de la app ---------- */
+@media (max-width: 45rem) {
+  .login-card {
+    grid-template-columns: 1fr;
+    max-width: 26rem;
+  }
+
+  .login-art-panel {
+    display: none;
+  }
+
+  .login-form-panel {
+    padding: var(--space-8) var(--space-6);
+  }
+}

@@ -182,20 +182,8 @@ button[type="submit"] {
   cursor: pointer;
 }
 
-.page-login {
-  text-align: center;
-  padding-top: var(--space-12);
-}
-
-.page-login button {
-  margin-top: var(--space-6);
-  padding: var(--space-3) var(--space-6);
-  border: none;
-  border-radius: var(--radius-sm);
-  background: var(--color-primary);
-  color: var(--color-surface);
-  cursor: pointer;
-}
+/* .page-login: ver styles/login.css (tarjeta flotante de 2 paneles),
+   importado solo por pages/login.js — ya no vive acá. */
 
 .empty-state {
   color: var(--color-text-muted);
