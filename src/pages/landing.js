@@ -153,19 +153,58 @@ function featureCard({ iconName, title, text, image }) {
   `;
 }
 
-// Texto exacto del roadmap de README.md (## Roadmap (próximas
-// actualizaciones)) — no se redacta contenido nuevo acá, ver el pedido
-// original de esta tarea. Solo se reusan los 5 ítems que ya nombra
-// (se deja afuera "eliminar viaje de forma permanente": es una
-// decisión de alcance interna, no una feature que alguien vendría a
-// buscar en una landing).
+// Mismo texto que ya usaba el roadmap (de README.md, ## Roadmap
+// (próximas actualizaciones)) — no se redacta copy nuevo, solo se le
+// suma un título corto + ícono a cada ítem para el nuevo formato de
+// tarjeta. Los títulos son los mismos 3 que ya usa la tarjeta "Próximas
+// actualizaciones" del sidebar (Multidivisa/Multilenguaje/Escaneo con
+// IA, ver components/sidebar.js) extendidos a los 5 ítems del roadmap
+// completo, para que ambos lugares nombren las mismas features igual.
+// En "Viaje compartido" y "Multilenguaje" el texto original ya traía
+// ese mismo título como prefijo ("Viaje compartido: ...", "Multi-
+// idioma: ...") — se recorta ESE prefijo redundante nada más (no se
+// reescribe ni se resume el resto de la oración); los otros 3 no
+// tenían ese prefijo, así que quedan con el texto completo tal cual.
 const ROADMAP = [
-  "Viaje compartido: viaje en pareja con reparto de gastos",
-  "Reintroducir soporte multi-divisa (COP, USD, EUR y más) con una UX más simple y clara",
-  "Escaneo de recibos con IA en el flujo de registro de gastos — los recibos escaneados vivirán en una nueva sección “Mis facturas”",
-  "Multi-idioma: español e inglés",
-  "Estadísticas de gasto entre viajes a lo largo del tiempo — comparar tendencias, categorías con mayor gasto recurrente y evolución del presupuesto histórico",
+  {
+    iconName: "banknote",
+    title: "Multidivisa",
+    text: "Reintroducir soporte multi-divisa (COP, USD, EUR y más) con una UX más simple y clara",
+  },
+  {
+    iconName: "languages",
+    title: "Multilenguaje",
+    text: "español e inglés",
+  },
+  {
+    iconName: "scan-line",
+    title: "Escaneo con IA",
+    text: "Escaneo de recibos con IA en el flujo de registro de gastos — los recibos escaneados vivirán en una nueva sección “Mis facturas”",
+  },
+  {
+    iconName: "users",
+    title: "Viaje compartido",
+    text: "viaje en pareja con reparto de gastos",
+  },
+  {
+    iconName: "bar-chart-3",
+    title: "Estadísticas",
+    text: "Estadísticas de gasto entre viajes a lo largo del tiempo — comparar tendencias, categorías con mayor gasto recurrente y evolución del presupuesto histórico",
+  },
 ];
+
+function roadmapCard({ iconName, title, text }) {
+  return `
+    <li class="roadmap-item">
+      <div class="roadmap-item-header">
+        <span class="roadmap-item-icon">${icon(iconName)}</span>
+        <h3>${title}</h3>
+        <span class="status-badge status-badge-ok">Próximamente</span>
+      </div>
+      <p>${text}</p>
+    </li>
+  `;
+}
 
 const GITHUB_URL = "https://github.com/stevenstyvargas/tripflow";
 
@@ -245,14 +284,7 @@ export function render(container) {
             <p>Roadmap real, documentado en el repo — no promesas sueltas.</p>
           </div>
           <ul class="roadmap-list">
-            ${ROADMAP.map(
-              (item, i) => `
-              <li class="roadmap-item${i === ROADMAP.length - 1 ? " roadmap-item-full" : ""}">
-                <span class="status-badge status-badge-ok">Próximamente</span>
-                <p>${item}</p>
-              </li>
-            `
-            ).join("")}
+            ${ROADMAP.map(roadmapCard).join("")}
           </ul>
         </div>
       </section>

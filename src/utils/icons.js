@@ -35,6 +35,9 @@ import users from "lucide-static/icons/users.svg?raw";
 import barChart3 from "lucide-static/icons/bar-chart-3.svg?raw";
 import layoutDashboard from "lucide-static/icons/layout-dashboard.svg?raw";
 import arrowUpRight from "lucide-static/icons/arrow-up-right.svg?raw";
+import banknote from "lucide-static/icons/banknote.svg?raw";
+import languages from "lucide-static/icons/languages.svg?raw";
+import scanLine from "lucide-static/icons/scan-line.svg?raw";
 
 const ICONS = {
   home,
@@ -70,6 +73,9 @@ const ICONS = {
   "bar-chart-3": barChart3,
   "layout-dashboard": layoutDashboard,
   "arrow-up-right": arrowUpRight,
+  banknote,
+  languages,
+  "scan-line": scanLine,
 };
 
 /**

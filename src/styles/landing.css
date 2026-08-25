@@ -530,15 +530,19 @@
   grid-column: 1 / -1;
 }
 
-/* ---------- Roadmap ---------- */
-/* Mismo tratamiento de tarjeta que .browser-frame arriba (radius-md,
-   shadow-sm, borde sutil) — antes era una lista de
-   filas apenas separadas por box-shadow, visualmente más liviana que
-   el resto de la página. La etiqueta "Próximamente" reusa las clases
-   reales .status-badge/.status-badge-ok (base.css, cargado global en
-   toda la app) en vez de texto verde suelto — mismo pill que ya
-   significa "en control" en Inicio/Alertas/cada viaje, sin ícono
-   (circle-check sugeriría "completado", lo opuesto de un roadmap). */
+/* ---------- Roadmap ----------
+   Tarjeta simple (ícono en círculo + título + badge + texto), sin
+   imagen — a propósito distinta del resto de la página (que sí muestra
+   capturas reales): acá no hay nada que capturar todavía, son
+   funciones futuras, así que forzar una imagen hubiera sido "fingir"
+   una pantalla que no existe. Grid de 2 columnas con 5 ítems: las
+   primeras 4 llenan 2 filas completas, la 5ta queda sola en la 3ra
+   fila (mismo tamaño que las demás, la celda de al lado se deja
+   vacía — no se fuerza a ancho completo). El círculo del ícono reusa
+   el mismo tinte que .status-badge-ok (color-mix del verde de acento
+   al 22%, texto verde oscuro) en vez de inventar un tratamiento
+   nuevo — mismo criterio "reusar antes que crear" del resto del
+   proyecto. */
 .roadmap-list {
   list-style: none;
   margin: 0;
@@ -551,13 +555,46 @@
 .roadmap-item {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: var(--space-3);
-  padding: var(--space-5);
+  padding: var(--space-6);
   border-radius: var(--radius-md);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: var(--color-bg);
+}
+
+.roadmap-item-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.roadmap-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-accent) 22%, white);
+  color: var(--color-status-ok-text);
+}
+
+.roadmap-item-icon .icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.roadmap-item-header h3 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.roadmap-item-header .status-badge {
+  flex-shrink: 0;
 }
 
 .roadmap-item p {
@@ -566,19 +603,11 @@
   line-height: 1.5;
 }
 
-/* El último ítem (el más largo, "Estadísticas...") ocupa las 2
-   columnas en vez de quedar solo en la última fila con un hueco vacío
-   al lado — mismo criterio que .feature-card-full arriba. */
-.roadmap-item-full {
-  grid-column: 1 / -1;
-}
-
 /* ---------- Footer ---------- */
 .landing-footer {
   background: var(--color-primary);
   color: rgba(255, 255, 255, 0.75);
   padding: var(--space-8) 0;
-  margin-top: var(--space-12);
 }
 
 .landing-footer-inner {
