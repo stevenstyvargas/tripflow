@@ -804,6 +804,32 @@ mismo patrón en vez de quedar solo en texto. Renombrar "Perfil
 compartido" a "Viaje compartido" evita que el mismo concepto tenga 2
 nombres distintos según dónde se lea (docs vs. app).
 
+## Verde de acento sólido en "bajo control" del hero, pese al contraste
+
+**Problema:** una auditoría previa a la entrega había detectado que
+`--color-accent` (verde de acento sólido, `#a1d35b`) como color de
+texto sobre el fondo gris claro del hero medía ~1.6:1 de contraste en
+Lighthouse — muy por debajo del 3:1 mínimo de WCAG AA incluso para
+texto grande/negrita — y lo había reemplazado por
+`--color-status-ok-text` (`#3f6b17`, variante oscurecida del mismo
+verde) para corregirlo.
+
+**Decisión:** se revierte a `--color-accent` a pedido explícito del
+usuario. Se le mostró la advertencia de contraste (con el número
+exacto de Lighthouse) antes de aplicar el cambio; la eligió de forma
+consciente porque, en su evaluación, el verde oscurecido rompía la
+estética del hero más de lo que el contraste real perjudica la
+lectura — lo describe como "casi al límite", no como ilegible. Ver
+`.landing-hero h1 em` en `src/styles/landing.css` (commit `47c6693`).
+
+**Por qué:** en este proyecto de portafolio/reto técnico, la
+identidad visual del hero (la primera impresión de la marca) pesó más
+que cumplir estrictamente WCAG AA en un solo elemento de texto grande
+y corto. Es una excepción puntual, no un cambio de criterio: el resto
+de la app (semáforo de presupuesto, textos de estado) sigue usando la
+variante oscurecida por accesibilidad — ver "Regla de accesibilidad
+del semáforo" más arriba.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 
