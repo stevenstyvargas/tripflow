@@ -99,18 +99,18 @@ function stepCard({ title, text, image }, index) {
 
 // Las 6 tarjetas comparten EXACTAMENTE el mismo tratamiento visual
 // (mismo marco de navegador, misma caja de imagen 16:10, mismo
-// object-fit) — ya no existe la distinción "browser"/"snippet" que
-// había antes, que dejaba las 2 últimas (WhatsApp/Calendar) como un
-// botón suelto sin marco ni contexto, con tamaño inconsistente frente
-// a las otras 4. whatsapp.png ahora es un mockup del bubble real de
-// WhatsApp con el mensaje que arma buildShareMessage() en
-// trip-detail.js (extraído del href real del link, no retipeado a
-// mano); google-calendar.png es el botón real "Agregar a Google
-// Calendar" clonado del DOM junto al badge de estado, en su contexto
-// real — ver docs/ai-process.md para el detalle de cómo se generaron.
-// width/height por imagen (dimensión real del .webp, ver docs/ai-process.md):
-// no son un placeholder, es la reserva de espacio nativa del navegador
-// (evita layout shift al cargar, mismo tamaño de caja que ya fija
+// object-fit: cover). Cada captura se generó (o regeneró) para llenar
+// esa caja con interfaz real, en vez de recortar/estirar una imagen
+// chica: alertas.webp es la pantalla real de Alertas con 4 viajes de
+// muestra (antes 2, dejaban medio contenedor vacío); whatsapp.webp y
+// google-calendar.webp son mockups de la interfaz COMPLETA de cada app
+// externa (header, fondo/grid, el mensaje o evento real, barra de
+// input/badge de origen) construidos a mano en 1150×719 (16:10 exacto,
+// sin necesidad de recorte) — ya no son solo el bubble o el botón
+// sueltos flotando en espacio en blanco. width/height por imagen
+// (dimensión real del .webp, ver docs/ai-process.md): no son un
+// placeholder, es la reserva de espacio nativa del navegador (evita
+// layout shift al cargar, mismo tamaño de caja que ya fija
 // aspect-ratio:16/10 en CSS — Lighthouse pedía además los atributos
 // HTML, no solo el aspect-ratio de CSS).
 // object-position por imagen: con object-fit:cover, la caja 16:10
@@ -155,7 +155,7 @@ const FEATURES = [
     text: "Verde mientras vas bien, naranja al 80% del límite, rojo al superarlo — el mismo criterio en Inicio, Alertas y cada viaje, siempre con ícono y texto, nunca solo color.",
     image: alertasImg,
     width: 1150,
-    height: 600,
+    height: 540,
     // Más ancha que la caja: cover recorta de los costados. "right"
     // se come sobre todo el sidebar de navegación (repetido en las
     // otras 5 capturas, no es información nueva acá) y conserva
@@ -168,17 +168,16 @@ const FEATURES = [
     title: "Compartir por WhatsApp",
     text: "Mandá un resumen del estado de tu viaje — gastado, restante, semáforo — directo por WhatsApp, sin exportar nada.",
     image: whatsappImg,
-    width: 920,
-    height: 382,
-    position: "65% center",
+    width: 1150,
+    height: 719,
   },
   {
     iconName: "calendar",
     title: "Integración con Google Calendar",
     text: "Si tu viaje tiene fechas, agregalo a tu calendario con un click — un link directo, sin pedirte permisos de tu cuenta.",
     image: calendarImg,
-    width: 822,
-    height: 478,
+    width: 1150,
+    height: 719,
   },
 ];
 
