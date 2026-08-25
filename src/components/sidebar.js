@@ -55,7 +55,7 @@ import { getTripAlerts } from "../data/store.js";
 import { showToast } from "./toast.js";
 import { escapeHtml } from "../utils/dom.js";
 import { searchField } from "./search-field.js";
-import { alertsBell } from "./alerts-bell.js";
+import { alertsBell, renderNavBadge } from "./alerts-bell.js";
 
 const NAV_ITEMS = [
   { path: "/", label: "Inicio", icon: "home" },
@@ -77,12 +77,6 @@ const COMING_SOON_ITEMS = [
 // destino/país (igual que en desktop) — el resto (Alertas, detalle de
 // viaje) no muestra la lupa en el header mobile.
 const SEARCHABLE_PATHS = new Set(["/", "/viajes"]);
-
-// "9+" en vez de desbordar el círculo con 2+ dígitos.
-function renderNavBadge(count) {
-  if (count <= 0) return "";
-  return `<span class="nav-badge">${count > 9 ? "9+" : count}</span>`;
-}
 
 // El badge solo aplica al ícono de "Alertas" — los otros 2 items
 // quedan con el mismo markup de siempre (ícono suelto, sin wrapper),

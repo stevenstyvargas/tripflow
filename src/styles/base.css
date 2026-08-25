@@ -348,25 +348,17 @@ button[type="submit"] {
 
 /* Campana de acceso rápido a Alertas (components/alerts-bell.js):
    mismo .icon-button de siempre (mudo en desktop, blanco sobre navy en
-   mobile vía .sidebar-icon-button) más un punto rojo simple —a
-   diferencia de .nav-badge, sin número, no hay espacio para uno
-   legible en un ícono suelto del header— cuando hay ≥1 viaje en
-   alerta. position:relative acá, no en un wrapper aparte, porque el
-   único hijo con contenido real es el <svg>; el padding del botón deja
-   un margen consistente para que el punto no quede pegado al borde. */
-.alerts-bell {
-  position: relative;
-}
-
-.alerts-bell-dot {
-  position: absolute;
-  top: 0.3rem;
-  right: 0.3rem;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: var(--radius-full);
-  background: var(--color-status-danger);
-  pointer-events: none;
+   mobile vía .sidebar-icon-button), con el ícono ~20% más grande que
+   el resto de los íconos del header (1.5rem vs. --icon-size:1.25rem,
+   acá solo — .search-field-icon/menu/x quedan en su tamaño de
+   siempre) para que destaque como acceso directo. El número de
+   alertas usa el mismo .nav-badge y el mismo .sidebar-nav-icon como
+   ancla que el ítem "Alertas" del sidebar (ver alerts-bell.js), así
+   que no hace falta ningún ajuste de posición propio acá: mismo
+   círculo, mismo lugar relativo al ícono, en los 2 sitios. */
+.alerts-bell .icon {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 /* Ítems de nav "Próximamente" (Mis facturas, Calendario): mismo
