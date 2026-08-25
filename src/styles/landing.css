@@ -138,7 +138,7 @@
    arriba/aire abajo) sigue siendo propio del hero, no de .landing-shell. */
 .landing-hero {
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-columns: 1fr 1.1fr;
   gap: 3rem;
   align-items: center;
   max-width: 75rem;

@@ -19,11 +19,7 @@ export function render(container, { error } = {}) {
           <button id="google-signin" type="button" class="login-button">Continuar con Google</button>
           <p class="field-error" id="login-error" role="alert" hidden></p>
         </div>
-        <div class="login-art-panel" aria-hidden="true">
-          <span class="login-art-orb login-art-orb-ok"></span>
-          <span class="login-art-orb login-art-orb-warning"></span>
-          <span class="login-art-orb login-art-orb-danger"></span>
-        </div>
+        <div class="login-art-panel" aria-hidden="true"></div>
       </div>
     </main>
   `;

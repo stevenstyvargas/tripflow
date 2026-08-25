@@ -20,7 +20,7 @@
   width: 100%;
   max-width: 56.25rem;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1.2fr;
   border-radius: 1.5rem;
   overflow: hidden;
   background: var(--color-surface);
@@ -77,63 +77,29 @@
   margin: 0;
 }
 
-/* ---------- Panel derecho: atmósfera de marca ----------
-   Gradiente derivado únicamente de --color-primary/--color-accent
-   (color-mix, sin hex nuevos) + 3 puntos de luz difuminados en los 3
-   colores del semáforo — eco sutil del elemento de firma del hero de
-   la landing (la ruta del presupuesto), sin reproducir literalmente
-   esas tarjetas/línea acá: a esta escala (la mitad de un panel de
-   450px) se hubiera visto apretado, así que quedó como atmósfera, no
-   como diagrama. Probé además el isotipo como marca de agua gigante
-   (Isotipo-fondo-oscuro.svg) y se descartó: ese archivo es un cuadrado
-   blanco sólido con la marca navy adentro (pensado como badge
-   autocontenido, no como silueta transparente), así que a opacidad
-   baja se veía como un bloque asimétrico, no como una marca de agua
-   limpia — el pedido explícitamente permitía no forzarlo si no se
-   veía bien. */
+/* ---------- Panel derecho: foto real de marca ----------
+   Antes era un gradiente + 3 puntos de luz (eco abstracto del
+   semáforo) porque no había una imagen de marca todavía — con
+   Imagen-inicio-sesion.jpg (mismo dashboard real de Tripflow, en un
+   entorno de viaje) ya no hace falta simular esa atmósfera, la foto
+   la trae puesta. Se mantiene un velo navy sutil (gradiente,
+   color-mix sobre --color-primary, sin hex nuevos) para que la foto
+   no quede como un elemento suelto/genérico y respire con el resto de
+   la paleta. .jpg (no el .png de al lado, 80KB vs. 1.8MB) — misma
+   foto, mucho más liviana para una imagen que carga siempre, en cada
+   visita a esta pantalla. */
 .login-art-panel {
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(120% 90% at 15% 20%, color-mix(in srgb, var(--color-accent) 35%, transparent) 0%, transparent 55%),
-    linear-gradient(
+  background-image: linear-gradient(
       160deg,
-      color-mix(in srgb, var(--color-primary) 65%, white) 0%,
-      var(--color-primary) 55%,
-      color-mix(in srgb, var(--color-primary) 82%, black) 100%
-    );
-}
-
-.login-art-orb {
-  position: absolute;
-  border-radius: var(--radius-full);
-}
-
-.login-art-orb-ok {
-  top: 22%;
-  left: 26%;
-  width: 0.75rem;
-  height: 0.75rem;
-  background: var(--color-status-ok);
-  box-shadow: 0 0 28px 8px var(--color-status-ok);
-}
-
-.login-art-orb-warning {
-  top: 50%;
-  left: 68%;
-  width: 0.625rem;
-  height: 0.625rem;
-  background: var(--color-status-warning);
-  box-shadow: 0 0 24px 7px var(--color-status-warning);
-}
-
-.login-art-orb-danger {
-  top: 72%;
-  left: 34%;
-  width: 0.5rem;
-  height: 0.5rem;
-  background: var(--color-status-danger);
-  box-shadow: 0 0 20px 6px var(--color-status-danger);
+      color-mix(in srgb, var(--color-primary) 40%, transparent) 0%,
+      color-mix(in srgb, var(--color-primary) 8%, transparent) 45%,
+      color-mix(in srgb, var(--color-primary) 50%, transparent) 100%
+    ),
+    url("/img/Imagen-inicio-sesion.jpg");
+  background-size: cover;
+  background-position: center;
 }
 
 /* ---------- Mobile: mismo breakpoint que el resto de la app ---------- */
@@ -143,8 +109,16 @@
     max-width: 26rem;
   }
 
+  /* En mobile la imagen no se oculta (antes sí, cuando este panel era
+     el gradiente/puntos de luz sin mayor peso propio) — ahora es una
+     foto real de marca, entra como banner arriba del formulario
+     (order:-1, sin tocar el orden real del DOM/lectura) a una altura
+     fija; background-size:cover (heredado de la regla de arriba)
+     sigue cubriendo el 100% de ancho y alto de esa altura. */
   .login-art-panel {
-    display: none;
+    display: block;
+    order: -1;
+    height: 12rem;
   }
 
   .login-form-panel {
