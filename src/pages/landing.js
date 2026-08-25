@@ -320,8 +320,8 @@ export function render(container) {
 
       <footer class="landing-footer">
         <div class="landing-shell landing-footer-inner">
-          <a href="${GITHUB_URL}" target="_blank" rel="noopener noreferrer">${GITHUB_MARK}<span>Código en GitHub</span></a>
-          <span>Construido por Steven Vargas, con colaboración de Claude Code — ver <a href="${GITHUB_URL}/blob/main/docs/ai-process.md" target="_blank" rel="noopener noreferrer">docs/ai-process.md</a></span>
+          <a class="landing-footer-github" href="${GITHUB_URL}" target="_blank" rel="noopener noreferrer">${GITHUB_MARK}<span>Código en GitHub</span></a>
+          <span>Construido por <a class="landing-footer-author" href="https://stevenvargas.com.co/" target="_blank" rel="noopener noreferrer">Steven Vargas</a>, con colaboración de Claude Code — ver <a href="${GITHUB_URL}/blob/main/docs/ai-process.md" target="_blank" rel="noopener noreferrer">docs/ai-process.md</a></span>
         </div>
       </footer>
     </div>

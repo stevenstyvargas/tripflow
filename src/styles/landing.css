@@ -629,6 +629,13 @@
   text-decoration: none;
 }
 
+.landing-footer-github {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+}
+
 .landing-footer a:hover {
   text-decoration: underline;
 }
