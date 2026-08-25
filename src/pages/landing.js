@@ -22,17 +22,19 @@ import alertasImg from "../assets/landing/alertas.png";
 import nuevoViajeImg from "../assets/landing/nuevo-viaje.png";
 import whatsappImg from "../assets/landing/whatsapp.png";
 import calendarImg from "../assets/landing/google-calendar.png";
-import step1Img from "../assets/landing/step-1-nuevo-viaje.png";
-import step2Img from "../assets/landing/step-2-agregar-gasto.png";
-import step3Img from "../assets/landing/step-3-semaforo.png";
 
 // A diferencia de las capturas de arriba (src/assets/landing/, generadas
 // por el harness Playwright de esta sesión e importadas como módulo para
-// que Vite las hashee), esta es una imagen de marca subida directo por
-// el usuario a public/img/ — mismo criterio que Imagen-inicio-sesion.jpg
-// del login: se referencia como URL de archivo estático, sin pasar por
-// el pipeline de assets.
+// que Vite las hashee), estas son imágenes subidas directo por el
+// usuario a public/img/ — mismo criterio que Imagen-inicio-sesion.jpg
+// del login: se referencian como URL de archivo estático, sin pasar por
+// el pipeline de assets. Las 3 de "Cómo funciona" reemplazan a las
+// capturas reales que había antes (step-1/2/3, borradas de
+// src/assets/landing/, ver docs/ai-process.md).
 const HERO_VISUAL_URL = "/img/Imagen-fondo-banner-principal.png";
+const STEP1_URL = "/img/1-imagen-crear-viaje.png";
+const STEP2_URL = "/img/2imagen-registrar-datos.png";
+const STEP3_URL = "/img/3-imagen-controlar-gastos.png";
 
 // Mismo SVG de marca oficial de GitHub, monocromo (currentColor) — no
 // hay ícono de marca en Lucide (a propósito, no cubren logos), así que
@@ -56,17 +58,17 @@ const STEPS = [
   {
     title: "Crea tu viaje y define tu presupuesto",
     text: "Define cuánto quieres gastar y agrega las fechas de tu viaje cuando quieras.",
-    image: step1Img,
+    image: STEP1_URL,
   },
   {
     title: "Registra cada gasto y clasifícalo por categoría",
-    text: "Añade cada gasto y clasifícalo para saber cómo usas tu presupuesto por categoría.",
-    image: step2Img,
+    text: "Añade cada gasto y clasifícalo para saber cómo usas tu presupuesto.",
+    image: STEP2_URL,
   },
   {
     title: "Controla tu presupuesto y revisa cómo vas",
     text: "Consulta el semáforo para saber si estás en control o cerca del límite.",
-    image: step3Img,
+    image: STEP3_URL,
   },
 ];
 
@@ -85,69 +87,65 @@ function stepCard({ title, text, image }, index) {
   `;
 }
 
+// Las 6 tarjetas comparten EXACTAMENTE el mismo tratamiento visual
+// (mismo marco de navegador, misma caja de imagen 16:10, mismo
+// object-fit) — ya no existe la distinción "browser"/"snippet" que
+// había antes, que dejaba las 2 últimas (WhatsApp/Calendar) como un
+// botón suelto sin marco ni contexto, con tamaño inconsistente frente
+// a las otras 4. whatsapp.png ahora es un mockup del bubble real de
+// WhatsApp con el mensaje que arma buildShareMessage() en
+// trip-detail.js (extraído del href real del link, no retipeado a
+// mano); google-calendar.png es el botón real "Agregar a Google
+// Calendar" clonado del DOM junto al badge de estado, en su contexto
+// real — ver docs/ai-process.md para el detalle de cómo se generaron.
 const FEATURES = [
   {
     iconName: "layout-dashboard",
     title: "Dashboard de gastos",
     text: "Cuánto llevás gastado, cuántos viajes tenés en riesgo y en qué categorías se te va la plata — todo junto al abrir la app, no repartido en 3 pantallas.",
     image: inicioImg,
-    frame: "browser",
   },
   {
     iconName: "plus",
     title: "Creación de viajes con presupuesto límite",
     text: "Definí un límite en pesos colombianos por viaje, con fechas opcionales. Con fotos sugeridas del destino (Pexels) en vez de tener que salir a buscar una URL a mano.",
     image: nuevoViajeImg,
-    frame: "browser",
   },
   {
     iconName: "wallet",
     title: "Registro de gastos",
     text: "Cargá cada gasto por categoría — transporte, comida, hotel y más — en segundos, y mirá cómo se actualiza tu presupuesto en tiempo real.",
     image: detalleImg,
-    frame: "browser",
   },
   {
     iconName: "target",
     title: "Sistema de semáforo",
     text: "Verde mientras vas bien, naranja al 80% del límite, rojo al superarlo — el mismo criterio en Inicio, Alertas y cada viaje, siempre con ícono y texto, nunca solo color.",
     image: alertasImg,
-    frame: "browser",
   },
   {
     iconName: "message-circle",
     title: "Compartir por WhatsApp",
     text: "Mandá un resumen del estado de tu viaje — gastado, restante, semáforo — directo por WhatsApp, sin exportar nada.",
     image: whatsappImg,
-    frame: "snippet",
   },
   {
     iconName: "calendar",
     title: "Integración con Google Calendar",
     text: "Si tu viaje tiene fechas, agregalo a tu calendario con un click — un link directo, sin pedirte permisos de tu cuenta.",
     image: calendarImg,
-    frame: "snippet",
   },
 ];
 
-function featureCard({ iconName, title, text, image, frame }) {
-  const media =
-    frame === "browser"
-      ? `
-        <div class="browser-frame">
-          <div class="browser-frame-bar"><span></span><span></span><span></span></div>
-          <img src="${image}" alt="Captura real de la pantalla &quot;${title}&quot; en Tripflow" loading="lazy" />
-        </div>
-      `
-      : `
-        <div class="feature-snippet">
-          <img src="${image}" alt="Captura real del control &quot;${title}&quot; en Tripflow" loading="lazy" />
-        </div>
-      `;
-
+function featureCard({ iconName, title, text, image }) {
   return `
     <li class="feature-card">
-      ${media}
+      <div class="browser-frame">
+        <div class="browser-frame-bar"><span></span><span></span><span></span></div>
+        <div class="browser-frame-media">
+          <img src="${image}" alt="Captura real de &quot;${title}&quot; en Tripflow" loading="lazy" />
+        </div>
+      </div>
       <div class="feature-card-icon">${icon(iconName)}</div>
       <h3>${title}</h3>
       <p>${text}</p>

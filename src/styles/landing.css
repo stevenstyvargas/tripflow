@@ -270,7 +270,7 @@
    (.landing-section-white) para que cada sección se lea como un
    bloque separado del siguiente, en vez de una sola página continua. */
 .landing-section {
-  padding: var(--space-12) 0;
+  padding: 5em 0;
   /* Con el pill fijo flotando arriba, saltar a un ancla (#como-funciona,
      #funcionalidades, #proximamente) sin esto deja el título de la
      sección tapado detrás del pill — mismo alto aprox. que el
@@ -332,7 +332,7 @@
   padding: 0;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-6);
+  gap: var(--space-8);
 }
 
 /* Patrón imagen+badge superpuesto (no el de .feature-snippet/
@@ -355,32 +355,32 @@
   text-align: center;
 }
 
-/* padding propio (no del <img>, que ya usa max-width/max-height:100%
-   para llenar lo que le quede) — las 3 capturas son recortes muy
-   ajustados (input/modal/badges tocan el borde del archivo), sin este
-   padding quedaban también pegadas al borde de la tarjeta. */
+/* Las 3 imágenes ahora son fotos de estilo (laptop con la app en un
+   escritorio/café/calle, subidas por el usuario a public/img/), no
+   capturas de UI recortadas — reemplazan a las 3 capturas reales que
+   había antes (borradas de src/assets/landing/). "Se debe respetar"
+   el tamaño 340×240 dado: como la tarjeta es de ancho fluido (grid
+   responsive, no un ancho fijo), lo que se respeta es la PROPORCIÓN
+   340:240 vía aspect-ratio — un alto en px fijo hubiera distorsionado
+   esa proporción en cualquier ancho de tarjeta que no diera
+   exactamente 340px (todos, salvo por coincidencia). */
 .step-card-image {
   width: 100%;
-  height: 9rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.25rem;
-  background: var(--color-bg);
+  aspect-ratio: 340 / 240;
+  overflow: hidden;
 }
 
-/* contain, no cover: las 3 capturas son recortes de ancho muy distinto
-   entre sí (un campo de formulario angosto vs. 3 badges en fila) — con
-   cover, cualquiera bastante más ancha que el slot 2.6:1 terminaba con
-   el texto cortado a los costados (una etiqueta o un badge entero por
-   fuera del recorte). Con contain nunca se pierde contenido, el fondo
-   (--color-bg) de arriba hace de marco cuando la imagen no llena el
-   alto completo. */
+/* cover, no contain (a diferencia del criterio usado para las
+   capturas de UI en otras tarjetas de esta misma sección/página): acá
+   el contenido es fotográfico, con la app como un elemento más dentro
+   de la escena — recortar los bordes de una foto para llenar el marco
+   es el tratamiento esperado, no pierde información crítica como sí
+   pasaba con un input o un badge cortado a la mitad. */
 .step-card-image img {
   display: block;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* margin-top negativo = la mitad de su propio alto: "muerde" el borde
@@ -434,7 +434,14 @@
   line-height: 1.5;
 }
 
-/* ---------- Funcionalidades ---------- */
+/* ---------- Funcionalidades ----------
+   Grid fijo de 2 columnas × 3 filas en desktop (repeat(2,1fr) — ya
+   estaba así, no era el problema) / 1 columna en mobile (media query
+   de abajo). Las 6 tarjetas comparten EXACTAMENTE el mismo marco
+   (.browser-frame) y la misma caja de imagen (.browser-frame-media,
+   16:10 fijo) — antes 4 tenían este marco y las 2 últimas
+   (WhatsApp/Calendar) eran un botón suelto sin marco, de tamaño nativo
+   propio, ver .feature-snippet (ya borrada) en el historial. */
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -470,24 +477,30 @@
   background: color-mix(in srgb, var(--color-text-muted) 36%, white);
 }
 
-.browser-frame img {
-  display: block;
+/* 16:10 fijo en las 6 — mismo motivo que --icon-size/design tokens del
+   resto del proyecto: una sola caja para que las 6 tarjetas midan
+   exactamente lo mismo, sin importar la proporción nativa de cada
+   imagen (van de capturas de dashboard casi cuadradas a un bubble de
+   WhatsApp bien horizontal). contain, no cover: mismo criterio que
+   .step-card-image — son capturas de UI real (texto, botones, badges),
+   cover las recortaría de forma impredecible según cuánto se aleje
+   cada una del 16:10; el fondo (--color-bg) enmarca cuando la imagen
+   no llena la caja completa. */
+.browser-frame-media {
   width: 100%;
-  height: auto;
+  aspect-ratio: 16 / 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: var(--color-bg);
 }
 
-.feature-snippet {
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  align-self: flex-start;
-}
-
-.feature-snippet img {
+.browser-frame-media img {
   display: block;
-  width: auto;
   max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .feature-card-icon {
@@ -518,8 +531,8 @@
 }
 
 /* ---------- Roadmap ---------- */
-/* Mismo tratamiento de tarjeta que .feature-snippet/.browser-frame
-   arriba (radius-md, shadow-sm, borde sutil) — antes era una lista de
+/* Mismo tratamiento de tarjeta que .browser-frame arriba (radius-md,
+   shadow-sm, borde sutil) — antes era una lista de
    filas apenas separadas por box-shadow, visualmente más liviana que
    el resto de la página. La etiqueta "Próximamente" reusa las clases
    reales .status-badge/.status-badge-ok (base.css, cargado global en
