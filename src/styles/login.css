@@ -15,12 +15,17 @@
 /* 24px de radio (mayor que --radius-lg/20px) y 900px de ancho máximo,
    ambos valores explícitos del pedido — no los tokens de radio de
    siempre, que quedan pensados para tarjetas de contenido, no para
-   una superficie flotante de este tamaño. */
+   una superficie flotante de este tamaño. La 2da columna es un ancho
+   fijo (500px, no una fracción) porque tiene que calzar exacto con el
+   tamaño nativo de Imagen-inicio-sesion.jpg (ver .login-art-panel) —
+   minmax(18rem, 1fr) en la 1ra evita que el panel de formulario quede
+   angosto/roto en el rango de ancho justo arriba del breakpoint mobile,
+   antes de que el layout colapse a 1 columna. */
 .login-card {
   width: 100%;
   max-width: 56.25rem;
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: minmax(18rem, 1fr) 500px;
   border-radius: 1.5rem;
   overflow: hidden;
   background: var(--color-surface);
@@ -87,10 +92,16 @@
    no quede como un elemento suelto/genérico y respire con el resto de
    la paleta. .jpg (no el .png de al lado, 80KB vs. 1.8MB) — misma
    foto, mucho más liviana para una imagen que carga siempre, en cada
-   visita a esta pantalla. */
+   visita a esta pantalla.
+   500×368: tamaño NATIVO real del archivo (confirmado leyendo el
+   header del JPEG) — el panel se fija a ese mismo tamaño exacto en vez
+   de estirar/recortar con cover sobre un contenedor de otra
+   proporción, para que la imagen se vea completa, sin recortar nada. */
 .login-art-panel {
   position: relative;
   overflow: hidden;
+  width: 500px;
+  height: 368px;
   background-image: linear-gradient(
       160deg,
       color-mix(in srgb, var(--color-primary) 40%, transparent) 0%,
@@ -112,12 +123,16 @@
   /* En mobile la imagen no se oculta (antes sí, cuando este panel era
      el gradiente/puntos de luz sin mayor peso propio) — ahora es una
      foto real de marca, entra como banner arriba del formulario
-     (order:-1, sin tocar el orden real del DOM/lectura) a una altura
-     fija; background-size:cover (heredado de la regla de arriba)
-     sigue cubriendo el 100% de ancho y alto de esa altura. */
+     (order:-1, sin tocar el orden real del DOM/lectura). Acá sí se
+     recorta con cover a un ancho/alto que ya no son los 500×368
+     nativos (una tarjeta de 416px de ancho máximo no tiene espacio
+     para eso) — mostrarla completa en desktop era el pedido explícito,
+     en mobile prioriza que el banner no empuje el formulario fuera de
+     la pantalla. */
   .login-art-panel {
     display: block;
     order: -1;
+    width: 100%;
     height: 12rem;
   }
 
