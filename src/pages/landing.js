@@ -26,6 +26,14 @@ import step1Img from "../assets/landing/step-1-nuevo-viaje.png";
 import step2Img from "../assets/landing/step-2-agregar-gasto.png";
 import step3Img from "../assets/landing/step-3-semaforo.png";
 
+// A diferencia de las capturas de arriba (src/assets/landing/, generadas
+// por el harness Playwright de esta sesión e importadas como módulo para
+// que Vite las hashee), esta es una imagen de marca subida directo por
+// el usuario a public/img/ — mismo criterio que Imagen-inicio-sesion.jpg
+// del login: se referencia como URL de archivo estático, sin pasar por
+// el pipeline de assets.
+const HERO_VISUAL_URL = "/img/Imagen-fondo-banner-principal.png";
+
 // Mismo SVG de marca oficial de GitHub, monocromo (currentColor) — no
 // hay ícono de marca en Lucide (a propósito, no cubren logos), así que
 // va escrito a mano acá en vez de en utils/icons.js, que es solo para
@@ -35,30 +43,6 @@ const GITHUB_MARK = `
     <path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.5 0-.24-.01-1.04-.01-1.89-2.78.62-3.37-1.21-3.37-1.21-.46-1.19-1.11-1.51-1.11-1.51-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 2.5-.35c.85 0 1.7.12 2.5.35 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.95.68 1.92 0 1.39-.01 2.5-.01 2.85 0 .28.18.61.69.5A10.26 10.26 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z"/>
   </svg>
 `;
-
-function heroRoute() {
-  return `
-    <div class="hero-route">
-      <svg class="hero-route-path" viewBox="0 0 400 400" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M 60 40 C 20 140, 90 160, 110 190 S 300 300, 340 360"
-              fill="none" stroke="var(--color-primary)" stroke-width="2.5" stroke-dasharray="2 10"
-              stroke-linecap="round" opacity="0.35" />
-      </svg>
-      <div class="hero-stage hero-stage-ok">
-        ${icon("circle-check")}
-        <span><span class="hero-stage-pct">62%</span><span class="hero-stage-label">En control</span></span>
-      </div>
-      <div class="hero-stage hero-stage-warning">
-        ${icon("alert-triangle")}
-        <span><span class="hero-stage-pct">88%</span><span class="hero-stage-label">Al borde del límite</span></span>
-      </div>
-      <div class="hero-stage hero-stage-danger">
-        ${icon("alert-octagon")}
-        <span><span class="hero-stage-pct">104%</span><span class="hero-stage-label">Límite superado</span></span>
-      </div>
-    </div>
-  `;
-}
 
 // El número en sí ES la información acá (paso 1, 2, 3 en orden real,
 // no una lista cualquiera con marcadores decorativos) — por eso el
@@ -230,7 +214,7 @@ export function render(container) {
             </a>
           </div>
         </div>
-        ${heroRoute()}
+        <img class="hero-visual" src="${HERO_VISUAL_URL}" alt="Dashboard de Tripflow con el gasto por categoría, alertas de presupuesto y los viajes activos del usuario" />
       </header>
 
       <section class="landing-section landing-section-white" id="como-funciona">
