@@ -367,10 +367,17 @@
 }
 
 /* ---------- Cómo funciona ---------- */
-/* Mismo tratamiento de tarjeta que .roadmap-item/.feature-snippet
-   (radius-md, shadow-sm, borde sutil) — el número reemplaza al ícono
-   genérico de .feature-card-icon porque acá el número SÍ es
-   información real (paso 1/2/3 en orden), no decoración. */
+/* Único encabezado de sección centrado en toda la landing (a
+   diferencia de "Funcionalidades"/"Lo que viene", alineados a la
+   izquierda) — pedido explícito, acotado a esta sección con el
+   selector de arriba en vez de tocar .landing-section-header en
+   general. */
+#como-funciona .landing-section-header {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
 .steps-grid {
   list-style: none;
   margin: 0;
@@ -380,38 +387,84 @@
   gap: var(--space-6);
 }
 
+/* Patrón imagen+badge superpuesto (no el de .feature-snippet/
+   .roadmap-item de arriba): la imagen ocupa el ancho completo arriba,
+   el número reemplaza al ícono/foto de la referencia porque acá SÍ es
+   información real (paso 1/2/3 en orden), no decoración.
+   overflow:hidden en la tarjeta es lo que recorta las esquinas
+   superiores de la imagen al mismo radio de la tarjeta — el badge no
+   se ve afectado porque nunca sale de los límites de la tarjeta, solo
+   se superpone al límite interno imagen/cuerpo. */
 .step-card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-5);
+  align-items: center;
+  overflow: hidden;
   border-radius: var(--radius-md);
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
   border: 1px solid rgba(0, 0, 0, 0.06);
+  text-align: center;
 }
 
+.step-card-image {
+  width: 100%;
+  height: 9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+}
+
+/* contain, no cover: las 3 capturas son recortes de ancho muy distinto
+   entre sí (un campo de formulario angosto vs. 3 badges en fila) — con
+   cover, cualquiera bastante más ancha que el slot 2.6:1 terminaba con
+   el texto cortado a los costados (una etiqueta o un badge entero por
+   fuera del recorte). Con contain nunca se pierde contenido, el fondo
+   (--color-bg) de arriba hace de marco cuando la imagen no llena el
+   alto completo. */
+.step-card-image img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* margin-top negativo = la mitad de su propio alto: "muerde" el borde
+   inferior de la imagen, mitad afuera (sobre la imagen) mitad adentro
+   (sobre el cuerpo blanco) — mismo efecto que un avatar superpuesto.
+   El aro blanco (border) lo despega visualmente de la imagen de atrás. */
 .step-card-number {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-top: -1.375rem;
+  border: 3px solid var(--color-surface);
   border-radius: var(--radius-full);
   background: var(--color-primary);
   color: var(--color-surface);
   font-weight: 800;
-  font-size: var(--text-base);
+  font-size: var(--text-lg);
   font-variant-numeric: tabular-nums;
+  box-shadow: var(--shadow-sm);
 }
 
-.step-card h3 {
-  margin: 0;
+.step-card-body {
+  padding: var(--space-2) var(--space-5) var(--space-5);
+}
+
+.step-card-body h3 {
+  margin: var(--space-2) 0;
   font-size: var(--text-lg);
   font-weight: 700;
 }
 
-.step-card p {
+.step-card-body p {
   margin: 0;
   color: var(--color-text-muted);
   line-height: 1.5;

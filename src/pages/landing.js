@@ -22,6 +22,9 @@ import alertasImg from "../assets/landing/alertas.png";
 import nuevoViajeImg from "../assets/landing/nuevo-viaje.png";
 import whatsappImg from "../assets/landing/whatsapp.png";
 import calendarImg from "../assets/landing/google-calendar.png";
+import step1Img from "../assets/landing/step-1-nuevo-viaje.png";
+import step2Img from "../assets/landing/step-2-agregar-gasto.png";
+import step3Img from "../assets/landing/step-3-semaforo.png";
 
 // Mismo SVG de marca oficial de GitHub, monocromo (currentColor) — no
 // hay ícono de marca en Lucide (a propósito, no cubren logos), así que
@@ -59,28 +62,41 @@ function heroRoute() {
 
 // El número en sí ES la información acá (paso 1, 2, 3 en orden real,
 // no una lista cualquiera con marcadores decorativos) — por eso el
-// badge de cada tarjeta muestra el número, no un ícono genérico.
+// badge circular de cada tarjeta muestra el número, no un ícono
+// genérico. Las 3 imágenes son capturas reales (mismo harness
+// Playwright que ya generó el resto de src/assets/landing/, ver
+// docs/ai-process.md), recortadas mucho más de cerca que las de
+// "Funcionalidades" — acá el punto no es mostrar la pantalla
+// completa, sino el gesto puntual de cada paso.
 const STEPS = [
   {
     title: "Creá tu viaje con presupuesto límite",
     text: "Definí cuánto vas a gastar en pesos colombianos, con fechas opcionales.",
+    image: step1Img,
   },
   {
     title: "Registrá cada gasto",
     text: "Cargá cada gasto por categoría en segundos, apenas pase.",
+    image: step2Img,
   },
   {
     title: "Mirá tu semáforo antes de que sea tarde",
     text: "Verde, naranja o rojo: sabés en qué punto estás sin sacar la calculadora.",
+    image: step3Img,
   },
 ];
 
-function stepCard({ title, text }, index) {
+function stepCard({ title, text, image }, index) {
   return `
     <li class="step-card">
+      <div class="step-card-image">
+        <img src="${image}" alt="" loading="lazy" />
+      </div>
       <span class="step-card-number">${index + 1}</span>
-      <h3>${title}</h3>
-      <p>${text}</p>
+      <div class="step-card-body">
+        <h3>${title}</h3>
+        <p>${text}</p>
+      </div>
     </li>
   `;
 }
