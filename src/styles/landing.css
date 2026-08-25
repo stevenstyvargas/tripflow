@@ -181,23 +181,17 @@
   text-wrap: balance;
 }
 
-/* Variante oscurecida del verde de acento (--color-status-ok-text, la
-   misma que usa el resto de la app para texto "en control" sobre fondo
-   claro) — el verde de acento sólido, directo como color de texto acá,
-   tendría muy poco contraste sobre el fondo gris claro del hero (mismo
-   problema ya señalado para blanco-sobre-verde en tareas anteriores,
-   sólo que invertido). */
-/* --color-status-ok-text (verde oscuro), no --color-accent (verde
-   claro de acento) — Lighthouse detectó ~1.6:1 de contraste real con
-   --color-accent sobre el fondo claro del hero, muy por debajo del
-   3:1 mínimo de WCAG AA incluso para texto grande/negrita como este
-   (auditoría previa a la entrega, ver docs/ai-process.md). Es la
-   misma corrección que ya se había hecho acá antes (tarea de copy del
-   hero) — el archivo tenía --color-accent otra vez al momento de esta
-   auditoría, restaurado a la variante oscurecida. */
+/* --color-accent (verde de acento sólido de la app), a pedido
+   explícito — decisión consciente de marca sobre legibilidad estricta.
+   OJO: Lighthouse midió ~1.6:1 de contraste real sobre el fondo gris
+   claro del hero, muy por debajo del 3:1 mínimo de WCAG AA incluso
+   para texto grande/negrita como este (auditoría previa a la entrega,
+   ver docs/ai-process.md). Ya se había revertido a
+   --color-status-ok-text por este motivo — si se vuelve a evaluar,
+   ese es el reemplazo accesible de este mismo verde. */
 .landing-hero h1 em {
   font-style: normal;
-  color: var(--color-status-ok-text);
+  color: var(--color-accent);
 }
 
 .landing-subhead {
