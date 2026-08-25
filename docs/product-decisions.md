@@ -837,6 +837,32 @@ de la app (semáforo de presupuesto, textos de estado) sigue usando la
 variante oscurecida por accesibilidad — ver "Regla de accesibilidad
 del semáforo" más arriba.
 
+## Postergar validación de shape/tipos en firestore.rules
+
+**Problema:** la auditoría integral pre-entrega revisó `firestore.rules`
+y confirmó que el aislamiento por usuario es correcto (`request.auth.uid
+== uid` sobre `users/{uid}/{document=**}`, cubre viajes y gastos por
+igual) — pero la única validación de forma de los datos (que
+`budgetLimit` sea un número, que `name` sea un string no vacío, que
+`amount` de un gasto no sea negativo, etc.) vive del lado del cliente en
+`src/data/store.js`, no en las reglas. Un usuario autenticado no puede
+tocar los datos de OTRO usuario, pero sí podría escribir cualquier shape
+en sus propios documentos saltándose el cliente (ej. con la consola de
+Firebase o una request directa a la API REST de Firestore).
+
+**Decisión:** no se corrige ahora — queda documentado como mejora
+técnica futura, severidad menor (no crítica: el riesgo es que un
+usuario corrompa sus PROPIOS datos, no que acceda a los de otro, que es
+lo que sí exigen las reglas actuales). Cuando se retome, agregar
+`request.resource.data.keys().hasAll([...])` + chequeos de tipo
+(`is number`, `is string`, rangos) a la regla existente, con el mismo
+alcance por usuario que ya tiene.
+
+**Por qué:** el aislamiento entre usuarios (la garantía de seguridad
+real) ya está cubierto; la validación de shape es defensa en profundidad
+contra un caso de bajo impacto (el usuario dañándose a sí mismo), no
+prioritario para esta entrega frente a otros pendientes.
+
 <!--
 Próxima decisión: agregar acá cuando surja, con el mismo formato:
 
