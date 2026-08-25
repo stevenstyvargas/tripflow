@@ -4,15 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#001860" />
-    <meta name="description" content="Tripflow — controla tu presupuesto de viaje" />
-    <title>Tripflow</title>
+    <meta name="description" content="TripFlow convierte el presupuesto de cada viaje en un semáforo simple: planeá cuánto querés gastar, registrá tus gastos y recibí alertas antes de pasarte del límite." />
+    <title>TripFlow — Control de presupuesto de viaje</title>
+
+    <!-- Favicon: mismo isotipo de marca que ya usa la app (navy + isotipo
+         blanco, fondo propio incluido en el SVG — se lee bien en pestañas
+         claras u oscuras por igual, sin depender del tema del navegador). -->
+    <link rel="icon" type="image/svg+xml" href="/img/Isotipo-fondo-claro.svg" />
+
+    <!-- Open Graph: para que el link se vea bien al compartirlo por email/
+         WhatsApp (ver docs/ai-process.md, auditoría previa a la entrega).
+         URL absoluta al dominio real del deploy (README.md) — og:image
+         relativo no es confiable en todos los clientes que arman la
+         vista previa. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="TripFlow — Control de presupuesto de viaje" />
+    <meta property="og:description" content="TripFlow convierte el presupuesto de cada viaje en un semáforo simple: planeá cuánto querés gastar, registrá tus gastos y recibí alertas antes de pasarte del límite." />
+    <meta property="og:image" content="https://tripflow-ashen-chi.vercel.app/img/Imagen-fondo-banner-principal.webp" />
+    <meta property="og:url" content="https://tripflow-ashen-chi.vercel.app" />
+    <meta name="twitter:card" content="summary_large_image" />
+
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- 800/900 se suman para el headline de la landing pública (src/pages/landing.js) —
-         el dashboard interno no pasa de 700, ver src/styles/landing.css -->
+    <!-- 800 se suma para el headline de la landing pública (src/pages/landing.js)
+         — el dashboard interno no pasa de 700, ver src/styles/landing.css.
+         500 y 900 (auditoría previa a la entrega, ver docs/ai-process.md):
+         ningún font-weight:500 ni :900 aparece en ninguna hoja de estilo del
+         proyecto (confirmado con grep) — se sacan del link, cada peso extra
+         es un archivo de fuente completo más que descargar. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/src/styles/tokens.css" />

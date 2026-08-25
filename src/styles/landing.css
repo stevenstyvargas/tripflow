@@ -187,9 +187,17 @@
    tendría muy poco contraste sobre el fondo gris claro del hero (mismo
    problema ya señalado para blanco-sobre-verde en tareas anteriores,
    sólo que invertido). */
+/* --color-status-ok-text (verde oscuro), no --color-accent (verde
+   claro de acento) — Lighthouse detectó ~1.6:1 de contraste real con
+   --color-accent sobre el fondo claro del hero, muy por debajo del
+   3:1 mínimo de WCAG AA incluso para texto grande/negrita como este
+   (auditoría previa a la entrega, ver docs/ai-process.md). Es la
+   misma corrección que ya se había hecho acá antes (tarea de copy del
+   hero) — el archivo tenía --color-accent otra vez al momento de esta
+   auditoría, restaurado a la variante oscurecida. */
 .landing-hero h1 em {
   font-style: normal;
-  color: var(--color-accent);
+  color: var(--color-status-ok-text);
 }
 
 .landing-subhead {
@@ -524,10 +532,6 @@
   margin: 0;
   color: var(--color-text-muted);
   line-height: 1.5;
-}
-
-.feature-card-full {
-  grid-column: 1 / -1;
 }
 
 /* ---------- Roadmap ----------

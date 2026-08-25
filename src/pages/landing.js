@@ -6,22 +6,24 @@
 // pages/login.js. Con sesión activa, el router nunca llega a esta
 // página (va directo a Inicio).
 //
-// Capturas reales (src/assets/landing/*.png): no son la app en vivo
+// Capturas reales (src/assets/landing/*.webp): no son la app en vivo
 // (requeriría una sesión de Google real, que este entorno no tiene) —
 // son las mismas páginas/componentes reales de la app, renderizadas
 // con datos de viaje de muestra vía un harness Playwright, con el
 // semáforo en naranja/rojo a propósito para que se vea activo. Ver
-// docs/ai-process.md para el detalle de cómo se generaron.
-
+// docs/ai-process.md para el detalle de cómo se generaron. Todas en
+// WebP (antes PNG) — mismo motivo que las 4 de public/img/ de abajo,
+// ver esa nota: reescaladas a su ancho de display real (no al 2880px
+// nativo de la captura original) y reencodeadas, sin pérdida visible.
 import "../styles/landing.css";
 import { icon } from "../utils/icons.js";
 
-import inicioImg from "../assets/landing/inicio.png";
-import detalleImg from "../assets/landing/detalle-viaje.png";
-import alertasImg from "../assets/landing/alertas.png";
-import nuevoViajeImg from "../assets/landing/nuevo-viaje.png";
-import whatsappImg from "../assets/landing/whatsapp.png";
-import calendarImg from "../assets/landing/google-calendar.png";
+import inicioImg from "../assets/landing/inicio.webp";
+import detalleImg from "../assets/landing/detalle-viaje.webp";
+import alertasImg from "../assets/landing/alertas.webp";
+import nuevoViajeImg from "../assets/landing/nuevo-viaje.webp";
+import whatsappImg from "../assets/landing/whatsapp.webp";
+import calendarImg from "../assets/landing/google-calendar.webp";
 
 // A diferencia de las capturas de arriba (src/assets/landing/, generadas
 // por el harness Playwright de esta sesión e importadas como módulo para
@@ -30,11 +32,19 @@ import calendarImg from "../assets/landing/google-calendar.png";
 // del login: se referencian como URL de archivo estático, sin pasar por
 // el pipeline de assets. Las 3 de "Cómo funciona" reemplazan a las
 // capturas reales que había antes (step-1/2/3, borradas de
-// src/assets/landing/, ver docs/ai-process.md).
-const HERO_VISUAL_URL = "/img/Imagen-fondo-banner-principal.png";
-const STEP1_URL = "/img/1-imagen-crear-viaje.png";
-const STEP2_URL = "/img/2imagen-registrar-datos.png";
-const STEP3_URL = "/img/3-imagen-controlar-gastos.png";
+// src/assets/landing/, ver docs/ai-process.md). Las 4 pasaron de PNG a
+// WebP (auditoría de performance previa a la entrega, ver
+// docs/ai-process.md): el usuario las subió a resolución nativa de
+// cámara/generador de imagen (1.5-2.3MB cada una, mucho más grande de
+// lo que se ve en pantalla — el slot más ancho de la página, el hero,
+// nunca pasa de ~700px de ancho real), así que se reescalaron al
+// tamaño real de despliegue (2x para pantallas retina) y se
+// reencodearon a WebP calidad 78-82 — sin pérdida visible, confirmado
+// visualmente antes de reemplazar los archivos.
+const HERO_VISUAL_URL = "/img/Imagen-fondo-banner-principal.webp";
+const STEP1_URL = "/img/1-imagen-crear-viaje.webp";
+const STEP2_URL = "/img/2imagen-registrar-datos.webp";
+const STEP3_URL = "/img/3-imagen-controlar-gastos.webp";
 
 // Mismo SVG de marca oficial de GitHub, monocromo (currentColor) — no
 // hay ícono de marca en Lucide (a propósito, no cubren logos), así que
@@ -76,7 +86,7 @@ function stepCard({ title, text, image }, index) {
   return `
     <li class="step-card">
       <div class="step-card-image">
-        <img src="${image}" alt="" loading="lazy" />
+        <img src="${image}" width="900" height="600" alt="Paso ${index + 1}: ${title}" loading="lazy" />
       </div>
       <span class="step-card-number">${index + 1}</span>
       <div class="step-card-body">
@@ -98,52 +108,69 @@ function stepCard({ title, text, image }, index) {
 // mano); google-calendar.png es el botón real "Agregar a Google
 // Calendar" clonado del DOM junto al badge de estado, en su contexto
 // real — ver docs/ai-process.md para el detalle de cómo se generaron.
+// width/height por imagen (dimensión real del .webp, ver docs/ai-process.md):
+// no son un placeholder, es la reserva de espacio nativa del navegador
+// (evita layout shift al cargar, mismo tamaño de caja que ya fija
+// aspect-ratio:16/10 en CSS — Lighthouse pedía además los atributos
+// HTML, no solo el aspect-ratio de CSS).
 const FEATURES = [
   {
     iconName: "layout-dashboard",
     title: "Dashboard de gastos",
     text: "Cuánto llevás gastado, cuántos viajes tenés en riesgo y en qué categorías se te va la plata — todo junto al abrir la app, no repartido en 3 pantallas.",
     image: inicioImg,
+    width: 1150,
+    height: 799,
   },
   {
     iconName: "plus",
     title: "Creación de viajes con presupuesto límite",
     text: "Definí un límite en pesos colombianos por viaje, con fechas opcionales. Con fotos sugeridas del destino (Pexels) en vez de tener que salir a buscar una URL a mano.",
     image: nuevoViajeImg,
+    width: 1024,
+    height: 1308,
   },
   {
     iconName: "wallet",
     title: "Registro de gastos",
     text: "Cargá cada gasto por categoría — transporte, comida, hotel y más — en segundos, y mirá cómo se actualiza tu presupuesto en tiempo real.",
     image: detalleImg,
+    width: 1150,
+    height: 799,
   },
   {
     iconName: "target",
     title: "Sistema de semáforo",
     text: "Verde mientras vas bien, naranja al 80% del límite, rojo al superarlo — el mismo criterio en Inicio, Alertas y cada viaje, siempre con ícono y texto, nunca solo color.",
     image: alertasImg,
+    width: 1150,
+    height: 600,
   },
   {
     iconName: "message-circle",
     title: "Compartir por WhatsApp",
     text: "Mandá un resumen del estado de tu viaje — gastado, restante, semáforo — directo por WhatsApp, sin exportar nada.",
     image: whatsappImg,
+    width: 920,
+    height: 382,
   },
   {
     iconName: "calendar",
     title: "Integración con Google Calendar",
     text: "Si tu viaje tiene fechas, agregalo a tu calendario con un click — un link directo, sin pedirte permisos de tu cuenta.",
     image: calendarImg,
+    width: 822,
+    height: 478,
   },
 ];
 
-function featureCard({ iconName, title, text, image }) {
+function featureCard({ iconName, title, text, image, width, height }) {
   return `
     <li class="feature-card">
       <div class="browser-frame">
         <div class="browser-frame-bar"><span></span><span></span><span></span></div>
         <div class="browser-frame-media">
-          <img src="${image}" alt="Captura real de &quot;${title}&quot; en Tripflow" loading="lazy" />
+          <img src="${image}" width="${width}" height="${height}" alt="Captura real de &quot;${title}&quot; en Tripflow" loading="lazy" />
         </div>
       </div>
       <div class="feature-card-icon">${icon(iconName)}</div>
@@ -214,7 +241,7 @@ export function render(container) {
       <div class="landing-topbar">
         <nav class="landing-pill" aria-label="Navegación de la página">
           <a href="#/" class="landing-pill-logo" aria-label="Ir arriba">
-            <img src="/img/Logotipo-fondo-claro.svg" alt="Tripflow" class="landing-nav-logo" />
+            <img src="/img/Logotipo-fondo-claro.svg" width="487" height="115" alt="Tripflow" class="landing-nav-logo" />
           </a>
           <div class="landing-pill-links">
             <a class="landing-pill-link" href="#como-funciona">Cómo funciona</a>
@@ -234,6 +261,7 @@ export function render(container) {
         </div>
       </div>
 
+      <main>
       <header class="landing-hero">
         <div>
           <span class="landing-eyebrow">Control de presupuesto de viaje</span>
@@ -250,7 +278,7 @@ export function render(container) {
             </a>
           </div>
         </div>
-        <img class="hero-visual" src="${HERO_VISUAL_URL}" alt="Dashboard de Tripflow con el gasto por categoría, alertas de presupuesto y los viajes activos del usuario" />
+        <img class="hero-visual" src="${HERO_VISUAL_URL}" width="1156" height="832" alt="Dashboard de Tripflow con el gasto por categoría, alertas de presupuesto y los viajes activos del usuario" fetchpriority="high" />
       </header>
 
       <section class="landing-section landing-section-white" id="como-funciona">
@@ -288,6 +316,7 @@ export function render(container) {
           </ul>
         </div>
       </section>
+      </main>
 
       <footer class="landing-footer">
         <div class="landing-shell landing-footer-inner">
