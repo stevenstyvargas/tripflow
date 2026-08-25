@@ -15,10 +15,15 @@
 // viaje?"), ya no como bloque inline en el flujo de la página.
 // Editar/finalizar viaje (antes en el header y en las cards de Mis
 // viajes) viven en una fila de botones al final de esta sección, tras
-// el último gasto de la lista. En viajes ya "Finalizado", "Finalizar
-// viaje" se reemplaza por "Eliminar viaje" (borrado PERMANENTE, con
-// confirmación y borrado en cascada de sus gastos — ver
-// docs/product-decisions.md): nunca conviven ambos botones. El
+// el último gasto de la lista. "Finalizar viaje" pide confirmación
+// antes de ejecutar (mismo showConfirmModal() que "¿Eliminar este
+// viaje?", cadena confirmación → closeTrip() → showSuccessModal() ya
+// existente) para evitar un click accidental — finalizar no borra
+// datos, pero tampoco tenía forma de deshacerse desde la UI. En viajes
+// ya "Finalizado", "Finalizar viaje" se reemplaza por "Eliminar viaje"
+// (borrado PERMANENTE, con su propia confirmación y borrado en cascada
+// de sus gastos — ver docs/product-decisions.md): nunca conviven ambos
+// botones. El
 // semáforo de Inicio y las alertas de Alertas se recalculan solos la
 // próxima vez que se rendericen: leen siempre el estado en memoria de
 // store.js, así que un gasto nuevo ya persistido ahí se refleja sin
@@ -413,12 +418,24 @@ export function render(container, { tripId } = {}) {
 
   const closeTripButton = container.querySelector("#close-trip");
   if (closeTripButton) {
-    closeTripButton.addEventListener("click", async () => {
-      closeTripButton.disabled = true;
-      await closeTrip(trip.id);
-      showSuccessModal({
-        title: "El viaje ha sido finalizado",
-        onClose: () => render(container, { tripId: trip.id }),
+    closeTripButton.addEventListener("click", () => {
+      showConfirmModal({
+        title: "¿Finalizar este viaje?",
+        body: `
+          El viaje <strong>${escapeHtml(trip.name)}</strong> se marcará
+          como finalizado. Podrás seguir viendo su información, pero no
+          podrás agregar más gastos.
+        `,
+        confirmLabel: "Finalizar viaje",
+        cancelLabel: "Cancelar",
+        onConfirm: async () => {
+          closeTripButton.disabled = true;
+          await closeTrip(trip.id);
+          showSuccessModal({
+            title: "El viaje ha sido finalizado",
+            onClose: () => render(container, { tripId: trip.id }),
+          });
+        },
       });
     });
   }
