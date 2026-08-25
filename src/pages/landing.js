@@ -197,28 +197,28 @@ export function render(container) {
         </div>
       </div>
 
-      <div class="landing-shell">
-        <header class="landing-hero">
-          <div>
-            <span class="landing-eyebrow">Control de presupuesto de viaje</span>
-            <h1>Sabé si vas bien, <em>antes</em> de que sea tarde.</h1>
-            <p class="landing-subhead">
-              Tripflow convierte el presupuesto de cada viaje en un semáforo
-              simple: verde mientras controlás el gasto, naranja cuando te
-              acercás al límite, rojo cuando lo cruzás. Sin hojas de
-              cálculo, sin sorpresas al volver.
-            </p>
-            <div class="landing-cta-row">
-              <a class="landing-cta-primary" href="#/login">Iniciar sesión con Google</a>
-              <a class="landing-cta-secondary" href="${GITHUB_URL}" target="_blank" rel="noopener noreferrer">
-                ${GITHUB_MARK}<span>Ver en GitHub</span>
-              </a>
-            </div>
+      <header class="landing-hero">
+        <div>
+          <span class="landing-eyebrow">Control de presupuesto de viaje</span>
+          <h1>Sabé si vas bien, <em>antes</em> de que sea tarde.</h1>
+          <p class="landing-subhead">
+            Tripflow convierte el presupuesto de cada viaje en un semáforo
+            simple: verde mientras controlás el gasto, naranja cuando te
+            acercás al límite, rojo cuando lo cruzás. Sin hojas de
+            cálculo, sin sorpresas al volver.
+          </p>
+          <div class="landing-cta-row">
+            <a class="landing-cta-primary" href="#/login">Iniciar sesión con Google</a>
+            <a class="landing-cta-secondary" href="${GITHUB_URL}" target="_blank" rel="noopener noreferrer">
+              ${GITHUB_MARK}<span>Ver en GitHub</span>
+            </a>
           </div>
-          ${heroRoute()}
-        </header>
+        </div>
+        ${heroRoute()}
+      </header>
 
-        <section class="landing-section" id="como-funciona">
+      <section class="landing-section landing-section-white" id="como-funciona">
+        <div class="landing-shell">
           <div class="landing-section-header">
             <h2>Cómo funciona</h2>
             <p>3 pasos, sin curva de aprendizaje.</p>
@@ -226,9 +226,11 @@ export function render(container) {
           <ol class="steps-grid">
             ${STEPS.map(stepCard).join("")}
           </ol>
-        </section>
+        </div>
+      </section>
 
-        <section class="landing-section" id="funcionalidades">
+      <section class="landing-section" id="funcionalidades">
+        <div class="landing-shell">
           <div class="landing-section-header">
             <h2>Todo lo que necesitás para no perder el control</h2>
             <p>6 funcionalidades reales, ya construidas — no un roadmap disfrazado de producto.</p>
@@ -236,9 +238,11 @@ export function render(container) {
           <ul class="feature-grid">
             ${FEATURES.map(featureCard).join("")}
           </ul>
-        </section>
+        </div>
+      </section>
 
-        <section class="landing-section" id="proximamente">
+      <section class="landing-section landing-section-white" id="proximamente">
+        <div class="landing-shell">
           <div class="landing-section-header">
             <h2>Lo que viene</h2>
             <p>Roadmap real, documentado en el repo — no promesas sueltas.</p>
@@ -253,8 +257,8 @@ export function render(container) {
             `
             ).join("")}
           </ul>
-        </section>
-      </div>
+        </div>
+      </section>
 
       <footer class="landing-footer">
         <div class="landing-shell landing-footer-inner">

@@ -17,10 +17,6 @@
   color: var(--color-text);
 }
 
-.page-landing a {
-  color: inherit;
-}
-
 .landing-shell {
   max-width: 75rem;
   margin: 0 auto;
@@ -55,7 +51,7 @@
 .landing-pill {
   pointer-events: auto;
   width: 100%;
-  max-width: 62rem;
+  max-width: 75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -92,13 +88,15 @@
 }
 
 /* Único elemento del pill que es una acción, no navegación — fondo
-   navy sólido a propósito, para que se distinga de un vistazo de las
-   3 anclas de al lado. */
+   verde de acento sólido a propósito, para que se distinga de un
+   vistazo de las 3 anclas de al lado. Texto navy (no blanco): mismo
+   criterio de contraste que ya usa .fab en base.css — navy sobre este
+   verde da ~9:1, blanco sobre verde da ~1.75:1 (ilegible). */
 .landing-pill-login {
-  padding: 0.5rem var(--space-4);
+  padding: 0.5rem var(--space-8);
   border-radius: var(--radius-full);
-  background: var(--color-primary);
-  color: var(--color-surface);
+  background: var(--color-accent);
+  color: var(--color-primary);
   font-weight: 700;
   font-size: var(--text-sm);
   text-decoration: none;
@@ -131,13 +129,21 @@
   pointer-events: auto;
 }
 
-/* ---------- Hero ---------- */
+/* ---------- Hero ----------
+   Ya no vive dentro de un .landing-shell envolvente (cada sección de
+   abajo ahora es su propio bloque full-bleed, con .landing-shell dentro
+   solo para centrar el contenido — ver más abajo) — por eso el hero
+   repite acá mismo el max-width/centrado horizontal en vez de heredarlo
+   de un wrapper compartido; el padding vertical (despeje del pill fijo
+   arriba/aire abajo) sigue siendo propio del hero, no de .landing-shell. */
 .landing-hero {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
   gap: 3rem;
   align-items: center;
-  padding: 7rem 0 6rem;
+  max-width: 75rem;
+  margin: 0 auto;
+  padding: 8rem 1.5rem 6rem;
 }
 
 .landing-eyebrow {
@@ -308,6 +314,13 @@
 }
 
 /* ---------- Secciones ---------- */
+/* Cada sección es su propio bloque full-bleed (fondo de borde a
+   borde) — .landing-shell adentro (el mismo div/clase que ya usa
+   .landing-footer para lo mismo) es lo único que acota/centra el
+   contenido a 1200px. Alterna gris (--color-bg, heredado de
+   .page-landing, sin declarar de nuevo acá) y blanco
+   (.landing-section-white) para que cada sección se lea como un
+   bloque separado del siguiente, en vez de una sola página continua. */
 .landing-section {
   padding: var(--space-12) 0;
   /* Con el pill fijo flotando arriba, saltar a un ancla (#como-funciona,
@@ -315,6 +328,10 @@
      sección tapado detrás del pill — mismo alto aprox. que el
      padding-top del hero de arriba. */
   scroll-margin-top: 6rem;
+}
+
+.landing-section-white {
+  background: var(--color-surface);
 }
 
 /* Scroll suave nativo (sin JS) al clickear cualquier ancla del pill/
@@ -595,12 +612,14 @@
     background: color-mix(in srgb, var(--color-primary) 6%, white);
   }
 
+  /* Mismo verde+navy que .landing-pill-login (arriba) — es la misma
+     acción, solo que acá vive dentro del dropdown mobile. */
   .landing-mobile-menu-cta {
     margin-top: 0.125rem;
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-sm);
-    background: var(--color-primary);
-    color: var(--color-surface);
+    background: var(--color-accent);
+    color: var(--color-primary);
     font-weight: 700;
     font-size: var(--text-sm);
     text-align: center;
