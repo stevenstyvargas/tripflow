@@ -23,7 +23,7 @@
    antes de que el layout colapse a 1 columna. */
 .login-card {
   width: 100%;
-  max-width: 56.25rem;
+  max-width: 60rem;
   display: grid;
   grid-template-columns: minmax(18rem, 1fr) 500px;
   border-radius: 1.5rem;
@@ -58,6 +58,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--space-3);
   padding: var(--space-3) var(--space-8);
   border: none;
   border-radius: var(--radius-sm);
@@ -76,6 +77,52 @@
 .login-button:disabled {
   opacity: 0.6;
   cursor: default;
+}
+
+/* Chip blanco propio para el logo multicolor de Google — su guideline
+   de marca pide que no vaya directo sobre fondos oscuros sin un
+   contenedor claro que le dé contraste. Colores del SVG sin tocar
+   (son de marca de Google, no del sistema de tokens). */
+.login-button-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+/* Nota informativa debajo del botón: chip navy al 5% sobre blanco
+   (nunca el verde de marca, reservado al estado "bien" del semáforo
+   de presupuesto), mismo radius que las trip-card. align-items del
+   ícono en flex-start por defecto (no solo en mobile): a este ancho
+   angosto el texto casi siempre envuelve a 2 líneas también en
+   desktop, y centrado ahí se ve descolgado. */
+.login-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0;
+  padding: var(--space-4) var(--space-4);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+  text-align: left;
+}
+
+.login-hint-icon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--color-primary);
+}
+
+.login-hint p {
+  margin: 0;
+  max-width: 16rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
+  line-height: 1.4;
 }
 
 .login-form-panel .field-error {
@@ -101,14 +148,8 @@
   position: relative;
   overflow: hidden;
   width: 500px;
-  height: 368px;
-  background-image: linear-gradient(
-      160deg,
-      color-mix(in srgb, var(--color-primary) 40%, transparent) 0%,
-      color-mix(in srgb, var(--color-primary) 8%, transparent) 45%,
-      color-mix(in srgb, var(--color-primary) 50%, transparent) 100%
-    ),
-    url("/img/Imagen-inicio-sesion.jpg");
+  height: 375px;
+  background-image: url("/img/Imagen-inicio-sesion.jpg");
   background-size: cover;
   background-position: center;
 }

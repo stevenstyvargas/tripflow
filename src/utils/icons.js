@@ -38,6 +38,7 @@ import arrowUpRight from "lucide-static/icons/arrow-up-right.svg?raw";
 import banknote from "lucide-static/icons/banknote.svg?raw";
 import languages from "lucide-static/icons/languages.svg?raw";
 import scanLine from "lucide-static/icons/scan-line.svg?raw";
+import monitorSmartphone from "lucide-static/icons/monitor-smartphone.svg?raw";
 
 const ICONS = {
   home,
@@ -76,6 +77,7 @@ const ICONS = {
   banknote,
   languages,
   "scan-line": scanLine,
+  "monitor-smartphone": monitorSmartphone,
 };
 
 /**
